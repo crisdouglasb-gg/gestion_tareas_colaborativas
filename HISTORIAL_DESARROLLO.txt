@@ -47,3 +47,10 @@ Sistema de asignaciones colaborativas
 - Se agregó trazabilidad de usuario asignador.
 - Se implementaron restricciones para evitar asignaciones duplicadas.
 - Se realizaron pruebas funcionales desde Django Admin.
+
+ Implementación de sistema de notificaciones internas
+- Se implementó el modelo NotificacionSistema.
+- Se agregó persistencia de notificaciones por usuario.
+- Se incorporó control de lectura de notificaciones.
+- Se preparó estructura para futuras actualizaciones en tiempo real.
+- Se realizaron pruebas funcionales desde Django Admin.

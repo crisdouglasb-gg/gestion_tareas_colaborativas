@@ -1,3 +1,22 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import NotificacionSistema
+
+
+@admin.register(NotificacionSistema)
+class NotificacionSistemaAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'usuario_destino',
+        'mensaje_notificacion',
+        'leida',
+        'fecha_creacion'
+    )
+
+    list_filter = (
+        'leida',
+    )
+
+    search_fields = (
+        'mensaje_notificacion',
+    )
