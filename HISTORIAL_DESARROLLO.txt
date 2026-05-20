@@ -1,0 +1,20 @@
+DÍA 1 - Configuración inicial y estructura base
+
+- Instalación y configuración de Python 3.12.
+- Instalación de Django 5.2.
+- Creación del proyecto principal Django.
+- Configuración del entorno virtual.
+- Creación de aplicaciones modulares:
+  * usuarios
+  * espacios
+  * paneles
+  * actividades
+  * notificaciones
+
+- Registro de aplicaciones en settings.py.
+- Diseño inicial del modelo EspacioTrabajo.
+- Implementación del modelo MiembroEspacio con roles y restricciones.
+- Implementación del modelo PanelTrabajo con soporte de orden visual.
+- Registro de modelos en Django Admin.
+- Creación de migraciones iniciales.
+- Pruebas funcionales desde panel administrativo.
