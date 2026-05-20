@@ -31,3 +31,11 @@ Implementación inicial del flujo Kanban
 - Se configuró orden visual persistente para futuras funciones drag & drop.
 - Se registraron columnas de estado en Django Admin.
 - Se realizaron pruebas funcionales de flujo Kanban desde panel administrativo.
+
+Implementación de actividades y tarjetas Kanban
+- Se implementó el modelo ActividadProyecto.
+- Se agregó relación entre columnas y actividades.
+- Se configuró sistema de prioridades para tareas.
+- Se incorporó soporte para fechas límite y archivado lógico.
+- Se agregó estructura de posicionamiento para drag & drop futuro.
+- Se realizaron pruebas funcionales creando actividades desde Django Admin.
