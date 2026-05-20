@@ -18,3 +18,9 @@ DÍA 1 - Configuración inicial y estructura base
 - Registro de modelos en Django Admin.
 - Creación de migraciones iniciales.
 - Pruebas funcionales desde panel administrativo.
+
+Registro adicional de avances
+
+- Se realizaron pruebas de persistencia desde Django Admin.
+- Se verificó el funcionamiento de relaciones entre espacios y paneles.
+- Se configuró la estructura inicial para futuras funcionalidades Kanban.
