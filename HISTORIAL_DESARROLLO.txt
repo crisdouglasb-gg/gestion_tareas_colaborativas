@@ -61,3 +61,10 @@ Configuración de entorno colaborativo multiusuario
 - Se realizaron asignaciones reales entre usuarios y actividades.
 - Se validó funcionamiento colaborativo del sistema Kanban.
 - Se preparó estructura para futuras notificaciones automáticas.
+
+ Automatización de notificaciones mediante signals
+- Se implementó archivo signals.py para automatización de eventos.
+- Se configuró generación automática de notificaciones al crear asignaciones.
+- Se integró sistema de señales de Django utilizando post_save.
+- Se registró carga automática de signals desde apps.py.
+- Se realizaron pruebas funcionales de automatización desde Django Admin.
