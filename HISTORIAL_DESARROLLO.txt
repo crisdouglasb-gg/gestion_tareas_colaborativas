@@ -1,5 +1,4 @@
 DÍA 1 - Configuración inicial y estructura base
-
 - Instalación y configuración de Python 3.12.
 - Instalación de Django 5.2.
 - Creación del proyecto principal Django.
@@ -20,9 +19,15 @@ DÍA 1 - Configuración inicial y estructura base
 - Pruebas funcionales desde panel administrativo.
 
 Registro adicional de avances
-
 - Se realizaron pruebas de persistencia desde Django Admin.
 - Se verificó el funcionamiento de relaciones entre espacios y paneles.
 - Se configuró la estructura inicial para futuras funcionalidades Kanban.
 - Se dejó preparada la estructura base para implementación de flujo Kanban.
 - Se organizó la arquitectura modular del proyecto para facilitar escalabilidad.
+
+Implementación inicial del flujo Kanban
+- Se implementó el modelo ColumnaEstado.
+- Se agregó relación entre paneles y columnas Kanban.
+- Se configuró orden visual persistente para futuras funciones drag & drop.
+- Se registraron columnas de estado en Django Admin.
+- Se realizaron pruebas funcionales de flujo Kanban desde panel administrativo.
