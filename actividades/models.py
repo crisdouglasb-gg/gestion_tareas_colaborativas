@@ -80,3 +80,49 @@ class ActividadProyecto(models.Model):
 
     def __str__(self):
         return self.titulo_actividad
+    
+class AsignacionActividad(models.Model):
+    # Relación con la actividad asignada
+    actividad_relacionada = models.ForeignKey(
+        ActividadProyecto,
+        on_delete=models.CASCADE,
+        related_name='usuarios_asignados'
+    )
+
+    # Usuario responsable de la actividad
+    usuario_asignado = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='actividades_asignadas'
+    )
+
+    # Usuario que realizó la asignación
+    asignado_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='asignaciones_realizadas'
+    )
+
+    # Permite mantener historial sin borrar registros
+    asignacion_activa = models.BooleanField(
+        default=True
+    )
+
+    # Fecha automática de asignación
+    fecha_asignacion = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+        verbose_name = 'Asignación de actividad'
+        verbose_name_plural = 'Asignaciones de actividades'
+
+        # Evita duplicar asignaciones
+        unique_together = (
+            'actividad_relacionada',
+            'usuario_asignado'
+        )
+
+    def __str__(self):
+        return f'{self.usuario_asignado} → {self.actividad_relacionada}'

@@ -39,3 +39,11 @@ Implementación de actividades y tarjetas Kanban
 - Se incorporó soporte para fechas límite y archivado lógico.
 - Se agregó estructura de posicionamiento para drag & drop futuro.
 - Se realizaron pruebas funcionales creando actividades desde Django Admin.
+
+Sistema de asignaciones colaborativas
+- Se implementó el modelo AsignacionActividad.
+- Se agregó relación entre usuarios y actividades.
+- Se incorporó control de asignaciones activas.
+- Se agregó trazabilidad de usuario asignador.
+- Se implementaron restricciones para evitar asignaciones duplicadas.
+- Se realizaron pruebas funcionales desde Django Admin.
