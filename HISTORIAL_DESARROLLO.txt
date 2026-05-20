@@ -54,3 +54,10 @@ Sistema de asignaciones colaborativas
 - Se incorporó control de lectura de notificaciones.
 - Se preparó estructura para futuras actualizaciones en tiempo real.
 - Se realizaron pruebas funcionales desde Django Admin.
+
+Configuración de entorno colaborativo multiusuario
+- Se crearon usuarios de prueba para simulación de equipo de trabajo.
+- Se configuraron perfiles para backend, frontend y testing.
+- Se realizaron asignaciones reales entre usuarios y actividades.
+- Se validó funcionamiento colaborativo del sistema Kanban.
+- Se preparó estructura para futuras notificaciones automáticas.
