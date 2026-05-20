@@ -24,3 +24,5 @@ Registro adicional de avances
 - Se realizaron pruebas de persistencia desde Django Admin.
 - Se verificó el funcionamiento de relaciones entre espacios y paneles.
 - Se configuró la estructura inicial para futuras funcionalidades Kanban.
+- Se dejó preparada la estructura base para implementación de flujo Kanban.
+- Se organizó la arquitectura modular del proyecto para facilitar escalabilidad.
