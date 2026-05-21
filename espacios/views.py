@@ -1,16 +1,18 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
-from .models import EspacioTrabajo, MiembroEspacio
+from espacios.models import EspacioTrabajo, MiembroEspacio
+from paneles.models import ColumnaEstado
+from actividades.models import ActividadProyecto
 
 
 @login_required
 def dashboard_principal(request):
     """
-    Dashboard principal del sistema.
+    Dashboard principal estilo Kanban.
 
-    Muestra únicamente los espacios
-    relacionados con el usuario autenticado.
+    Muestra espacios del usuario y
+    actividades agrupadas por columnas.
     """
 
     espacios_usuario = EspacioTrabajo.objects.filter(
@@ -18,8 +20,21 @@ def dashboard_principal(request):
         miembros_asociados__miembro_activo=True
     ).distinct()
 
+    columnas_sistema = ColumnaEstado.objects.all().order_by(
+        'posicion_columna'
+    )
+
+    actividades_usuario = ActividadProyecto.objects.filter(
+        creado_por=request.user,
+        actividad_archivada=False
+    ).select_related(
+        'columna_actual'
+    )
+
     contexto = {
-        'espacios_usuario': espacios_usuario
+        'espacios_usuario': espacios_usuario,
+        'columnas_sistema': columnas_sistema,
+        'actividades_usuario': actividades_usuario,
     }
 
     return render(

@@ -76,3 +76,11 @@ Implementación de permisos multiusuario y dashboard dinámico
 - Se configuraron relaciones multiusuario entre espacios y miembros.
 - Se validó acceso restringido según participación del usuario.
 - Se realizaron pruebas funcionales con múltiples perfiles simulados.
+
+Desarrollo de interfaz visual tipo Kanban
+- Se rediseñó dashboard principal con estructura visual estilo Trello.
+- Se implementó renderizado dinámico de columnas Kanban.
+- Se integró visualización de actividades agrupadas por estado.
+- Se aplicó diferenciación visual de prioridades mediante colores.
+- Se construyó estructura base para futura integración de drag & drop.
+- Se realizaron pruebas funcionales de visualización multiusuario.
