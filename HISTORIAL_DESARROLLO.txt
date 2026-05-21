@@ -68,3 +68,11 @@ Configuración de entorno colaborativo multiusuario
 - Se integró sistema de señales de Django utilizando post_save.
 - Se registró carga automática de signals desde apps.py.
 - Se realizaron pruebas funcionales de automatización desde Django Admin.
+
+Implementación de permisos multiusuario y dashboard dinámico
+- Se desarrolló dashboard principal utilizando vistas y templates Django.
+- Se implementó autenticación mediante login_required.
+- Se creó filtrado dinámico de espacios por usuario autenticado.
+- Se configuraron relaciones multiusuario entre espacios y miembros.
+- Se validó acceso restringido según participación del usuario.
+- Se realizaron pruebas funcionales con múltiples perfiles simulados.

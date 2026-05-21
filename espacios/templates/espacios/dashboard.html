@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel principal</title>
+</head>
+<body>
+
+    <h1>Panel principal del sistema</h1>
+
+    <hr>
+
+    <h2>Espacios disponibles</h2>
+
+    {% if espacios_usuario %}
+        <ul>
+            {% for espacio in espacios_usuario %}
+                <li>
+                    <strong>{{ espacio.nombre_espacio }}</strong>
+                    <br>
+                    {{ espacio.descripcion_general }}
+                </li>
+
+                <br>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No existen espacios disponibles para este usuario.</p>
+    {% endif %}
+
+</body>
+</html>
