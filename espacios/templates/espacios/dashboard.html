@@ -91,9 +91,13 @@
     <h3>Espacios disponibles</h3>
 
     <ul>
+
         {% for espacio in espacios_usuario %}
+
             <li>{{ espacio.nombre_espacio }}</li>
+
         {% endfor %}
+
     </ul>
 
     <div class="contenedor-kanban">
@@ -104,7 +108,9 @@
                  data-columna-id="{{ columna.id }}">
 
                 <div class="titulo-columna">
+
                     {{ columna.nombre_columna }}
+
                 </div>
 
                 {% for actividad in actividades_usuario %}
@@ -128,16 +134,22 @@
                         data-actividad-id="{{ actividad.id }}">
 
                             <div class="titulo-tarjeta">
+
                                 {{ actividad.titulo_actividad }}
+
                             </div>
 
                             <div class="descripcion-tarjeta">
+
                                 {{ actividad.descripcion_detallada }}
+
                             </div>
 
                             <div class="fecha-limite">
+
                                 Fecha límite:
                                 {{ actividad.fecha_limite }}
+
                             </div>
 
                         </div>
@@ -152,73 +164,179 @@
 
     </div>
 
-    <script>
+<script>
 
-        // Tarjeta actualmente seleccionada
-        let tarjetaSeleccionada = null;
+    // =========================================
+    // CONEXION WEBSOCKET
+    // =========================================
 
-        // Obtiene todas las tarjetas
-        const tarjetasSistema = document.querySelectorAll(
-            '.tarjeta-actividad'
+    const socketKanban = new WebSocket(
+
+        'ws://' +
+        window.location.host +
+        '/ws/kanban/'
+
+    );
+
+    socketKanban.onopen = function () {
+
+        console.log(
+            'WebSocket conectado correctamente.'
         );
 
-        // Obtiene columnas del tablero
-        const columnasKanban = document.querySelectorAll(
-            '.columna-kanban'
+    };
+
+    // =========================================
+    // MENSAJES WEBSOCKET
+    // =========================================
+
+    socketKanban.onmessage = function (evento) {
+
+        const datosSocket = JSON.parse(
+            evento.data
         );
 
-        // Eventos drag para tarjetas
-        tarjetasSistema.forEach((tarjeta) => {
+        console.log(
+            'Mensaje recibido:',
+            datosSocket
+        );
 
-            tarjeta.addEventListener('dragstart', () => {
+        // Detecta movimiento de actividad
+        if (
 
-                tarjetaSeleccionada = tarjeta;
+            datosSocket.tipo ===
+            'actividad_movida'
 
-                setTimeout(() => {
+        ) {
 
-                    tarjeta.style.display = 'none';
+            // Busca tarjeta por ID
+            const tarjetaMover = document.querySelector(
 
-                }, 0);
+                `[data-actividad-id="${datosSocket.actividad_id}"]`
 
-            });
+            );
 
-            tarjeta.addEventListener('dragend', () => {
+            // Busca columna destino
+            const columnaDestino = document.querySelector(
 
-                setTimeout(() => {
+                `[data-columna-id="${datosSocket.columna_destino}"]`
 
-                    tarjeta.style.display = 'block';
+            );
 
-                    tarjetaSeleccionada = null;
+            // Si existen ambos elementos
+            if (
 
-                }, 0);
+                tarjetaMover &&
+                columnaDestino
 
-            });
+            ) {
 
-        });
+                columnaDestino.appendChild(
+                    tarjetaMover
+                );
 
-        // Eventos drop para columnas
-        columnasKanban.forEach((columna) => {
+            }
 
-            columna.addEventListener('dragover', (evento) => {
+        }
+
+    };
+
+    socketKanban.onclose = function () {
+
+        console.log(
+            'WebSocket desconectado.'
+        );
+
+    };
+
+    // =========================================
+    // DRAG AND DROP
+    // =========================================
+
+    const tarjetasSistema = document.querySelectorAll(
+        '.tarjeta-actividad'
+    );
+
+    const columnasKanban = document.querySelectorAll(
+        '.columna-kanban'
+    );
+
+    // Eventos drag de tarjetas
+    tarjetasSistema.forEach((tarjeta) => {
+
+        tarjeta.addEventListener(
+            'dragstart',
+            (evento) => {
+
+                evento.dataTransfer.setData(
+
+                    'actividad_id',
+
+                    tarjeta.dataset.actividadId
+
+                );
+
+            }
+
+        );
+
+    });
+
+    // Eventos drop de columnas
+    columnasKanban.forEach((columna) => {
+
+        columna.addEventListener(
+            'dragover',
+            (evento) => {
 
                 evento.preventDefault();
 
-            });
+            }
 
-            columna.addEventListener('drop', () => {
+        );
 
-                columna.appendChild(
-                    tarjetaSeleccionada
+        columna.addEventListener(
+            'drop',
+            (evento) => {
+
+                evento.preventDefault();
+
+                // Obtiene ID actividad
+                const actividadId =
+
+                    evento.dataTransfer.getData(
+                        'actividad_id'
+                    );
+
+                // Busca tarjeta HTML
+                const tarjetaMover = document.querySelector(
+
+                    `[data-actividad-id="${actividadId}"]`
+
                 );
 
-                // Obtiene IDs
-                const actividadId =
-                    tarjetaSeleccionada.dataset.actividadId;
+                // Verifica existencia
+                if (!tarjetaMover) {
 
+                    console.log(
+                        'Tarjeta no encontrada.'
+                    );
+
+                    return;
+
+                }
+
+                // Mueve tarjeta visualmente
+                columna.appendChild(
+                    tarjetaMover
+                );
+
+                // Obtiene columna destino
                 const columnaDestinoId =
+
                     columna.dataset.columnaId;
 
-                // Actualiza backend Django
+                // Actualiza Django
                 fetch('/actualizar-columna/', {
 
                     method: 'POST',
@@ -226,18 +344,23 @@
                     headers: {
 
                         'Content-Type':
+
                             'application/x-www-form-urlencoded',
 
                         'X-CSRFToken':
+
                             obtenerTokenCSRF()
 
                     },
 
                     body:
+
                         `actividad_id=${actividadId}&columna_destino_id=${columnaDestinoId}`
 
                 })
+
                 .then(response => response.json())
+
                 .then(data => {
 
                     console.log(
@@ -245,40 +368,68 @@
                         data
                     );
 
-                });
+                    // Notifica a otros clientes
+                    socketKanban.send(
 
-            });
+                        JSON.stringify({
 
-        });
+                            'tipo':
+                                'actividad_movida',
 
-        // Obtiene token CSRF de Django
-        function obtenerTokenCSRF() {
+                            'actividad_id':
+                                actividadId,
 
-            const cookies = document.cookie.split(';');
+                            'columna_destino':
+                                columnaDestinoId
 
-            for (let cookie of cookies) {
+                        })
 
-                cookie = cookie.trim();
-
-                if (
-                    cookie.startsWith(
-                        'csrftoken='
-                    )
-                ) {
-
-                    return cookie.substring(
-                        'csrftoken='.length
                     );
 
-                }
+                });
 
             }
 
-            return '';
+        );
+
+    });
+
+    // =========================================
+    // TOKEN CSRF DJANGO
+    // =========================================
+
+    function obtenerTokenCSRF() {
+
+        const cookies =
+            document.cookie.split(';');
+
+        for (let cookie of cookies) {
+
+            cookie = cookie.trim();
+
+            if (
+
+                cookie.startsWith(
+                    'csrftoken='
+                )
+
+            ) {
+
+                return cookie.substring(
+
+                    'csrftoken='.length
+
+                );
+
+            }
 
         }
 
-    </script>
+        return '';
+
+    }
+
+</script>
 
 </body>
 

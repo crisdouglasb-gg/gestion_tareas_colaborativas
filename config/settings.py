@@ -31,6 +31,9 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+
+'daphne',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,6 +45,7 @@ INSTALLED_APPS = [
     'espacios',
     'paneles',
     'actividades',
+    'channels',
     'notificaciones',
 ]
 
@@ -129,3 +133,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 LOGIN_URL = '/admin/login/'
+
+ASGI_APPLICATION = 'config.asgi.application'
+
+
+CHANNEL_LAYERS = {
+
+    "default": {
+
+        "BACKEND": (
+            "channels.layers.InMemoryChannelLayer"
+        ),
+
+    },
+
+}
