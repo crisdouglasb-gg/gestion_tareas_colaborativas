@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
     <meta charset="UTF-8">
 
     <title>Panel Kanban</title>
@@ -31,6 +33,7 @@
             width: 320px;
             padding: 15px;
             flex-shrink: 0;
+            min-height: 400px;
         }
 
         .titulo-columna {
@@ -45,7 +48,8 @@
             border-radius: 8px;
             padding: 12px;
             margin-bottom: 12px;
-            box-shadow: 0px 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+            cursor: grab;
         }
 
         .prioridad-alta {
@@ -96,7 +100,8 @@
 
         {% for columna in columnas_sistema %}
 
-            <div class="columna-kanban">
+            <div class="columna-kanban"
+                 data-columna-id="{{ columna.id }}">
 
                 <div class="titulo-columna">
                     {{ columna.nombre_columna }}
@@ -115,7 +120,9 @@
                             {% else %}
                                 prioridad-baja
                             {% endif %}
-                        ">
+
+                        "
+                        draggable="true">
 
                             <div class="titulo-tarjeta">
                                 {{ actividad.titulo_actividad }}
@@ -142,5 +149,67 @@
 
     </div>
 
+    <script>
+
+        // Variable global para almacenar tarjeta arrastrada
+        let tarjetaSeleccionada = null;
+
+        // Obtiene todas las tarjetas del tablero
+        const tarjetasSistema = document.querySelectorAll(
+            '.tarjeta-actividad'
+        );
+
+        // Obtiene todas las columnas del tablero
+        const columnasKanban = document.querySelectorAll(
+            '.columna-kanban'
+        );
+
+        // Eventos para las tarjetas
+        tarjetasSistema.forEach((tarjeta) => {
+
+            tarjeta.addEventListener('dragstart', () => {
+
+                tarjetaSeleccionada = tarjeta;
+
+                setTimeout(() => {
+                    tarjeta.style.display = 'none';
+                }, 0);
+
+            });
+
+            tarjeta.addEventListener('dragend', () => {
+
+                setTimeout(() => {
+
+                    tarjeta.style.display = 'block';
+
+                    tarjetaSeleccionada = null;
+
+                }, 0);
+
+            });
+
+        });
+
+        // Eventos para columnas
+        columnasKanban.forEach((columna) => {
+
+            columna.addEventListener('dragover', (evento) => {
+
+                evento.preventDefault();
+
+            });
+
+            columna.addEventListener('drop', () => {
+
+                columna.appendChild(tarjetaSeleccionada);
+
+            });
+
+        });
+
+    </script>
+
 </body>
+
 </html>

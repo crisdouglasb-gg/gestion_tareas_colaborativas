@@ -84,3 +84,11 @@ Desarrollo de interfaz visual tipo Kanban
 - Se aplicó diferenciación visual de prioridades mediante colores.
 - Se construyó estructura base para futura integración de drag & drop.
 - Se realizaron pruebas funcionales de visualización multiusuario.
+Implementación de interacción Drag and Drop en tablero Kanban
+
+- Se incorporó funcionalidad Drag and Drop mediante JavaScript nativo.
+- Se implementó movimiento visual de tarjetas entre columnas Kanban.
+- Se agregaron atributos dinámicos para identificación de columnas.
+- Se mejoró experiencia visual del tablero colaborativo.
+- Se preparó estructura frontend para futura persistencia en base de datos.
+- Se realizaron pruebas funcionales de interacción dinámica.
