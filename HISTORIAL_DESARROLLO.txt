@@ -92,3 +92,11 @@ Implementación de interacción Drag and Drop en tablero Kanban
 - Se mejoró experiencia visual del tablero colaborativo.
 - Se preparó estructura frontend para futura persistencia en base de datos.
 - Se realizaron pruebas funcionales de interacción dinámica.
+Persistencia de movimientos Drag and Drop
+
+- Se implementó actualización dinámica de columnas mediante peticiones fetch.
+- Se desarrolló persistencia real de movimientos Kanban en base de datos.
+- Se integró comunicación frontend-backend utilizando JavaScript y Django.
+- Se implementó actualización automática de estados mediante eventos drag and drop.
+- Se agregaron validaciones para actualización dinámica de actividades.
+- Se realizaron pruebas funcionales de persistencia visual y lógica.

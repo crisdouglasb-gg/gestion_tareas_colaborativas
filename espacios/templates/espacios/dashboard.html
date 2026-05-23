@@ -33,7 +33,7 @@
             width: 320px;
             padding: 15px;
             flex-shrink: 0;
-            min-height: 400px;
+            min-height: 450px;
         }
 
         .titulo-columna {
@@ -122,7 +122,10 @@
                             {% endif %}
 
                         "
-                        draggable="true">
+
+                        draggable="true"
+
+                        data-actividad-id="{{ actividad.id }}">
 
                             <div class="titulo-tarjeta">
                                 {{ actividad.titulo_actividad }}
@@ -151,20 +154,20 @@
 
     <script>
 
-        // Variable global para almacenar tarjeta arrastrada
+        // Tarjeta actualmente seleccionada
         let tarjetaSeleccionada = null;
 
-        // Obtiene todas las tarjetas del tablero
+        // Obtiene todas las tarjetas
         const tarjetasSistema = document.querySelectorAll(
             '.tarjeta-actividad'
         );
 
-        // Obtiene todas las columnas del tablero
+        // Obtiene columnas del tablero
         const columnasKanban = document.querySelectorAll(
             '.columna-kanban'
         );
 
-        // Eventos para las tarjetas
+        // Eventos drag para tarjetas
         tarjetasSistema.forEach((tarjeta) => {
 
             tarjeta.addEventListener('dragstart', () => {
@@ -172,7 +175,9 @@
                 tarjetaSeleccionada = tarjeta;
 
                 setTimeout(() => {
+
                     tarjeta.style.display = 'none';
+
                 }, 0);
 
             });
@@ -191,7 +196,7 @@
 
         });
 
-        // Eventos para columnas
+        // Eventos drop para columnas
         columnasKanban.forEach((columna) => {
 
             columna.addEventListener('dragover', (evento) => {
@@ -202,11 +207,76 @@
 
             columna.addEventListener('drop', () => {
 
-                columna.appendChild(tarjetaSeleccionada);
+                columna.appendChild(
+                    tarjetaSeleccionada
+                );
+
+                // Obtiene IDs
+                const actividadId =
+                    tarjetaSeleccionada.dataset.actividadId;
+
+                const columnaDestinoId =
+                    columna.dataset.columnaId;
+
+                // Actualiza backend Django
+                fetch('/actualizar-columna/', {
+
+                    method: 'POST',
+
+                    headers: {
+
+                        'Content-Type':
+                            'application/x-www-form-urlencoded',
+
+                        'X-CSRFToken':
+                            obtenerTokenCSRF()
+
+                    },
+
+                    body:
+                        `actividad_id=${actividadId}&columna_destino_id=${columnaDestinoId}`
+
+                })
+                .then(response => response.json())
+                .then(data => {
+
+                    console.log(
+                        'Actividad actualizada:',
+                        data
+                    );
+
+                });
 
             });
 
         });
+
+        // Obtiene token CSRF de Django
+        function obtenerTokenCSRF() {
+
+            const cookies = document.cookie.split(';');
+
+            for (let cookie of cookies) {
+
+                cookie = cookie.trim();
+
+                if (
+                    cookie.startsWith(
+                        'csrftoken='
+                    )
+                ) {
+
+                    return cookie.substring(
+                        'csrftoken='.length
+                    );
+
+                }
+
+            }
+
+            return '';
+
+        }
 
     </script>
 
