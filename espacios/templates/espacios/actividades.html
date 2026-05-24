@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actividades - Gestión de Tareas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f0f0f0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; min-height: 100vh; }
+        .navbar { background: #fff; border-bottom: 2px solid #222; padding: 0 25px; height: 62px; }
+        .navbar-brand { font-weight: 700; color: #000 !important; font-size: 20px; }
+        .navbar-brand span { font-weight: 400; color: #666 !important; font-size: 14px; margin-left: 8px; }
+        .nav-user { display: flex; align-items: center; gap: 18px; }
+        .nav-username { font-size: 14px; font-weight: 600; color: #333; }
+        .btn-logout { background: #000; color: white !important; border: none; padding: 7px 16px; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 6px; }
+        .btn-logout:hover { background: #333; }
+        .layout { display: flex; min-height: calc(100vh - 62px); }
+        .sidebar { background: #fff; border-right: 2px solid #222; width: 240px; flex-shrink: 0; padding: 20px 0; display: flex; flex-direction: column; }
+        .sidebar-section-label { font-size: 11px; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 1px; padding: 0 25px; margin: 18px 0 8px; }
+        .sidebar-item { padding: 11px 25px; border-left: 3px solid transparent; transition: all 0.2s; color: #444; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .sidebar-item i { width: 16px; font-size: 14px; color: #888; }
+        .sidebar-item:hover { background: #f5f5f5; border-left-color: #555; color: #000; text-decoration: none; }
+        .sidebar-item.active { background: #f0f0f0; border-left-color: #000; color: #000; font-weight: 600; }
+        .sidebar-item.active i { color: #000; }
+        .sidebar-bottom { margin-top: auto; border-top: 1px solid #e0e0e0; padding-top: 10px; }
+        .main-content { flex: 1; padding: 35px 40px; }
+        .page-header { margin-bottom: 30px; }
+        .page-header h1 { font-size: 26px; font-weight: 700; color: #000; margin-bottom: 5px; }
+        .page-header p { color: #666; font-size: 14px; }
+        .section-title { font-size: 15px; font-weight: 700; color: #000; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #222; display: flex; align-items: center; justify-content: space-between; }
+        .btn-nuevo { background: #000; color: white; border: none; padding: 8px 16px; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: background 0.2s; }
+        .btn-nuevo:hover { background: #333; color: white; text-decoration: none; }
+
+        /* STATS RÁPIDOS */
+        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 28px; }
+        .stat-mini { background: white; border: 1px solid #ddd; border-radius: 6px; padding: 16px 18px; display: flex; align-items: center; gap: 12px; }
+        .stat-mini-icon { width: 38px; height: 38px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+        .icon-total    { background: #f0f0f0; color: #333; }
+        .icon-alta     { background: #fff0f0; color: #c53030; }
+        .icon-progreso { background: #fefce8; color: #a16207; }
+        .icon-ok       { background: #f0fdf4; color: #15803d; }
+        .stat-mini-num { font-size: 22px; font-weight: 700; color: #000; line-height: 1; }
+        .stat-mini-label { font-size: 12px; color: #777; margin-top: 2px; }
+
+        /* CARDS DE ACTIVIDADES */
+        .actividades-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+        .actividad-card { background: white; border: 1px solid #ddd; border-radius: 6px; padding: 20px; transition: all 0.2s; border-left: 4px solid #ddd; }
+        .actividad-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.08); transform: translateY(-1px); }
+        .actividad-card.alta    { border-left-color: #e53e3e; }
+        .actividad-card.media   { border-left-color: #f59e0b; }
+        .actividad-card.baja    { border-left-color: #22c55e; }
+        .actividad-card.urgente { border-left-color: #7c3aed; }
+        .actividad-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+        .actividad-titulo { font-size: 14px; font-weight: 700; color: #000; flex: 1; margin-right: 10px; }
+        .priority-badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; flex-shrink: 0; }
+        .priority-alta    { background: #fff0f0; color: #c53030; }
+        .priority-media   { background: #fffaf0; color: #b7791f; }
+        .priority-baja    { background: #f0fff4; color: #276749; }
+        .priority-urgente { background: #f5f3ff; color: #7c3aed; }
+        .actividad-desc { font-size: 13px; color: #666; line-height: 1.5; margin-bottom: 14px; }
+        .actividad-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; border-top: 1px solid #f0f0f0; }
+        .actividad-meta { font-size: 12px; color: #aaa; display: flex; align-items: center; gap: 5px; }
+        .actividad-acciones { display: flex; gap: 6px; }
+        .btn-accion { font-size: 11px; padding: 4px 10px; border-radius: 3px; border: none; cursor: pointer; font-weight: 600; text-decoration: none; transition: opacity 0.2s; }
+        .btn-accion:hover { opacity: 0.8; text-decoration: none; }
+        .btn-editar   { background: #000; color: white; }
+        .btn-eliminar { background: #e53e3e; color: white; }
+
+        .empty-state { text-align: center; padding: 60px 20px; color: #aaa; background: white; border: 1px solid #ddd; border-radius: 6px; grid-column: 1/-1; }
+        .empty-state i { font-size: 48px; margin-bottom: 16px; display: block; }
+        .empty-state p { font-size: 15px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Gestión de Tareas <span>Colaborativas</span></a>
+            <div class="nav-user">
+                <span class="nav-username"><i class="fas fa-user-circle" style="margin-right:5px;color:#aaa;"></i>{{ request.user.username }}</span>
+                <form action="/logout/" method="POST" style="margin:0;">{% csrf_token %}<button type="submit" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button></form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="layout">
+        <div class="sidebar">
+            <div class="sidebar-section-label">Principal</div>
+            <a class="sidebar-item" href="/"><i class="fas fa-home"></i> Inicio</a>
+            <a class="sidebar-item" href="/mis-tareas/"><i class="fas fa-tasks"></i> Mis Tareas</a>
+            <a class="sidebar-item" href="/espacios/"><i class="fas fa-users"></i> Espacios</a>
+            <div class="sidebar-section-label">Trabajo</div>
+            <a class="sidebar-item" href="/paneles/"><i class="fas fa-th"></i> Paneles Kanban</a>
+            <a class="sidebar-item active" href="/actividades/"><i class="fas fa-list-check"></i> Actividades</a>
+            <a class="sidebar-item" href="/notificaciones/"><i class="fas fa-bell"></i> Notificaciones</a>
+            <div class="sidebar-bottom">
+                <div class="sidebar-section-label">Sistema</div>
+                <a class="sidebar-item" href="/admin/"><i class="fas fa-cog"></i> Panel Admin</a>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="page-header">
+                <h1><i class="fas fa-list-check" style="margin-right:10px;"></i>Actividades</h1>
+                <p>Seguimiento de todas las actividades del equipo</p>
+            </div>
+
+            <!-- Stats rápidos -->
+            <div class="stats-row">
+                <div class="stat-mini">
+                    <div class="stat-mini-icon icon-total"><i class="fas fa-layer-group"></i></div>
+                    <div>
+                        <div class="stat-mini-num">{{ actividades_usuario|length|default:"0" }}</div>
+                        <div class="stat-mini-label">Total</div>
+                    </div>
+                </div>
+                <div class="stat-mini">
+                    <div class="stat-mini-icon icon-alta"><i class="fas fa-exclamation-circle"></i></div>
+                    <div>
+                        <div class="stat-mini-num">0</div>
+                        <div class="stat-mini-label">Alta Prioridad</div>
+                    </div>
+                </div>
+                <div class="stat-mini">
+                    <div class="stat-mini-icon icon-progreso"><i class="fas fa-spinner"></i></div>
+                    <div>
+                        <div class="stat-mini-num">0</div>
+                        <div class="stat-mini-label">En Progreso</div>
+                    </div>
+                </div>
+                <div class="stat-mini">
+                    <div class="stat-mini-icon icon-ok"><i class="fas fa-check-circle"></i></div>
+                    <div>
+                        <div class="stat-mini-num">0</div>
+                        <div class="stat-mini-label">Completadas</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de actividades -->
+            <div class="section-title">
+                <span><i class="fas fa-th-list"></i> Todas las Actividades</span>
+                <a href="/crear-actividad/" class="btn-nuevo"><i class="fas fa-plus"></i> Nueva Actividad</a>
+            </div>
+
+            <div class="actividades-grid">
+                {% for actividad in actividades_usuario %}
+                <div class="actividad-card {{ actividad.prioridad_actividad|lower }}">
+                    <div class="actividad-header">
+                        <div class="actividad-titulo">{{ actividad.titulo_actividad }}</div>
+                        <span class="priority-badge
+                            {% if actividad.prioridad_actividad == 'ALTA' %}priority-alta
+                            {% elif actividad.prioridad_actividad == 'MEDIA' %}priority-media
+                            {% elif actividad.prioridad_actividad == 'URGENTE' %}priority-urgente
+                            {% else %}priority-baja{% endif %}">
+                            {{ actividad.prioridad_actividad }}
+                        </span>
+                    </div>
+                    <div class="actividad-desc">{{ actividad.descripcion_detallada|truncatechars:100 }}</div>
+                    <div class="actividad-footer">
+                        <div class="actividad-meta">
+                            <i class="fas fa-columns"></i>
+                            {{ actividad.columna_actual.nombre_columna }}
+                            {% if actividad.fecha_limite %}
+                            &nbsp;·&nbsp;<i class="fas fa-calendar-alt"></i> {{ actividad.fecha_limite }}
+                            {% endif %}
+                        </div>
+                        <div class="actividad-acciones">
+                            <a href="/editar-actividad/{{ actividad.id }}/" class="btn-accion btn-editar"><i class="fas fa-edit"></i></a>
+                            <a href="/eliminar-actividad/{{ actividad.id }}/" class="btn-accion btn-eliminar"><i class="fas fa-trash"></i></a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    <i class="fas fa-clipboard-list"></i>
+                    <p>No hay actividades registradas todavía.</p>
+                    <a href="/crear-actividad/" class="btn-nuevo"><i class="fas fa-plus"></i> Crear Actividad</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
