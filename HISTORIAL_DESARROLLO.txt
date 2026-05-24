@@ -114,3 +114,10 @@ Se implementó sistema drag and drop para mover tarjetas entre columnas.
 - Se configuraron rutas de login y logout.
 - Se añadieron redirecciones automáticas de sesión.
 - El sistema ahora requiere autenticación para acceder al tablero Kanban.
+
+Se agregó barra superior personalizada al dashboard.
+- Se muestra el usuario autenticado en tiempo real.
+- Se implementó botón de cierre de sesión.
+- Se configuró logout seguro mediante método POST.
+- Se corrigió error HTTP 405 durante cierre de sesión.
+- El sistema ahora permite navegación autenticada completa.

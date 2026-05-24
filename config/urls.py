@@ -21,10 +21,12 @@ urlpatterns = [
 
     # Logout del sistema
     path(
-        'logout/',
-        auth_views.LogoutView.as_view(),
-        name='logout'
+    'logout/',
+    auth_views.LogoutView.as_view(
+        next_page='/login/'
     ),
+    name='logout'
+),
 
     # Dashboard principal
     path(
