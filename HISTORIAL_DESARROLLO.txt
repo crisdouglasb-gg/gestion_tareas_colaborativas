@@ -107,3 +107,10 @@ Se implementó sistema drag and drop para mover tarjetas entre columnas.
 - Se habilitó sincronización en tiempo real entre múltiples ventanas del navegador.
 - Se corrigieron errores de conexión y actualización visual de tarjetas.
 - Se validó funcionamiento multiusuario del tablero Kanban.
+
+- Se integró sistema de login de Django.
+- Se creó pantalla personalizada de autenticación.
+- Se protegió el dashboard principal mediante login_required.
+- Se configuraron rutas de login y logout.
+- Se añadieron redirecciones automáticas de sesión.
+- El sistema ahora requiere autenticación para acceder al tablero Kanban.

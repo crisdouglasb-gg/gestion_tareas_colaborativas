@@ -64,7 +64,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'config/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -131,9 +131,6 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-LOGIN_URL = '/admin/login/'
-
 ASGI_APPLICATION = 'config.asgi.application'
 
 
@@ -148,3 +145,9 @@ CHANNEL_LAYERS = {
     },
 
 }
+LOGIN_URL = '/login/'
+
+LOGIN_REDIRECT_URL = '/'
+
+LOGOUT_REDIRECT_URL = '/login/'
+

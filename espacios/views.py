@@ -1,3 +1,4 @@
+
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -7,7 +8,7 @@ from paneles.models import ColumnaEstado
 from actividades.models import ActividadProyecto
 
 
-@login_required
+@login_required(login_url='/login/')
 def dashboard_principal(request):
 
     """
