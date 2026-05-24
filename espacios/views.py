@@ -206,3 +206,18 @@ def editar_actividad_frontend(request, actividad_id):
         'espacios/editar_actividad.html',
         contexto
     )
+@login_required(login_url='/login/')
+def eliminar_actividad_frontend(request, actividad_id):
+
+    """
+    Permite eliminar actividades
+    desde el dashboard.
+    """
+
+    actividad = ActividadProyecto.objects.get(
+        id=actividad_id
+    )
+
+    actividad.delete()
+
+    return redirect('dashboard')

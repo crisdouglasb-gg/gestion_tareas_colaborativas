@@ -142,3 +142,10 @@ Se agregó barra superior personalizada al dashboard.
 - Se agregó navegación desde tarjetas mediante botón editar.
 - Se corrigieron errores de importación de vistas en urls.py.
 - Se realizaron pruebas funcionales de edición desde dashboard.
+
+- Se desarrolló vista para eliminar actividades desde dashboard.
+- Se implementó eliminación directa de tarjetas Kanban.
+- Se agregaron rutas dinámicas para eliminación por ID.
+- Se añadieron botones de edición y eliminación en tarjetas.
+- Se integró navegación completa CRUD desde frontend.
+- Se realizaron pruebas funcionales de eliminación visual y lógica.

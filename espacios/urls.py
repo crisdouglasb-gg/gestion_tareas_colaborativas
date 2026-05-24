@@ -4,7 +4,8 @@ from .views import (
     dashboard_principal,
     actualizar_columna_actividad,
     crear_actividad_frontend,
-    editar_actividad_frontend
+    editar_actividad_frontend,
+    eliminar_actividad_frontend
 )
 
 urlpatterns = [
@@ -32,5 +33,11 @@ urlpatterns = [
         editar_actividad_frontend,
         name='editar_actividad_frontend'
     ),
+
+    path(
+    'eliminar-actividad/<int:actividad_id>/',
+    eliminar_actividad_frontend,
+    name='eliminar_actividad_frontend'
+),
 
 ]
