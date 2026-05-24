@@ -149,3 +149,9 @@ Se agregó barra superior personalizada al dashboard.
 - Se añadieron botones de edición y eliminación en tarjetas.
 - Se integró navegación completa CRUD desde frontend.
 - Se realizaron pruebas funcionales de eliminación visual y lógica.
+
+- Se implementó estructura de comentarios para actividades.
+- Se registró ComentarioActividad en Django Admin.
+- Se habilitó persistencia de comentarios asociados a tareas.
+- Se corrigieron conflictos de registro duplicado en admin.py.
+- Se validó funcionamiento interno del sistema de comentarios.

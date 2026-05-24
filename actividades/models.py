@@ -126,3 +126,41 @@ class AsignacionActividad(models.Model):
 
     def __str__(self):
         return f'{self.usuario_asignado} → {self.actividad_relacionada}'
+    
+class ComentarioActividad(models.Model):
+
+    # Actividad relacionada
+    actividad_relacionada = models.ForeignKey(
+        ActividadProyecto,
+        on_delete=models.CASCADE,
+        related_name='comentarios_actividad'
+    )
+
+    # Usuario que comenta
+    usuario_comentario = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='comentarios_realizados'
+    )
+
+    # Contenido del comentario
+    contenido_comentario = models.TextField()
+
+    # Fecha automática
+    fecha_creacion = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+
+        verbose_name = 'Comentario'
+        verbose_name_plural = 'Comentarios'
+
+        ordering = ['-fecha_creacion']
+
+    def __str__(self):
+
+        return (
+            f'Comentario de '
+            f'{self.usuario_comentario}'
+        )
