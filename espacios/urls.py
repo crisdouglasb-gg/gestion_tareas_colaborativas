@@ -7,8 +7,14 @@ from .views import (
     editar_actividad_frontend,
     eliminar_actividad_frontend,
     subir_archivo_actividad,
-    crear_comentario
+    crear_comentario,
+    mis_tareas,
+    espacios_view,
+    paneles_view,
+    actividades_view,
+    notificaciones_view,
 )
+
 urlpatterns = [
 
     path(
@@ -36,19 +42,51 @@ urlpatterns = [
     ),
 
     path(
-    'eliminar-actividad/<int:actividad_id>/',
-    eliminar_actividad_frontend,
-    name='eliminar_actividad_frontend'
-),
-path(
-    'subir-archivo/<int:actividad_id>/',
-    subir_archivo_actividad,
-    name='subir_archivo_actividad'
-),
+        'eliminar-actividad/<int:actividad_id>/',
+        eliminar_actividad_frontend,
+        name='eliminar_actividad_frontend'
+    ),
 
     path(
-    'crear-comentario/<int:actividad_id>/',
-    crear_comentario,
-    name='crear_comentario'
-),
+        'subir-archivo/<int:actividad_id>/',
+        subir_archivo_actividad,
+        name='subir_archivo_actividad'
+    ),
+
+    path(
+        'crear-comentario/<int:actividad_id>/',
+        crear_comentario,
+        name='crear_comentario'
+    ),
+
+    path(
+        'mis-tareas/',
+        mis_tareas,
+        name='mis_tareas'
+    ),
+
+    path(
+        'espacios/',
+        espacios_view,
+        name='espacios'
+    ),
+
+    path(
+        'paneles/',
+        paneles_view,
+        name='paneles'
+    ),
+
+    path(
+        'actividades/',
+        actividades_view,
+        name='actividades'
+    ),
+
+    path(
+        'notificaciones/',
+        notificaciones_view,
+        name='notificaciones'
+    ),
+
 ]
