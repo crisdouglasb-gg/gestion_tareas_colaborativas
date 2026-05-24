@@ -135,3 +135,10 @@ Se agregó barra superior personalizada al dashboard.
 - Se corrigió error de prioridad enviada como fecha.
 - Se agregó label descriptivo para campo de fecha límite.
 - Sistema de creación funcionando correctamente.
+
+- Se desarrolló vista de edición de actividades desde interfaz Kanban.
+- Se implementó formulario dinámico de edición.
+- Se habilitó actualización de título, descripción, prioridad y fecha límite.
+- Se agregó navegación desde tarjetas mediante botón editar.
+- Se corrigieron errores de importación de vistas en urls.py.
+- Se realizaron pruebas funcionales de edición desde dashboard.

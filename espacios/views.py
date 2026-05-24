@@ -163,3 +163,46 @@ def crear_actividad_frontend(request):
         request,
         'espacios/crear_actividad.html'
     )
+@login_required(login_url='/login/')
+def editar_actividad_frontend(request, actividad_id):
+
+    """
+    Permite editar actividades
+    directamente desde el dashboard.
+    """
+
+    actividad = ActividadProyecto.objects.get(
+        id=actividad_id
+    )
+
+    if request.method == 'POST':
+
+        actividad.titulo_actividad = request.POST.get(
+            'titulo_actividad'
+        )
+
+        actividad.descripcion_detallada = request.POST.get(
+            'descripcion_actividad'
+        )
+
+        actividad.prioridad_actividad = request.POST.get(
+            'prioridad_actividad'
+        )
+
+        actividad.fecha_limite = request.POST.get(
+            'fecha_limite'
+        )
+
+        actividad.save()
+
+        return redirect('dashboard')
+
+    contexto = {
+        'actividad': actividad
+    }
+
+    return render(
+        request,
+        'espacios/editar_actividad.html',
+        contexto
+    )
