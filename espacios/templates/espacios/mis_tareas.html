@@ -39,10 +39,19 @@
         .page-header p { color: #666; font-size: 14px; }
 
         /* FILTROS */
-        .filtros-bar { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; }
+        .filtros-bar { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; align-items: center; }
         .filtro-btn { padding: 7px 16px; border-radius: 20px; border: 1px solid #ddd; background: white; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; color: #555; }
         .filtro-btn:hover { border-color: #000; color: #000; }
         .filtro-btn.active { background: #000; color: white; border-color: #000; }
+        .contador-tareas { margin-left: auto; font-size: 13px; color: #888; }
+        .contador-tareas span { font-weight: 700; color: #000; }
+
+        /* BUSCADOR */
+        .buscador-wrap { margin-bottom: 20px; position: relative; }
+        .buscador-wrap i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #aaa; font-size: 14px; }
+        .buscador-input { width: 100%; max-width: 350px; border: 1px solid #ddd; border-radius: 20px; padding: 8px 16px 8px 36px; font-size: 13px; font-family: inherit; color: #000; transition: border-color 0.2s; }
+        .buscador-input:focus { border-color: #000; outline: none; }
+        .buscador-input::placeholder { color: #bbb; }
 
         /* TABLA DE TAREAS */
         .tareas-table { background: white; border: 1px solid #ddd; border-radius: 6px; overflow: hidden; }
@@ -50,6 +59,7 @@
         .tarea-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 120px; padding: 16px 20px; border-bottom: 1px solid #f0f0f0; align-items: center; transition: background 0.15s; }
         .tarea-row:last-child { border-bottom: none; }
         .tarea-row:hover { background: #fafafa; }
+        .tarea-row.oculta { display: none; }
         .tarea-titulo { font-size: 14px; font-weight: 600; color: #000; margin-bottom: 3px; }
         .tarea-desc { font-size: 12px; color: #888; }
         .priority-badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; display: inline-block; }
@@ -72,6 +82,9 @@
         .empty-state { text-align: center; padding: 60px 20px; color: #aaa; }
         .empty-state i { font-size: 48px; margin-bottom: 16px; display: block; }
         .empty-state p { font-size: 15px; }
+        .sin-resultados { text-align: center; padding: 40px 20px; color: #aaa; display: none; }
+        .sin-resultados i { font-size: 36px; margin-bottom: 12px; display: block; }
+        .sin-resultados p { font-size: 14px; }
 
         /* SECCION TITLE */
         .section-title { font-size: 15px; font-weight: 700; color: #000; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #222; display: flex; align-items: center; justify-content: space-between; }
@@ -113,16 +126,24 @@
         <div class="main-content">
             <div class="page-header">
                 <h1><i class="fas fa-tasks" style="margin-right:10px;"></i>Mis Tareas</h1>
-                <p>Todas las tareas asignadas a tu usuario</p>
+                <p>Todas las tareas del sistema</p>
             </div>
 
             <!-- Filtros -->
             <div class="filtros-bar">
-                <button class="filtro-btn active">Todas</button>
-                <button class="filtro-btn">Pendientes</button>
-                <button class="filtro-btn">En Progreso</button>
-                <button class="filtro-btn">Completadas</button>
-                <button class="filtro-btn">Alta Prioridad</button>
+                <button class="filtro-btn active" data-filtro="todas">Todas</button>
+                <button class="filtro-btn" data-filtro="pendiente">Pendientes</button>
+                <button class="filtro-btn" data-filtro="progreso">En Progreso</button>
+                <button class="filtro-btn" data-filtro="completado">Completadas</button>
+                <button class="filtro-btn" data-filtro="alta">Alta Prioridad</button>
+                <button class="filtro-btn" data-filtro="urgente">Urgente</button>
+                <span class="contador-tareas">Mostrando <span id="contador">0</span> tareas</span>
+            </div>
+
+            <!-- Buscador -->
+            <div class="buscador-wrap">
+                <i class="fas fa-search"></i>
+                <input type="text" id="buscador" class="buscador-input" placeholder="Buscar tarea por título...">
             </div>
 
             <!-- Tabla -->
@@ -141,7 +162,10 @@
                 </div>
 
                 {% for actividad in actividades_usuario %}
-                <div class="tarea-row">
+                <div class="tarea-row"
+                     data-prioridad="{{ actividad.prioridad_actividad|lower }}"
+                     data-estado="{{ actividad.columna_actual.nombre_columna|lower }}"
+                     data-titulo="{{ actividad.titulo_actividad|lower }}">
                     <div>
                         <div class="tarea-titulo">{{ actividad.titulo_actividad }}</div>
                         <div class="tarea-desc">{{ actividad.descripcion_detallada|truncatechars:60 }}</div>
@@ -156,7 +180,12 @@
                         </span>
                     </div>
                     <div>
-                        <span class="estado-badge estado-pendiente">{{ actividad.columna_actual.nombre_columna }}</span>
+                        <span class="estado-badge
+                            {% if 'progreso' in actividad.columna_actual.nombre_columna|lower %}estado-progreso
+                            {% elif 'complet' in actividad.columna_actual.nombre_columna|lower %}estado-completado
+                            {% else %}estado-pendiente{% endif %}">
+                            {{ actividad.columna_actual.nombre_columna }}
+                        </span>
                     </div>
                     <div class="fecha-text">
                         {% if actividad.fecha_limite %}
@@ -173,21 +202,92 @@
                 {% empty %}
                 <div class="empty-state">
                     <i class="fas fa-clipboard-list"></i>
-                    <p>No tienes tareas asignadas todavía.</p>
+                    <p>No hay tareas registradas todavía.</p>
                 </div>
                 {% endfor %}
+
+                <!-- Mensaje cuando no hay resultados del filtro -->
+                <div class="sin-resultados" id="sin-resultados">
+                    <i class="fas fa-filter"></i>
+                    <p>No hay tareas con ese filtro.</p>
+                </div>
+
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // ── Variables principales ──
+        const filas = document.querySelectorAll('.tarea-row');
+        const contador = document.getElementById('contador');
+        const sinResultados = document.getElementById('sin-resultados');
+        const buscador = document.getElementById('buscador');
+        let filtroActual = 'todas';
+        let textoBusqueda = '';
+
+        // ── Actualizar contador ──
+        function actualizarContador() {
+            const visibles = document.querySelectorAll('.tarea-row:not(.oculta)').length;
+            contador.textContent = visibles;
+            sinResultados.style.display = visibles === 0 && filas.length > 0 ? 'block' : 'none';
+        }
+
+        // ── Aplicar filtros ──
+        function aplicarFiltros() {
+            filas.forEach(fila => {
+                const prioridad = fila.dataset.prioridad || '';
+                const estado    = fila.dataset.estado    || '';
+                const titulo    = fila.dataset.titulo    || '';
+
+                // Verificar filtro activo
+                let pasaFiltro = false;
+                if (filtroActual === 'todas') {
+                    pasaFiltro = true;
+                } else if (filtroActual === 'alta') {
+                    pasaFiltro = prioridad === 'alta';
+                } else if (filtroActual === 'urgente') {
+                    pasaFiltro = prioridad === 'urgente';
+                } else if (filtroActual === 'pendiente') {
+                    pasaFiltro = estado.includes('pendiente');
+                } else if (filtroActual === 'progreso') {
+                    pasaFiltro = estado.includes('progreso');
+                } else if (filtroActual === 'completado') {
+                    pasaFiltro = estado.includes('complet');
+                }
+
+                // Verificar búsqueda por texto
+                const pasaBusqueda = titulo.includes(textoBusqueda.toLowerCase());
+
+                // Mostrar u ocultar
+                if (pasaFiltro && pasaBusqueda) {
+                    fila.classList.remove('oculta');
+                } else {
+                    fila.classList.add('oculta');
+                }
+            });
+
+            actualizarContador();
+        }
+
+        // ── Botones de filtro ──
         document.querySelectorAll('.filtro-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
+                filtroActual = this.dataset.filtro;
+                aplicarFiltros();
             });
         });
+
+        // ── Buscador ──
+        buscador.addEventListener('input', function() {
+            textoBusqueda = this.value.toLowerCase();
+            aplicarFiltros();
+        });
+
+        // ── Inicializar contador ──
+        actualizarContador();
     </script>
 </body>
 </html>
