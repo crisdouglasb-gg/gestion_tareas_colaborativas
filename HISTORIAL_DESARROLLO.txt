@@ -155,3 +155,5 @@ Se agregó barra superior personalizada al dashboard.
 - Se habilitó persistencia de comentarios asociados a tareas.
 - Se corrigieron conflictos de registro duplicado en admin.py.
 - Se validó funcionamiento interno del sistema de comentarios.
+
+- Se implemento el adjuntamiento de archivos al momento de editar

@@ -5,6 +5,7 @@ from paneles.models import ColumnaEstado
 
 
 class ActividadProyecto(models.Model):
+
     # Opciones de prioridad para organizar tareas
     PRIORIDADES_DISPONIBLES = (
         ('BAJA', 'Baja'),
@@ -72,16 +73,23 @@ class ActividadProyecto(models.Model):
     )
 
     class Meta:
+
         verbose_name = 'Actividad de proyecto'
         verbose_name_plural = 'Actividades de proyecto'
 
         # Orden importante para drag & drop futuro
-        ordering = ['posicion_actividad', '-fecha_creacion']
+        ordering = [
+            'posicion_actividad',
+            '-fecha_creacion'
+        ]
 
     def __str__(self):
+
         return self.titulo_actividad
-    
+
+
 class AsignacionActividad(models.Model):
+
     # Relación con la actividad asignada
     actividad_relacionada = models.ForeignKey(
         ActividadProyecto,
@@ -115,6 +123,7 @@ class AsignacionActividad(models.Model):
     )
 
     class Meta:
+
         verbose_name = 'Asignación de actividad'
         verbose_name_plural = 'Asignaciones de actividades'
 
@@ -125,8 +134,13 @@ class AsignacionActividad(models.Model):
         )
 
     def __str__(self):
-        return f'{self.usuario_asignado} → {self.actividad_relacionada}'
-    
+
+        return (
+            f'{self.usuario_asignado} → '
+            f'{self.actividad_relacionada}'
+        )
+
+
 class ComentarioActividad(models.Model):
 
     # Actividad relacionada
@@ -163,4 +177,45 @@ class ComentarioActividad(models.Model):
         return (
             f'Comentario de '
             f'{self.usuario_comentario}'
+        )
+
+
+class ArchivoAdjuntoActividad(models.Model):
+
+    """
+    Archivos adjuntos
+    asociados a actividades.
+    """
+
+    actividad = models.ForeignKey(
+        ActividadProyecto,
+        on_delete=models.CASCADE,
+        related_name='archivos_adjuntos'
+    )
+
+    usuario_subida = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
+
+    archivo = models.FileField(
+        upload_to='archivos_actividades/'
+    )
+
+    fecha_subida = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+
+        verbose_name = 'Archivo adjunto'
+        verbose_name_plural = 'Archivos adjuntos'
+
+        ordering = ['-fecha_subida']
+
+    def __str__(self):
+
+        return (
+            f'Archivo de '
+            f'{self.actividad.titulo_actividad}'
         )

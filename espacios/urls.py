@@ -5,7 +5,8 @@ from .views import (
     actualizar_columna_actividad,
     crear_actividad_frontend,
     editar_actividad_frontend,
-    eliminar_actividad_frontend
+    eliminar_actividad_frontend,
+    subir_archivo_actividad
 )
 
 urlpatterns = [
@@ -39,5 +40,9 @@ urlpatterns = [
     eliminar_actividad_frontend,
     name='eliminar_actividad_frontend'
 ),
-
+path(
+    'subir-archivo/<int:actividad_id>/',
+    subir_archivo_actividad,
+    name='subir_archivo_actividad'
+),
 ]

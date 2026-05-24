@@ -48,6 +48,15 @@
 
         }
 
+        .archivo-item {
+
+            background: #f4f5f7;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+
+        }
+
     </style>
 
 </head>
@@ -103,6 +112,66 @@
             </button>
 
         </form>
+
+        <hr style="margin-top: 30px; margin-bottom: 30px;">
+
+        <h3>Subir archivo adjunto</h3>
+
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+            action="/subir-archivo/{{ actividad.id }}/"
+        >
+
+            {% csrf_token %}
+
+            <input
+                type="file"
+                name="archivo_adjunto"
+                required
+            >
+
+            <button type="submit">
+
+                Subir archivo
+
+            </button>
+
+        </form>
+
+        <hr style="margin-top: 30px; margin-bottom: 30px;">
+
+        <h3>Archivos adjuntos</h3>
+
+        {% for archivo in actividad.archivos_adjuntos.all %}
+
+            <div class="archivo-item">
+
+                <a
+                    href="{{ archivo.archivo.url }}"
+                    target="_blank"
+                >
+
+                    {{ archivo.archivo.name }}
+
+                </a>
+
+                <br>
+
+                <small>
+
+                    Subido por:
+                    {{ archivo.usuario_subida }}
+
+                </small>
+
+            </div>
+
+        {% empty %}
+
+            <p>No hay archivos adjuntos.</p>
+
+        {% endfor %}
 
     </div>
 

@@ -4,7 +4,11 @@ from django.shortcuts import render, redirect
 
 from espacios.models import EspacioTrabajo
 from paneles.models import ColumnaEstado
-from actividades.models import ActividadProyecto
+from actividades.models import (
+    ActividadProyecto,
+    ComentarioActividad,
+    ArchivoAdjuntoActividad
+)
 
 
 @login_required(login_url='/login/')
@@ -221,3 +225,40 @@ def eliminar_actividad_frontend(request, actividad_id):
     actividad.delete()
 
     return redirect('dashboard')
+@login_required(login_url='/login/')
+def subir_archivo_actividad(
+    request,
+    actividad_id
+):
+
+    """
+    Permite subir archivos
+    adjuntos a actividades.
+    """
+
+    actividad = ActividadProyecto.objects.get(
+        id=actividad_id
+    )
+
+    if request.method == 'POST':
+
+        archivo_recibido = request.FILES.get(
+            'archivo_adjunto'
+        )
+
+        if archivo_recibido:
+
+            ArchivoAdjuntoActividad.objects.create(
+
+                actividad=actividad,
+
+                usuario_subida=request.user,
+
+                archivo=archivo_recibido
+
+            )
+
+        return redirect(
+            'editar_actividad_frontend',
+            actividad_id=actividad.id
+        )
