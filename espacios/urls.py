@@ -2,7 +2,8 @@ from django.urls import path
 
 from .views import (
     dashboard_principal,
-    actualizar_columna_actividad
+    actualizar_columna_actividad,
+    crear_actividad_frontend
 )
 
 urlpatterns = [
@@ -18,5 +19,10 @@ urlpatterns = [
         actualizar_columna_actividad,
         name='actualizar_columna_actividad'
     ),
+    path(
+    'crear-actividad/',
+    crear_actividad_frontend,
+    name='crear_actividad_frontend'
+),
 
 ]

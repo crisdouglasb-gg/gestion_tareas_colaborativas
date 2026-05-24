@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from espacios.models import EspacioTrabajo
 from paneles.models import ColumnaEstado
@@ -111,3 +111,55 @@ def actualizar_columna_actividad(request):
         'estado': 'error',
         'mensaje': 'Método HTTP inválido.'
     })
+@login_required(login_url='/login/')
+def crear_actividad_frontend(request):
+
+    """
+    Permite crear nuevas actividades
+    desde el formulario visual frontend.
+    """
+
+    if request.method == 'POST':
+
+        titulo_actividad = request.POST.get(
+            'titulo_actividad'
+        )
+
+        descripcion_actividad = request.POST.get(
+            'descripcion_actividad'
+        )
+
+        prioridad_actividad = request.POST.get(
+            'prioridad_actividad'
+        )
+
+        fecha_limite = request.POST.get(
+            'fecha_limite'
+        )
+
+        columna_inicial = ColumnaEstado.objects.filter(
+            nombre_columna='Pendiente'
+        ).first()
+
+        ActividadProyecto.objects.create(
+
+            columna_actual=columna_inicial,
+
+            creado_por=request.user,
+
+            titulo_actividad=titulo_actividad,
+
+            descripcion_detallada=descripcion_actividad,
+
+            prioridad_actividad=prioridad_actividad,
+
+            fecha_limite=fecha_limite
+
+        )
+
+        return redirect('dashboard')
+
+    return render(
+        request,
+        'espacios/crear_actividad.html'
+    )

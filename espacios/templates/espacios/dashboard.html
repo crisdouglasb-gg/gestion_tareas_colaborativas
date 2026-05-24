@@ -180,6 +180,98 @@ cursor: pointer;
     <h1>Panel Kanban del Sistema</h1>
 
     <h3>Espacios disponibles</h3>
+    <form
+    method="POST"
+    action="/crear-actividad/"
+    style="
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 25px;
+        width: 400px;
+    "
+>
+
+    {% csrf_token %}
+
+    <h3>Nueva actividad</h3>
+
+    <input
+        type="text"
+        name="titulo_actividad"
+        placeholder="Título"
+        required
+        style="
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        "
+    >
+
+    <textarea
+        name="descripcion_actividad"
+        placeholder="Descripción"
+        style="
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        "
+    ></textarea>
+
+    <select
+    name="prioridad_actividad"
+    style="
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+    "
+>
+
+    <option value="BAJA">Baja</option>
+    <option value="MEDIA">Media</option>
+    <option value="ALTA">Alta</option>
+    <option value="URGENTE">Urgente</option>
+
+</select>
+
+<label
+    style="
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #172b4d;
+    "
+>
+    Fecha límite
+</label>
+
+<input
+    type="date"
+    name="fecha_limite"
+    style="
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+    "
+>
+    
+    </select>
+
+    <button
+        type="submit"
+        style="
+            background: #172b4d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+        "
+    >
+        Crear actividad
+    </button>
+
+</form>
 
     <ul>
 
@@ -236,12 +328,20 @@ cursor: pointer;
 
                             </div>
 
-                            <div class="fecha-limite">
+                           <div class="fecha-limite">
 
-                                Fecha límite:
-                                {{ actividad.fecha_limite }}
+    {% if actividad.fecha_limite %}
 
-                            </div>
+        Fecha límite:
+        {{ actividad.fecha_limite }}
+
+    {% else %}
+
+        Sin fecha límite
+
+    {% endif %}
+
+</div>
 
                         </div>
 

@@ -128,3 +128,10 @@ Se agregó barra superior personalizada al dashboard.
 - Se añadieron tareas asignadas al dashboard.
 - Se corrigió compatibilidad de consultas en Django 5.2.
 - Se mejoró colaboración multiusuario.
+
+- Se agregó formulario frontend para crear actividades desde dashboard.
+- Se añadió campo de fecha límite.
+- Se corrigió error de estructura HTML en formulario.
+- Se corrigió error de prioridad enviada como fecha.
+- Se agregó label descriptivo para campo de fecha límite.
+- Sistema de creación funcionando correctamente.
