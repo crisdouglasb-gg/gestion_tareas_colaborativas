@@ -262,3 +262,50 @@ def subir_archivo_actividad(
             'editar_actividad_frontend',
             actividad_id=actividad.id
         )
+    
+
+
+@login_required(login_url='/login/')
+def crear_comentario(request, actividad_id):
+
+    """
+    Permite crear comentarios
+    dinámicos desde frontend.
+    """
+
+    actividad = ActividadProyecto.objects.get(
+        id=actividad_id
+    )
+
+    if request.method == 'POST':
+
+        contenido_comentario = request.POST.get(
+            'contenido_comentario'
+        )
+
+        nuevo_comentario = ComentarioActividad.objects.create(
+
+            actividad_relacionada=actividad,
+
+            usuario_comentario=request.user,
+
+            contenido_comentario=contenido_comentario
+
+        )
+
+        return JsonResponse({
+
+            'usuario':
+                request.user.username,
+
+            'comentario':
+                nuevo_comentario.contenido_comentario
+
+        })
+
+    return JsonResponse({
+
+        'error':
+            'Método inválido'
+
+    })

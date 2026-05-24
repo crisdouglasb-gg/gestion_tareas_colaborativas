@@ -139,6 +139,59 @@
 
         </form>
 
+        <hr style="margin-top:40px; margin-bottom:30px;">
+
+        <h3>Comentarios</h3>
+
+        <div id="contenedor-comentarios">
+
+            {% for comentario in actividad.comentarios_actividad.all %}
+
+                <div
+                    style="
+                        background:#f1f2f4;
+                        padding:10px;
+                        border-radius:8px;
+                        margin-bottom:10px;
+                    "
+                >
+
+                    <strong>
+
+                        {{ comentario.usuario_comentario.username }}
+
+                    </strong>
+
+                    <p>
+
+                        {{ comentario.contenido_comentario }}
+
+                    </p>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+        <form id="formulario-comentario">
+
+            {% csrf_token %}
+
+            <textarea
+                id="comentario-texto"
+                placeholder="Escribe un comentario..."
+                required
+            ></textarea>
+
+            <button type="submit">
+
+                Comentar
+
+            </button>
+
+        </form>
+
         <hr style="margin-top: 30px; margin-bottom: 30px;">
 
         <h3>Archivos adjuntos</h3>
@@ -174,6 +227,199 @@
         {% endfor %}
 
     </div>
+
+<script>
+
+    // =========================================
+    // WEBSOCKET COMENTARIOS
+    // =========================================
+
+    const socketComentarios = new WebSocket(
+
+        'ws://' +
+        window.location.host +
+        '/ws/kanban/'
+
+    );
+
+    // =========================================
+    // FORMULARIO COMENTARIOS
+    // =========================================
+
+    const formularioComentario = document.getElementById(
+        'formulario-comentario'
+    );
+
+    formularioComentario.addEventListener(
+        'submit',
+        function(evento) {
+
+            evento.preventDefault();
+
+            const textoComentario = document.getElementById(
+                'comentario-texto'
+            ).value;
+
+            fetch(
+
+                '/crear-comentario/{{ actividad.id }}/',
+
+                {
+
+                    method: 'POST',
+
+                    headers: {
+
+                        'Content-Type':
+                            'application/x-www-form-urlencoded',
+
+                        'X-CSRFToken':
+                            obtenerTokenCSRF()
+
+                    },
+
+                    body:
+
+                        `contenido_comentario=${textoComentario}`
+
+                }
+
+            )
+
+            .then(response => response.json())
+
+            .then(data => {
+
+                socketComentarios.send(
+
+                    JSON.stringify({
+
+                        'tipo': 'nuevo_comentario',
+
+                        'actividad_id':
+                            '{{ actividad.id }}',
+
+                        'usuario':
+                            data.usuario,
+
+                        'comentario':
+                            data.comentario
+
+                    })
+
+                );
+
+                document.getElementById(
+                    'comentario-texto'
+                ).value = '';
+
+            });
+
+        }
+
+    );
+
+    // =========================================
+    // RECEPCION DE COMENTARIOS
+    // =========================================
+
+    socketComentarios.onmessage = function(evento) {
+
+        const datos = JSON.parse(
+            evento.data
+        );
+
+        const contenido = datos.contenido;
+
+        if (
+
+            contenido.tipo ===
+            'nuevo_comentario'
+
+        ) {
+
+            if (
+
+                contenido.actividad_id ==
+                '{{ actividad.id }}'
+
+            ) {
+
+                const contenedor = document.getElementById(
+                    'contenedor-comentarios'
+                );
+
+                contenedor.innerHTML =
+
+                    `
+                    <div
+                        style="
+                            background:#f1f2f4;
+                            padding:10px;
+                            border-radius:8px;
+                            margin-bottom:10px;
+                        "
+                    >
+
+                        <strong>
+
+                            ${contenido.usuario}
+
+                        </strong>
+
+                        <p>
+
+                            ${contenido.comentario}
+
+                        </p>
+
+                    </div>
+                    `
+
+                    +
+
+                    contenedor.innerHTML;
+
+            }
+
+        }
+
+    };
+
+    // =========================================
+    // TOKEN CSRF
+    // =========================================
+
+    function obtenerTokenCSRF() {
+
+        const cookies =
+            document.cookie.split(';');
+
+        for (let cookie of cookies) {
+
+            cookie = cookie.trim();
+
+            if (
+
+                cookie.startsWith(
+                    'csrftoken='
+                )
+
+            ) {
+
+                return cookie.substring(
+                    'csrftoken='.length
+                );
+
+            }
+
+        }
+
+        return '';
+
+    }
+
+</script>
 
 </body>
 

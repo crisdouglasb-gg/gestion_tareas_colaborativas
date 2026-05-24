@@ -156,4 +156,10 @@ Se agregó barra superior personalizada al dashboard.
 - Se corrigieron conflictos de registro duplicado en admin.py.
 - Se validó funcionamiento interno del sistema de comentarios.
 
-- Se implemento el adjuntamiento de archivos al momento de editar
+- Se implemento Archivos adjuntos en actividades   
+- Se implementó sistema de comentarios dinámicos en actividades.
+- Se agregó persistencia de comentarios en base de datos.
+- Se integró actualización visual automática sin recargar página.
+- Se incorporó comunicación realtime mediante WebSockets.
+- Se habilitó sincronización colaborativa de comentarios.
+- Se realizaron pruebas funcionales de comentarios multiusuario.                                   
