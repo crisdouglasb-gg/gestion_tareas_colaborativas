@@ -121,3 +121,10 @@ Se agregó barra superior personalizada al dashboard.
 - Se configuró logout seguro mediante método POST.
 - Se corrigió error HTTP 405 durante cierre de sesión.
 - El sistema ahora permite navegación autenticada completa.
+
+- Se protegió el dashboard usando login_required.
+- Se implementó sistema login/logout.
+- Se agregó visualización exclusiva de tareas del usuario.
+- Se añadieron tareas asignadas al dashboard.
+- Se corrigió compatibilidad de consultas en Django 5.2.
+- Se mejoró colaboración multiusuario.

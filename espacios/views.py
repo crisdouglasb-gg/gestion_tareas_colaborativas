@@ -1,4 +1,3 @@
-
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -24,11 +23,27 @@ def dashboard_principal(request):
         'posicion_columna'
     )
 
-    actividades_usuario = ActividadProyecto.objects.filter(
+    # Actividades creadas por el usuario
+    actividades_creadas = ActividadProyecto.objects.filter(
         creado_por=request.user,
         actividad_archivada=False
-    ).select_related(
+    )
+
+    # Actividades asignadas al usuario
+    actividades_asignadas = ActividadProyecto.objects.filter(
+        usuarios_asignados__usuario_asignado=request.user,
+        usuarios_asignados__asignacion_activa=True,
+        actividad_archivada=False
+    )
+
+    # Unifica actividades sin duplicados
+    actividades_usuario = (
+        actividades_creadas |
+        actividades_asignadas
+    ).distinct().select_related(
         'columna_actual'
+    ).order_by(
+        'posicion_actividad'
     )
 
     contexto = {
