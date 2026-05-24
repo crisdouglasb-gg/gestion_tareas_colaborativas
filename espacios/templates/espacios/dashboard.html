@@ -79,199 +79,273 @@
             font-size: 12px;
             color: #777;
         }
-.barra-superior {
 
-    background-color: #172b4d;
+        .barra-superior {
 
-    color: white;
+            background-color: #172b4d;
 
-    padding: 15px 25px;
+            color: white;
 
-    border-radius: 10px;
+            padding: 15px 25px;
 
-    display: flex;
+            border-radius: 10px;
 
-    justify-content: space-between;
+            display: flex;
 
-    align-items: center;
+            justify-content: space-between;
 
-    margin-bottom: 25px;
+            align-items: center;
 
-}
+            margin-bottom: 25px;
 
-.titulo-sistema {
+        }
 
-    font-size: 22px;
+        .titulo-sistema {
 
-    font-weight: bold;
+            font-size: 22px;
 
-}
+            font-weight: bold;
 
-.usuario-sistema {
+        }
 
-    display: flex;
+        .usuario-sistema {
 
-    align-items: center;
+            display: flex;
 
-    gap: 15px;
+            align-items: center;
 
-}
+            gap: 15px;
 
-.boton-logout {
+        }
 
-    background-color: #d62828;
+        .boton-logout {
 
-    color: white;
+            background-color: #d62828;
 
-    padding: 8px 12px;
+            color: white;
 
-    border-radius: 5px;
+            padding: 8px 12px;
 
-    text-decoration: none;
+            border-radius: 5px;
 
-    font-size: 14px;
+            text-decoration: none;
 
-    border: none;
+            font-size: 14px;
 
-cursor: pointer;
+            border: none;
 
-}
+            cursor: pointer;
 
-.boton-logout:hover {
+        }
 
-    background-color: #a4161a;
+        .boton-logout:hover {
 
-}
+            background-color: #a4161a;
+
+        }
+
+        .panel-notificaciones {
+
+            background: white;
+
+            padding: 15px;
+
+            border-radius: 10px;
+
+            margin-bottom: 25px;
+
+            width: 450px;
+
+        }
+
+        .item-notificacion {
+
+            background: #f1f2f4;
+
+            padding: 10px;
+
+            border-radius: 8px;
+
+            margin-bottom: 10px;
+
+        }
+
+        .texto-detalle {
+
+            color: #555;
+
+            font-size: 13px;
+
+            margin-top: 5px;
+
+        }
+
     </style>
 
 </head>
 
 <body>
+
     <div class="barra-superior">
 
-    <div class="titulo-sistema">
+        <div class="titulo-sistema">
 
-        Sistema Gestión de Tareas
+            Sistema Gestión de Tareas
+
+        </div>
+
+        <div class="usuario-sistema">
+
+            Bienvenido,
+            <strong>{{ request.user.username }}</strong>
+
+            <form action="/logout/" method="POST">
+
+                {% csrf_token %}
+
+                <button
+                    type="submit"
+                    class="boton-logout"
+                >
+
+                    Cerrar sesión
+
+                </button>
+
+            </form>
+
+        </div>
 
     </div>
-
-    <div class="usuario-sistema">
-
-        Bienvenido,
-        <strong>{{ request.user.username }}</strong>
-
-        <form action="/logout/" method="POST">
-
-    {% csrf_token %}
-
-    <button type="submit"
-            class="boton-logout">
-
-        Cerrar sesión
-
-    </button>
-
-</form>
-
-    </div>
-
-</div>
 
     <h1>Panel Kanban del Sistema</h1>
 
+    <div class="panel-notificaciones">
+
+        <h3>Notificaciones</h3>
+
+        {% for notificacion in notificaciones_usuario %}
+
+            <div class="item-notificacion">
+
+                <strong>
+
+                    {{ notificacion.mensaje_notificacion }}
+
+                </strong>
+
+                {% if notificacion.detalle_adicional %}
+
+                    <div class="texto-detalle">
+
+                        {{ notificacion.detalle_adicional }}
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        {% empty %}
+
+            <p>No tienes notificaciones.</p>
+
+        {% endfor %}
+
+    </div>
+
     <h3>Espacios disponibles</h3>
+
     <form
-    method="POST"
-    action="/crear-actividad/"
-    style="
-        background: white;
-        padding: 20px;
-        border-radius: 10px;
-        margin-bottom: 25px;
-        width: 400px;
-    "
->
-
-    {% csrf_token %}
-
-    <h3>Nueva actividad</h3>
-
-    <input
-        type="text"
-        name="titulo_actividad"
-        placeholder="Título"
-        required
+        method="POST"
+        action="/crear-actividad/"
         style="
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            width: 400px;
         "
     >
 
-    <textarea
-        name="descripcion_actividad"
-        placeholder="Descripción"
-        style="
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-        "
-    ></textarea>
+        {% csrf_token %}
 
-    <select
-    name="prioridad_actividad"
-    style="
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 10px;
-    "
->
+        <h3>Nueva actividad</h3>
 
-    <option value="BAJA">Baja</option>
-    <option value="MEDIA">Media</option>
-    <option value="ALTA">Alta</option>
-    <option value="URGENTE">Urgente</option>
+        <input
+            type="text"
+            name="titulo_actividad"
+            placeholder="Título"
+            required
+            style="
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 10px;
+            "
+        >
 
-</select>
+        <textarea
+            name="descripcion_actividad"
+            placeholder="Descripción"
+            style="
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 10px;
+            "
+        ></textarea>
 
-<label
-    style="
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-        color: #172b4d;
-    "
->
-    Fecha límite
-</label>
+        <select
+            name="prioridad_actividad"
+            style="
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 10px;
+            "
+        >
 
-<input
-    type="date"
-    name="fecha_limite"
-    style="
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 10px;
-    "
->
-    
-    </select>
+            <option value="BAJA">Baja</option>
+            <option value="MEDIA">Media</option>
+            <option value="ALTA">Alta</option>
+            <option value="URGENTE">Urgente</option>
 
-    <button
-        type="submit"
-        style="
-            background: #172b4d;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-        "
-    >
-        Crear actividad
-    </button>
+        </select>
 
-</form>
+        <label
+            style="
+                display: block;
+                margin-bottom: 5px;
+                font-weight: bold;
+                color: #172b4d;
+            "
+        >
+            Fecha límite
+        </label>
+
+        <input
+            type="date"
+            name="fecha_limite"
+            style="
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 10px;
+            "
+        >
+
+        <button
+            type="submit"
+            style="
+                background: #172b4d;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 6px;
+                cursor: pointer;
+            "
+        >
+            Crear actividad
+        </button>
+
+    </form>
 
     <ul>
 
@@ -287,8 +361,10 @@ cursor: pointer;
 
         {% for columna in columnas_sistema %}
 
-            <div class="columna-kanban"
-                 data-columna-id="{{ columna.id }}">
+            <div
+                class="columna-kanban"
+                data-columna-id="{{ columna.id }}"
+            >
 
                 <div class="titulo-columna">
 
@@ -300,7 +376,8 @@ cursor: pointer;
 
                     {% if actividad.columna_actual.id == columna.id %}
 
-                        <div class="tarjeta-actividad
+                        <div
+                            class="tarjeta-actividad
 
                             {% if actividad.prioridad_actividad == 'ALTA' %}
                                 prioridad-alta
@@ -309,12 +386,12 @@ cursor: pointer;
                             {% else %}
                                 prioridad-baja
                             {% endif %}
+                            "
 
-                        "
+                            draggable="true"
 
-                        draggable="true"
-
-                        data-actividad-id="{{ actividad.id }}">
+                            data-actividad-id="{{ actividad.id }}"
+                        >
 
                             <div class="titulo-tarjeta">
 
@@ -328,48 +405,50 @@ cursor: pointer;
 
                             </div>
 
-                           <div class="fecha-limite">
+                            <div class="fecha-limite">
 
-    {% if actividad.fecha_limite %}
+                                {% if actividad.fecha_limite %}
 
-        Fecha límite:
-        {{ actividad.fecha_limite }}
+                                    Fecha límite:
+                                    {{ actividad.fecha_limite }}
 
-    {% else %}
+                                {% else %}
 
-        Sin fecha límite
+                                    Sin fecha límite
 
-    {% endif %}
+                                {% endif %}
 
-</div>
- <a
-        href="/eliminar-actividad/{{ actividad.id }}/"
-        style="
-            background: #d62828;
-            color: white;
-            padding: 6px 10px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-size: 12px;
-        "
-    >
-        Eliminar
-    </a>
-<a
-    href="/editar-actividad/{{ actividad.id }}/"
-    style="
-        display: inline-block;
-        margin-top: 10px;
-        background: #1d3557;
-        color: white;
-        padding: 6px 12px;
-        border-radius: 5px;
-        text-decoration: none;
-        font-size: 13px;
-    "
->
-    Editar
-</a>
+                            </div>
+
+                            <a
+                                href="/eliminar-actividad/{{ actividad.id }}/"
+                                style="
+                                    background: #d62828;
+                                    color: white;
+                                    padding: 6px 10px;
+                                    border-radius: 5px;
+                                    text-decoration: none;
+                                    font-size: 12px;
+                                "
+                            >
+                                Eliminar
+                            </a>
+
+                            <a
+                                href="/editar-actividad/{{ actividad.id }}/"
+                                style="
+                                    display: inline-block;
+                                    margin-top: 10px;
+                                    background: #1d3557;
+                                    color: white;
+                                    padding: 6px 12px;
+                                    border-radius: 5px;
+                                    text-decoration: none;
+                                    font-size: 13px;
+                                "
+                            >
+                                Editar
+                            </a>
 
                         </div>
 
@@ -385,10 +464,6 @@ cursor: pointer;
 
 <script>
 
-    // =========================================
-    // CONEXION WEBSOCKET
-    // =========================================
-
     const socketKanban = new WebSocket(
 
         'ws://' +
@@ -397,30 +472,12 @@ cursor: pointer;
 
     );
 
-    socketKanban.onopen = function () {
-
-        console.log(
-            'WebSocket conectado correctamente.'
-        );
-
-    };
-
-    // =========================================
-    // MENSAJES WEBSOCKET
-    // =========================================
-
     socketKanban.onmessage = function (evento) {
 
         const datosSocket = JSON.parse(
             evento.data
         );
 
-        console.log(
-            'Mensaje recibido:',
-            datosSocket
-        );
-
-        // Detecta movimiento de actividad
         if (
 
             datosSocket.tipo ===
@@ -428,21 +485,18 @@ cursor: pointer;
 
         ) {
 
-            // Busca tarjeta por ID
             const tarjetaMover = document.querySelector(
 
                 `[data-actividad-id="${datosSocket.actividad_id}"]`
 
             );
 
-            // Busca columna destino
             const columnaDestino = document.querySelector(
 
                 `[data-columna-id="${datosSocket.columna_destino}"]`
 
             );
 
-            // Si existen ambos elementos
             if (
 
                 tarjetaMover &&
@@ -460,18 +514,6 @@ cursor: pointer;
 
     };
 
-    socketKanban.onclose = function () {
-
-        console.log(
-            'WebSocket desconectado.'
-        );
-
-    };
-
-    // =========================================
-    // DRAG AND DROP
-    // =========================================
-
     const tarjetasSistema = document.querySelectorAll(
         '.tarjeta-actividad'
     );
@@ -480,7 +522,6 @@ cursor: pointer;
         '.columna-kanban'
     );
 
-    // Eventos drag de tarjetas
     tarjetasSistema.forEach((tarjeta) => {
 
         tarjeta.addEventListener(
@@ -501,7 +542,6 @@ cursor: pointer;
 
     });
 
-    // Eventos drop de columnas
     columnasKanban.forEach((columna) => {
 
         columna.addEventListener(
@@ -520,42 +560,32 @@ cursor: pointer;
 
                 evento.preventDefault();
 
-                // Obtiene ID actividad
                 const actividadId =
 
                     evento.dataTransfer.getData(
                         'actividad_id'
                     );
 
-                // Busca tarjeta HTML
                 const tarjetaMover = document.querySelector(
 
                     `[data-actividad-id="${actividadId}"]`
 
                 );
 
-                // Verifica existencia
                 if (!tarjetaMover) {
-
-                    console.log(
-                        'Tarjeta no encontrada.'
-                    );
 
                     return;
 
                 }
 
-                // Mueve tarjeta visualmente
                 columna.appendChild(
                     tarjetaMover
                 );
 
-                // Obtiene columna destino
                 const columnaDestinoId =
 
                     columna.dataset.columnaId;
 
-                // Actualiza Django
                 fetch('/actualizar-columna/', {
 
                     method: 'POST',
@@ -582,12 +612,6 @@ cursor: pointer;
 
                 .then(data => {
 
-                    console.log(
-                        'Actividad actualizada:',
-                        data
-                    );
-
-                    // Notifica a otros clientes
                     socketKanban.send(
 
                         JSON.stringify({
@@ -612,10 +636,6 @@ cursor: pointer;
         );
 
     });
-
-    // =========================================
-    // TOKEN CSRF DJANGO
-    // =========================================
 
     function obtenerTokenCSRF() {
 

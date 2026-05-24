@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Crear actividad</title>
+
+    <style>
+
+        body {
+
+            font-family: Arial, sans-serif;
+            background-color: #f4f5f7;
+            padding: 40px;
+
+        }
+
+        .contenedor {
+
+            background: white;
+            width: 500px;
+            margin: auto;
+            padding: 30px;
+            border-radius: 10px;
+
+        }
+
+        input,
+        textarea,
+        select {
+
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+
+        }
+
+        button {
+
+            background: #172b4d;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="contenedor">
+
+        <h2>Crear nueva actividad</h2>
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <input
+                type="text"
+                name="titulo_actividad"
+                placeholder="Título de la actividad"
+                required
+            >
+
+            <textarea
+                name="descripcion_actividad"
+                placeholder="Descripción de la actividad"
+            ></textarea>
+
+            <select name="prioridad_actividad">
+
+                <option value="BAJA">
+                    Baja
+                </option>
+
+                <option value="MEDIA" selected>
+                    Media
+                </option>
+
+                <option value="ALTA">
+                    Alta
+                </option>
+
+                <option value="URGENTE">
+                    Urgente
+                </option>
+
+            </select>
+
+            <label>
+
+                Fecha límite
+
+            </label>
+
+            <input
+                type="date"
+                name="fecha_limite"
+            >
+
+            <button type="submit">
+
+                Crear actividad
+
+            </button>
+
+        </form>
+
+    </div>
+
+</body>
+
+</html>

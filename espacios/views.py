@@ -7,7 +7,11 @@ from paneles.models import ColumnaEstado
 from actividades.models import (
     ActividadProyecto,
     ComentarioActividad,
-    ArchivoAdjuntoActividad
+    ArchivoAdjuntoActividad,
+)
+
+from notificaciones.models import (
+    NotificacionSistema
 )
 
 
@@ -27,33 +31,31 @@ def dashboard_principal(request):
         'posicion_columna'
     )
 
-    # Actividades creadas por el usuario
-    actividades_creadas = ActividadProyecto.objects.filter(
-        creado_por=request.user,
+    # Mostrar TODAS las actividades
+    # para todos los usuarios
+    actividades_usuario = ActividadProyecto.objects.filter(
         actividad_archivada=False
-    )
-
-    # Actividades asignadas al usuario
-    actividades_asignadas = ActividadProyecto.objects.filter(
-        usuarios_asignados__usuario_asignado=request.user,
-        usuarios_asignados__asignacion_activa=True,
-        actividad_archivada=False
-    )
-
-    # Unifica actividades sin duplicados
-    actividades_usuario = (
-        actividades_creadas |
-        actividades_asignadas
-    ).distinct().select_related(
-        'columna_actual'
+    ).select_related(
+        'columna_actual',
+        'creado_por'
     ).order_by(
         'posicion_actividad'
+    )
+
+    # Últimas notificaciones del usuario
+    notificaciones_usuario = (
+        NotificacionSistema.objects.filter(
+            usuario_destino=request.user
+        ).order_by(
+            '-fecha_creacion'
+        )[:10]
     )
 
     contexto = {
         'espacios_usuario': espacios_usuario,
         'columnas_sistema': columnas_sistema,
         'actividades_usuario': actividades_usuario,
+        'notificaciones_usuario': notificaciones_usuario,
     }
 
     return render(
@@ -115,6 +117,8 @@ def actualizar_columna_actividad(request):
         'estado': 'error',
         'mensaje': 'Método HTTP inválido.'
     })
+
+
 @login_required(login_url='/login/')
 def crear_actividad_frontend(request):
 
@@ -167,6 +171,8 @@ def crear_actividad_frontend(request):
         request,
         'espacios/crear_actividad.html'
     )
+
+
 @login_required(login_url='/login/')
 def editar_actividad_frontend(request, actividad_id):
 
@@ -210,6 +216,8 @@ def editar_actividad_frontend(request, actividad_id):
         'espacios/editar_actividad.html',
         contexto
     )
+
+
 @login_required(login_url='/login/')
 def eliminar_actividad_frontend(request, actividad_id):
 
@@ -225,6 +233,8 @@ def eliminar_actividad_frontend(request, actividad_id):
     actividad.delete()
 
     return redirect('dashboard')
+
+
 @login_required(login_url='/login/')
 def subir_archivo_actividad(
     request,
@@ -258,11 +268,29 @@ def subir_archivo_actividad(
 
             )
 
+            # Crear notificación
+            if actividad.creado_por != request.user:
+
+                NotificacionSistema.objects.create(
+
+                    usuario_destino=actividad.creado_por,
+
+                    mensaje_notificacion=(
+                        f'{request.user.username} '
+                        f'subió un archivo en: '
+                        f'{actividad.titulo_actividad}'
+                    ),
+
+                    detalle_adicional=(
+                        archivo_recibido.name
+                    )
+
+                )
+
         return redirect(
             'editar_actividad_frontend',
             actividad_id=actividad.id
         )
-    
 
 
 @login_required(login_url='/login/')
@@ -292,6 +320,25 @@ def crear_comentario(request, actividad_id):
             contenido_comentario=contenido_comentario
 
         )
+
+        # Evita notificarse a sí mismo
+        if actividad.creado_por != request.user:
+
+            NotificacionSistema.objects.create(
+
+                usuario_destino=actividad.creado_por,
+
+                mensaje_notificacion=(
+                    f'{request.user.username} '
+                    f'comentó tu actividad: '
+                    f'{actividad.titulo_actividad}'
+                ),
+
+                detalle_adicional=(
+                    nuevo_comentario.contenido_comentario
+                )
+
+            )
 
         return JsonResponse({
 
