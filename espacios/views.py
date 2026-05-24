@@ -1,3 +1,6 @@
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
@@ -416,3 +419,19 @@ def notificaciones_view(request):
         'notificaciones_usuario': notificaciones_usuario,
     }
     return render(request, 'espacios/notificaciones.html', contexto)
+
+def registro_usuario(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            usuario = form.save(commit=False)
+            usuario.email = request.POST.get('email', '')
+            usuario.first_name = request.POST.get('first_name', '')
+            usuario.save()
+            login(request, usuario)
+            return redirect('dashboard')
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/registro.html', {'form': form})
