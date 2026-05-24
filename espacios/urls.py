@@ -13,6 +13,7 @@ from .views import (
     paneles_view,
     actividades_view,
     notificaciones_view,
+    registro_usuario,
 )
 
 urlpatterns = [
@@ -87,6 +88,12 @@ urlpatterns = [
         'notificaciones/',
         notificaciones_view,
         name='notificaciones'
+    ),
+
+    path(
+        'registro/',
+        registro_usuario,
+        name='registro'
     ),
 
 ]
