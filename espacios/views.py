@@ -149,6 +149,9 @@ def crear_actividad_frontend(request):
             nombre_columna='Pendiente'
         ).first()
 
+        if not columna_inicial:
+            columna_inicial = ColumnaEstado.objects.first()
+
         ActividadProyecto.objects.create(
 
             columna_actual=columna_inicial,
@@ -355,4 +358,85 @@ def crear_comentario(request, actividad_id):
         'error':
             'Método inválido'
 
+
     })
+
+
+@login_required(login_url='/login/')
+def mis_tareas(request):
+    actividades_usuario = ActividadProyecto.objects.filter(
+        actividad_archivada=False
+    ).select_related('columna_actual', 'creado_por').order_by('posicion_actividad')
+    notificaciones_usuario = NotificacionSistema.objects.filter(
+        usuario_destino=request.user
+    ).order_by('-fecha_creacion')[:10]
+    contexto = {
+        'actividades_usuario': actividades_usuario,
+        'notificaciones_usuario': notificaciones_usuario,
+    }
+    return render(request, 'espacios/mis_tareas.html', contexto)
+
+
+@login_required(login_url='/login/')
+def espacios_view(request):
+    espacios_usuario = EspacioTrabajo.objects.filter(
+        miembros_asociados__usuario_miembro=request.user,
+        miembros_asociados__miembro_activo=True
+    ).distinct()
+    contexto = {
+        'espacios_usuario': espacios_usuario,
+    }
+    return render(request, 'espacios/espacios.html', contexto)
+
+
+@login_required(login_url='/login/')
+def paneles_view(request):
+    columnas_sistema = ColumnaEstado.objects.all().order_by('posicion_columna')
+    actividades_usuario = ActividadProyecto.objects.filter(
+        actividad_archivada=False
+    ).select_related('columna_actual', 'creado_por').order_by('posicion_actividad')
+    contexto = {
+        'columnas_sistema': columnas_sistema,
+        'actividades_usuario': actividades_usuario,
+    }
+    return render(request, 'espacios/paneles.html', contexto)
+
+
+@login_required(login_url='/login/')
+def actividades_view(request):
+    actividades_usuario = ActividadProyecto.objects.filter(
+        actividad_archivada=False
+    ).select_related('columna_actual', 'creado_por').order_by('posicion_actividad')
+    contexto = {
+        'actividades_usuario': actividades_usuario,
+    }
+    return render(request, 'espacios/actividades.html', contexto)
+
+
+@login_required(login_url='/login/')
+def notificaciones_view(request):
+    notificaciones_usuario = NotificacionSistema.objects.filter(
+        usuario_destino=request.user
+    ).order_by('-fecha_creacion')
+    contexto = {
+        'notificaciones_usuario': notificaciones_usuario,
+    }
+    return render(request, 'espacios/notificaciones.html', contexto)
+
+
+def registro_usuario(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            usuario = form.save(commit=False)
+            usuario.email = request.POST.get('email', '')
+            usuario.first_name = request.POST.get('first_name', '')
+            usuario.save()
+            login(request, usuario)
+            return redirect('dashboard')
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/registro.html', {'form': form})
+>>>>>>> Stashed changes
