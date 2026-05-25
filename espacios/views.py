@@ -415,8 +415,10 @@ def notificaciones_view(request):
     notificaciones_usuario = NotificacionSistema.objects.filter(
         usuario_destino=request.user
     ).order_by('-fecha_creacion')
+    no_leidas = notificaciones_usuario.filter(leida=False).count()
     contexto = {
         'notificaciones_usuario': notificaciones_usuario,
+        'no_leidas': no_leidas,
     }
     return render(request, 'espacios/notificaciones.html', contexto)
 
@@ -435,3 +437,16 @@ def registro_usuario(request):
     else:
         form = UserCreationForm()
     return render(request, 'registration/registro.html', {'form': form})
+@login_required(login_url='/login/')
+def marcar_notificaciones_leidas(request):
+    """
+    Marca todas las notificaciones
+    del usuario como leídas.
+    """
+    if request.method == 'POST':
+        NotificacionSistema.objects.filter(
+            usuario_destino=request.user,
+            leida=False
+        ).update(leida=True)
+        messages.success(request, 'Todas las notificaciones fueron marcadas como leídas.')
+    return redirect('notificaciones')
