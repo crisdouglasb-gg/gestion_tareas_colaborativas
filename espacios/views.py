@@ -21,35 +21,20 @@ from notificaciones.models import (
 @login_required(login_url='/login/')
 def dashboard_principal(request):
 
-    """
-    Dashboard principal del sistema Kanban.
-    """
-
     espacios_usuario = EspacioTrabajo.objects.filter(
         miembros_asociados__usuario_miembro=request.user,
         miembros_asociados__miembro_activo=True
     ).distinct()
 
-    columnas_sistema = ColumnaEstado.objects.all().order_by(
-        'posicion_columna'
-    )
+    columnas_sistema = ColumnaEstado.objects.all().order_by('posicion_columna')
 
     actividades_usuario = ActividadProyecto.objects.filter(
         actividad_archivada=False
-    ).select_related(
-        'columna_actual',
-        'creado_por'
-    ).order_by(
-        'posicion_actividad'
-    )
+    ).select_related('columna_actual', 'creado_por').order_by('posicion_actividad')
 
-    notificaciones_usuario = (
-        NotificacionSistema.objects.filter(
-            usuario_destino=request.user
-        ).order_by(
-            '-fecha_creacion'
-        )[:10]
-    )
+    notificaciones_usuario = NotificacionSistema.objects.filter(
+        usuario_destino=request.user
+    ).order_by('-fecha_creacion')[:10]
 
     contexto = {
         'espacios_usuario': espacios_usuario,
@@ -58,21 +43,15 @@ def dashboard_principal(request):
         'notificaciones_usuario': notificaciones_usuario,
     }
 
-    return render(
-        request,
-        'espacios/dashboard.html',
-        contexto
-    )
+    return render(request, 'espacios/dashboard.html', contexto)
 
 
 @login_required
 def actualizar_columna_actividad(request):
 
     if request.method == 'POST':
-
         actividad_id = request.POST.get('actividad_id')
         columna_destino_id = request.POST.get('columna_destino_id')
-
         try:
             actividad = ActividadProyecto.objects.get(id=actividad_id)
             nueva_columna = ColumnaEstado.objects.get(id=columna_destino_id)
@@ -89,15 +68,12 @@ def actualizar_columna_actividad(request):
 def crear_actividad_frontend(request):
 
     if request.method == 'POST':
-
         titulo_actividad = request.POST.get('titulo_actividad')
         descripcion_actividad = request.POST.get('descripcion_actividad')
         prioridad_actividad = request.POST.get('prioridad_actividad')
         fecha_limite = request.POST.get('fecha_limite')
 
-        columna_inicial = ColumnaEstado.objects.filter(
-            nombre_columna='Pendiente'
-        ).first()
+        columna_inicial = ColumnaEstado.objects.filter(nombre_columna='Pendiente').first()
 
         ActividadProyecto.objects.create(
             columna_actual=columna_inicial,
@@ -116,6 +92,9 @@ def crear_actividad_frontend(request):
 @login_required(login_url='/login/')
 def editar_actividad_frontend(request, actividad_id):
 
+    from django.contrib.auth.models import User
+    from actividades.models import AsignacionActividad
+
     actividad = ActividadProyecto.objects.get(id=actividad_id)
 
     if request.method == 'POST':
@@ -126,7 +105,25 @@ def editar_actividad_frontend(request, actividad_id):
         actividad.save()
         return redirect('dashboard')
 
-    contexto = {'actividad': actividad}
+    # Usuarios ya asignados a esta actividad
+    asignados = AsignacionActividad.objects.filter(
+        actividad_relacionada=actividad,
+        asignacion_activa=True
+    ).select_related('usuario_asignado')
+
+    # IDs de usuarios ya asignados para excluirlos del dropdown
+    ids_asignados = asignados.values_list('usuario_asignado__id', flat=True)
+
+    # Usuarios disponibles para asignar
+    usuarios_disponibles = User.objects.exclude(
+        id__in=ids_asignados
+    ).order_by('username')
+
+    contexto = {
+        'actividad': actividad,
+        'asignados': asignados,
+        'usuarios_disponibles': usuarios_disponibles,
+    }
     return render(request, 'espacios/editar_actividad.html', contexto)
 
 
@@ -287,24 +284,20 @@ def perfil_usuario(request):
     """
     Muestra el perfil del usuario con sus estadísticas.
     """
-    # Contar tareas creadas por el usuario
     total_tareas = ActividadProyecto.objects.filter(
         creado_por=request.user,
         actividad_archivada=False
     ).count()
 
-    # Contar comentarios hechos
     total_comentarios = ComentarioActividad.objects.filter(
         usuario_comentario=request.user
     ).count()
 
-    # Contar notificaciones no leídas
     notif_no_leidas = NotificacionSistema.objects.filter(
         usuario_destino=request.user,
         leida=False
     ).count()
 
-    # Cambio de contraseña
     if request.method == 'POST':
         from django.contrib.auth import update_session_auth_hash
         password_actual = request.POST.get('password_actual')
@@ -330,3 +323,36 @@ def perfil_usuario(request):
         'notif_no_leidas': notif_no_leidas,
     }
     return render(request, 'espacios/perfil.html', contexto)
+
+
+@login_required(login_url='/login/')
+def asignar_usuario_actividad(request, actividad_id):
+    """
+    Asigna o desasigna un usuario a una actividad.
+    """
+    from django.contrib.auth.models import User
+    from actividades.models import AsignacionActividad
+
+    actividad = ActividadProyecto.objects.get(id=actividad_id)
+
+    if request.method == 'POST':
+        usuario_id = request.POST.get('usuario_id')
+        accion = request.POST.get('accion')
+        usuario = User.objects.get(id=usuario_id)
+
+        if accion == 'asignar':
+            AsignacionActividad.objects.get_or_create(
+                actividad_relacionada=actividad,
+                usuario_asignado=usuario,
+                defaults={'asignado_por': request.user}
+            )
+            messages.success(request, f'{usuario.username} asignado correctamente.')
+
+        elif accion == 'desasignar':
+            AsignacionActividad.objects.filter(
+                actividad_relacionada=actividad,
+                usuario_asignado=usuario
+            ).delete()
+            messages.success(request, f'{usuario.username} removido de la actividad.')
+
+    return redirect('editar_actividad_frontend', actividad_id=actividad_id)
