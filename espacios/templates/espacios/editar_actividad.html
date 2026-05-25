@@ -8,264 +8,139 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            background: #f0f0f0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100vh;
-            padding: 40px 20px;
-        }
-
-        .page-wrapper {
-            max-width: 700px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 13px;
-            color: #555;
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
+        body { background: #f0f0f0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; min-height: 100vh; padding: 40px 20px; }
+        .page-wrapper { max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+        .back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #555; text-decoration: none; transition: color 0.2s; }
         .back-link:hover { color: #000; text-decoration: none; }
-
-        /* ── CARD BASE ── */
-        .section-card {
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            overflow: hidden;
-        }
-
-        .section-card-header {
-            padding: 18px 24px;
-            border-bottom: 2px solid #222;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .section-card-header.dark {
-            background: #000;
-            color: white;
-        }
-
-        .section-card-header h2 {
-            font-size: 16px;
-            font-weight: 700;
-            margin: 0;
-        }
-
-        .section-card-header p {
-            font-size: 12px;
-            color: #aaa;
-            margin: 2px 0 0;
-        }
-
-        .section-card-body {
-            padding: 24px;
-        }
-
-        /* ── FORM FIELDS ── */
-        .form-field {
-            margin-bottom: 18px;
-        }
-
-        .form-field label {
-            display: block;
-            font-size: 12px;
-            font-weight: 700;
-            color: #444;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .form-field input,
-        .form-field textarea,
-        .form-field select {
-            width: 100%;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            padding: 10px 13px;
-            font-size: 14px;
-            font-family: inherit;
-            color: #000;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .form-field input:focus,
-        .form-field textarea:focus,
-        .form-field select:focus {
-            border-color: #000;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(0,0,0,0.07);
-        }
-
-        .form-field textarea {
-            resize: vertical;
-            min-height: 90px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-
-        .btn-submit {
-            background: #000;
-            color: white;
-            border: none;
-            padding: 10px 22px;
-            border-radius: 4px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-        }
-
+        .section-card { background: white; border: 1px solid #ddd; border-radius: 6px; overflow: hidden; }
+        .section-card-header { padding: 18px 24px; border-bottom: 2px solid #222; display: flex; align-items: center; gap: 10px; }
+        .section-card-header.dark { background: #000; color: white; }
+        .section-card-header h2 { font-size: 16px; font-weight: 700; margin: 0; }
+        .section-card-header p { font-size: 12px; color: #aaa; margin: 2px 0 0; }
+        .section-card-body { padding: 24px; }
+        .form-field { margin-bottom: 18px; }
+        .form-field label { display: block; font-size: 12px; font-weight: 700; color: #444; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-field input, .form-field textarea, .form-field select { width: 100%; border: 1px solid #ccc; border-radius: 4px; padding: 10px 13px; font-size: 14px; font-family: inherit; color: #000; transition: border-color 0.2s, box-shadow 0.2s; }
+        .form-field input:focus, .form-field textarea:focus, .form-field select:focus { border-color: #000; outline: none; box-shadow: 0 0 0 3px rgba(0,0,0,0.07); }
+        .form-field textarea { resize: vertical; min-height: 90px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .btn-submit { background: #000; color: white; border: none; padding: 10px 22px; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s; display: inline-flex; align-items: center; gap: 7px; }
         .btn-submit:hover { background: #333; }
-
-        .btn-secondary {
-            background: transparent;
-            color: #555;
-            border: 1px solid #ccc;
-            padding: 10px 18px;
-            border-radius: 4px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-secondary:hover {
-            border-color: #000;
-            color: #000;
-            text-decoration: none;
-        }
-
-        /* ── ARCHIVOS ── */
-        .archivo-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: #f8f8f8;
-            border: 1px solid #e8e8e8;
-            border-radius: 5px;
-            padding: 10px 14px;
-            margin-bottom: 10px;
-        }
-
-        .archivo-item i {
-            font-size: 18px;
-            color: #666;
-        }
-
-        .archivo-item a {
-            font-size: 13px;
-            color: #000;
-            text-decoration: none;
-            font-weight: 500;
-            flex: 1;
-        }
-
+        .btn-secondary { background: transparent; color: #555; border: 1px solid #ccc; padding: 10px 18px; border-radius: 4px; font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-secondary:hover { border-color: #000; color: #000; text-decoration: none; }
+        .archivo-item { display: flex; align-items: center; gap: 12px; background: #f8f8f8; border: 1px solid #e8e8e8; border-radius: 5px; padding: 10px 14px; margin-bottom: 10px; }
+        .archivo-item i { font-size: 18px; color: #666; }
+        .archivo-item a { font-size: 13px; color: #000; text-decoration: none; font-weight: 500; flex: 1; }
         .archivo-item a:hover { text-decoration: underline; }
-
-        .archivo-meta {
-            font-size: 12px;
-            color: #aaa;
-        }
-
-        .archivo-empty {
-            font-size: 13px;
-            color: #aaa;
-            text-align: center;
-            padding: 16px 0;
-        }
-
-        /* ── COMENTARIOS ── */
-        .comentario-item {
-            padding: 14px 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
+        .archivo-meta { font-size: 12px; color: #aaa; }
+        .archivo-empty { font-size: 13px; color: #aaa; text-align: center; padding: 16px 0; }
+        .comentario-item { padding: 14px 0; border-bottom: 1px solid #f0f0f0; }
         .comentario-item:last-child { border-bottom: none; }
+        .comentario-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+        .comentario-avatar { width: 30px; height: 30px; background: #222; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+        .comentario-usuario { font-size: 13px; font-weight: 700; color: #000; }
+        .comentario-texto { font-size: 13px; color: #444; line-height: 1.5; margin-left: 40px; }
+        .comentarios-empty { font-size: 13px; color: #aaa; text-align: center; padding: 16px 0; }
+        input[type="file"] { width: 100%; border: 1px dashed #ccc; border-radius: 4px; padding: 10px 13px; font-size: 13px; cursor: pointer; background: #fafafa; color: #555; }
+        input[type="file"]:hover { border-color: #000; }
+        .form-actions { display: flex; gap: 10px; align-items: center; margin-top: 4px; }
 
-        .comentario-header {
+        /* ── USUARIOS ASIGNADOS ── */
+        .usuarios-asignados { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+
+        .usuario-asignado-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 6px;
+            gap: 8px;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 6px 12px;
         }
 
-        .comentario-avatar {
-            width: 30px;
-            height: 30px;
-            background: #222;
+        .usuario-avatar {
+            width: 26px;
+            height: 26px;
+            background: #000;
             color: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             flex-shrink: 0;
         }
 
-        .comentario-usuario {
+        .usuario-nombre {
             font-size: 13px;
-            font-weight: 700;
+            font-weight: 600;
             color: #000;
         }
 
-        .comentario-texto {
-            font-size: 13px;
-            color: #444;
-            line-height: 1.5;
-            margin-left: 40px;
+        .btn-desasignar {
+            background: none;
+            border: none;
+            color: #aaa;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 0;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
         }
 
-        .comentarios-empty {
+        .btn-desasignar:hover { color: #e53e3e; }
+
+        .usuarios-empty {
             font-size: 13px;
             color: #aaa;
-            text-align: center;
-            padding: 16px 0;
+            padding: 10px 0;
         }
 
-        /* Input de archivo */
-        input[type="file"] {
-            width: 100%;
-            border: 1px dashed #ccc;
-            border-radius: 4px;
-            padding: 10px 13px;
-            font-size: 13px;
-            cursor: pointer;
-            background: #fafafa;
-            color: #555;
-        }
-
-        input[type="file"]:hover { border-color: #000; }
-
-        .form-actions {
+        .asignar-form {
             display: flex;
             gap: 10px;
+            align-items: flex-end;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #eee;
+        }
+
+        .asignar-form .form-field {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .btn-asignar {
+            background: #000;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+            display: inline-flex;
             align-items: center;
-            margin-top: 4px;
+            gap: 6px;
+        }
+
+        .btn-asignar:hover { background: #333; }
+
+        .alerta-success {
+            background: #f0fdf4;
+            border: 1px solid #22c55e;
+            color: #15803d;
+            border-radius: 4px;
+            padding: 10px 14px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
     </style>
 </head>
@@ -277,7 +152,7 @@
             <i class="fas fa-arrow-left"></i> Volver al Dashboard
         </a>
 
-        <!-- ── EDITAR ACTIVIDAD ── -->
+        <!-- EDITAR ACTIVIDAD -->
         <div class="section-card">
             <div class="section-card-header dark">
                 <div>
@@ -288,17 +163,14 @@
             <div class="section-card-body">
                 <form method="POST">
                     {% csrf_token %}
-
                     <div class="form-field">
                         <label>Título *</label>
                         <input type="text" name="titulo_actividad" value="{{ actividad.titulo_actividad }}" required>
                     </div>
-
                     <div class="form-field">
                         <label>Descripción</label>
                         <textarea name="descripcion_actividad">{{ actividad.descripcion_detallada }}</textarea>
                     </div>
-
                     <div class="form-row">
                         <div class="form-field">
                             <label>Prioridad</label>
@@ -309,40 +181,97 @@
                                 <option value="URGENTE" {% if actividad.prioridad_actividad == 'URGENTE' %}selected{% endif %}>🚨 Urgente</option>
                             </select>
                         </div>
-
                         <div class="form-field">
                             <label>Fecha Límite</label>
                             <input type="date" name="fecha_limite" value="{{ actividad.fecha_limite|date:'Y-m-d' }}">
                         </div>
                     </div>
-
                     <div class="form-actions">
-                        <button type="submit" class="btn-submit">
-                            <i class="fas fa-save"></i> Guardar Cambios
-                        </button>
-                        <a href="/" class="btn-secondary">
-                            <i class="fas fa-times"></i> Cancelar
-                        </a>
+                        <button type="submit" class="btn-submit"><i class="fas fa-save"></i> Guardar Cambios</button>
+                        <a href="/" class="btn-secondary"><i class="fas fa-times"></i> Cancelar</a>
                     </div>
                 </form>
             </div>
         </div>
 
-        <!-- ── ARCHIVOS ADJUNTOS ── -->
+        <!-- USUARIOS ASIGNADOS -->
         <div class="section-card">
             <div class="section-card-header">
                 <div>
-                    <h2><i class="fas fa-paperclip"></i> Archivos Adjuntos</h2>
+                    <h2><i class="fas fa-users"></i> Usuarios Asignados</h2>
                 </div>
             </div>
             <div class="section-card-body">
 
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alerta-success">
+                            <i class="fas fa-check-circle"></i> {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Lista de usuarios asignados -->
+                <div class="usuarios-asignados">
+                    {% for asignacion in asignados %}
+                        <div class="usuario-asignado-item">
+                            <div class="usuario-avatar">
+                                {{ asignacion.usuario_asignado.username|first|upper }}
+                            </div>
+                            <span class="usuario-nombre">{{ asignacion.usuario_asignado.username }}</span>
+                            <form method="POST" action="/asignar-usuario/{{ actividad.id }}/" style="margin:0;">
+                                {% csrf_token %}
+                                <input type="hidden" name="usuario_id" value="{{ asignacion.usuario_asignado.id }}">
+                                <input type="hidden" name="accion" value="desasignar">
+                                <button type="submit" class="btn-desasignar" title="Remover">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </form>
+                        </div>
+                    {% empty %}
+                        <div class="usuarios-empty">
+                            <i class="fas fa-user-slash" style="margin-right:6px;"></i>
+                            No hay usuarios asignados todavía.
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Formulario para asignar -->
+                {% if usuarios_disponibles %}
+                <form method="POST" action="/asignar-usuario/{{ actividad.id }}/" class="asignar-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="accion" value="asignar">
+                    <div class="form-field">
+                        <label>Asignar usuario</label>
+                        <select name="usuario_id">
+                            {% for usuario in usuarios_disponibles %}
+                                <option value="{{ usuario.id }}">{{ usuario.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-asignar">
+                        <i class="fas fa-user-plus"></i> Asignar
+                    </button>
+                </form>
+                {% else %}
+                    <p style="font-size:13px;color:#aaa;margin-top:16px;padding-top:16px;border-top:1px solid #eee;">
+                        Todos los usuarios ya están asignados.
+                    </p>
+                {% endif %}
+
+            </div>
+        </div>
+
+        <!-- ARCHIVOS ADJUNTOS -->
+        <div class="section-card">
+            <div class="section-card-header">
+                <div><h2><i class="fas fa-paperclip"></i> Archivos Adjuntos</h2></div>
+            </div>
+            <div class="section-card-body">
                 {% for archivo in actividad.archivos_adjuntos.all %}
                     <div class="archivo-item">
                         <i class="fas fa-file-alt"></i>
-                        <a href="{{ archivo.archivo.url }}" target="_blank">
-                            {{ archivo.archivo.name }}
-                        </a>
+                        <a href="{{ archivo.archivo.url }}" target="_blank">{{ archivo.archivo.name }}</a>
                         <span class="archivo-meta">Subido por: {{ archivo.usuario_subida }}</span>
                     </div>
                 {% empty %}
@@ -360,29 +289,22 @@
                         <label>Subir nuevo archivo</label>
                         <input type="file" name="archivo_adjunto" required>
                     </div>
-                    <button type="submit" class="btn-submit">
-                        <i class="fas fa-upload"></i> Subir Archivo
-                    </button>
+                    <button type="submit" class="btn-submit"><i class="fas fa-upload"></i> Subir Archivo</button>
                 </form>
             </div>
         </div>
 
-        <!-- ── COMENTARIOS ── -->
+        <!-- COMENTARIOS -->
         <div class="section-card">
             <div class="section-card-header">
-                <div>
-                    <h2><i class="fas fa-comments"></i> Comentarios</h2>
-                </div>
+                <div><h2><i class="fas fa-comments"></i> Comentarios</h2></div>
             </div>
             <div class="section-card-body">
-
                 <div id="contenedor-comentarios">
                     {% for comentario in actividad.comentarios_actividad.all %}
                         <div class="comentario-item">
                             <div class="comentario-header">
-                                <div class="comentario-avatar">
-                                    {{ comentario.usuario_comentario.username|first|upper }}
-                                </div>
+                                <div class="comentario-avatar">{{ comentario.usuario_comentario.username|first|upper }}</div>
                                 <span class="comentario-usuario">{{ comentario.usuario_comentario.username }}</span>
                             </div>
                             <div class="comentario-texto">{{ comentario.contenido_comentario }}</div>
@@ -403,41 +325,28 @@
                         <label>Nuevo Comentario</label>
                         <textarea id="comentario-texto" placeholder="Escribe un comentario..." required></textarea>
                     </div>
-                    <button type="submit" class="btn-submit">
-                        <i class="fas fa-paper-plane"></i> Comentar
-                    </button>
+                    <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> Comentar</button>
                 </form>
             </div>
         </div>
 
-    </div><!-- /page-wrapper -->
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // ── WebSocket Comentarios ──
-        const socketComentarios = new WebSocket(
-            'ws://' + window.location.host + '/ws/kanban/'
-        );
+        const socketComentarios = new WebSocket('ws://' + window.location.host + '/ws/kanban/');
 
         document.getElementById('formulario-comentario').addEventListener('submit', function(e) {
             e.preventDefault();
             const texto = document.getElementById('comentario-texto').value;
             fetch('/crear-comentario/{{ actividad.id }}/', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': obtenerCSRF()
-                },
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': obtenerCSRF() },
                 body: `contenido_comentario=${texto}`
             })
             .then(r => r.json())
             .then(data => {
-                socketComentarios.send(JSON.stringify({
-                    tipo: 'nuevo_comentario',
-                    actividad_id: '{{ actividad.id }}',
-                    usuario: data.usuario,
-                    comentario: data.comentario
-                }));
+                socketComentarios.send(JSON.stringify({ tipo: 'nuevo_comentario', actividad_id: '{{ actividad.id }}', usuario: data.usuario, comentario: data.comentario }));
                 document.getElementById('comentario-texto').value = '';
             });
         });
@@ -445,7 +354,7 @@
         socketComentarios.onmessage = function(e) {
             const datos = JSON.parse(e.data);
             const contenido = datos.contenido;
-            if (contenido.tipo === 'nuevo_comentario' && contenido.actividad_id == '{{ actividad.id }}') {
+            if (contenido && contenido.tipo === 'nuevo_comentario' && contenido.actividad_id == '{{ actividad.id }}') {
                 const inicial = contenido.usuario.charAt(0).toUpperCase();
                 const nuevoComentario = `
                     <div class="comentario-item">
@@ -455,17 +364,12 @@
                         </div>
                         <div class="comentario-texto">${contenido.comentario}</div>
                     </div>`;
-                const contenedor = document.getElementById('contenedor-comentarios');
-                contenedor.innerHTML = nuevoComentario + contenedor.innerHTML;
+                document.getElementById('contenedor-comentarios').innerHTML = nuevoComentario + document.getElementById('contenedor-comentarios').innerHTML;
             }
         };
 
         function obtenerCSRF() {
-            for (let c of document.cookie.split(';')) {
-                c = c.trim();
-                if (c.startsWith('csrftoken=')) return c.substring('csrftoken='.length);
-            }
-            return '';
+            for (let c of document.cookie.split(';')) { c = c.trim(); if (c.startsWith('csrftoken=')) return c.substring('csrftoken='.length); } return '';
         }
     </script>
 </body>
