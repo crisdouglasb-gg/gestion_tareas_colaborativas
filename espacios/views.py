@@ -34,8 +34,6 @@ def dashboard_principal(request):
         'posicion_columna'
     )
 
-    # Mostrar TODAS las actividades
-    # para todos los usuarios
     actividades_usuario = ActividadProyecto.objects.filter(
         actividad_archivada=False
     ).select_related(
@@ -45,7 +43,6 @@ def dashboard_principal(request):
         'posicion_actividad'
     )
 
-    # Últimas notificaciones del usuario
     notificaciones_usuario = (
         NotificacionSistema.objects.filter(
             usuario_destino=request.user
@@ -71,294 +68,129 @@ def dashboard_principal(request):
 @login_required
 def actualizar_columna_actividad(request):
 
-    """
-    Actualiza la columna de una actividad
-    cuando el usuario mueve tarjetas
-    mediante drag and drop.
-    """
-
     if request.method == 'POST':
 
-        actividad_id = request.POST.get(
-            'actividad_id'
-        )
-
-        columna_destino_id = request.POST.get(
-            'columna_destino_id'
-        )
+        actividad_id = request.POST.get('actividad_id')
+        columna_destino_id = request.POST.get('columna_destino_id')
 
         try:
-
-            actividad = ActividadProyecto.objects.get(
-                id=actividad_id
-            )
-
-            nueva_columna = ColumnaEstado.objects.get(
-                id=columna_destino_id
-            )
-
+            actividad = ActividadProyecto.objects.get(id=actividad_id)
+            nueva_columna = ColumnaEstado.objects.get(id=columna_destino_id)
             actividad.columna_actual = nueva_columna
-
             actividad.save()
-
-            return JsonResponse({
-                'estado': 'ok',
-                'mensaje': (
-                    'La actividad fue movida '
-                    'correctamente.'
-                )
-            })
-
+            return JsonResponse({'estado': 'ok', 'mensaje': 'La actividad fue movida correctamente.'})
         except Exception as error:
+            return JsonResponse({'estado': 'error', 'mensaje': str(error)})
 
-            return JsonResponse({
-                'estado': 'error',
-                'mensaje': str(error)
-            })
-
-    return JsonResponse({
-        'estado': 'error',
-        'mensaje': 'Método HTTP inválido.'
-    })
+    return JsonResponse({'estado': 'error', 'mensaje': 'Método HTTP inválido.'})
 
 
 @login_required(login_url='/login/')
 def crear_actividad_frontend(request):
 
-    """
-    Permite crear nuevas actividades
-    desde el formulario visual frontend.
-    """
-
     if request.method == 'POST':
 
-        titulo_actividad = request.POST.get(
-            'titulo_actividad'
-        )
-
-        descripcion_actividad = request.POST.get(
-            'descripcion_actividad'
-        )
-
-        prioridad_actividad = request.POST.get(
-            'prioridad_actividad'
-        )
-
-        fecha_limite = request.POST.get(
-            'fecha_limite'
-        )
+        titulo_actividad = request.POST.get('titulo_actividad')
+        descripcion_actividad = request.POST.get('descripcion_actividad')
+        prioridad_actividad = request.POST.get('prioridad_actividad')
+        fecha_limite = request.POST.get('fecha_limite')
 
         columna_inicial = ColumnaEstado.objects.filter(
             nombre_columna='Pendiente'
         ).first()
 
         ActividadProyecto.objects.create(
-
             columna_actual=columna_inicial,
-
             creado_por=request.user,
-
             titulo_actividad=titulo_actividad,
-
             descripcion_detallada=descripcion_actividad,
-
             prioridad_actividad=prioridad_actividad,
-
             fecha_limite=fecha_limite
-
         )
 
         return redirect('dashboard')
 
-    return render(
-        request,
-        'espacios/crear_actividad.html'
-    )
+    return render(request, 'espacios/crear_actividad.html')
 
 
 @login_required(login_url='/login/')
 def editar_actividad_frontend(request, actividad_id):
 
-    """
-    Permite editar actividades
-    directamente desde el dashboard.
-    """
-
-    actividad = ActividadProyecto.objects.get(
-        id=actividad_id
-    )
+    actividad = ActividadProyecto.objects.get(id=actividad_id)
 
     if request.method == 'POST':
-
-        actividad.titulo_actividad = request.POST.get(
-            'titulo_actividad'
-        )
-
-        actividad.descripcion_detallada = request.POST.get(
-            'descripcion_actividad'
-        )
-
-        actividad.prioridad_actividad = request.POST.get(
-            'prioridad_actividad'
-        )
-
-        actividad.fecha_limite = request.POST.get(
-            'fecha_limite'
-        )
-
+        actividad.titulo_actividad = request.POST.get('titulo_actividad')
+        actividad.descripcion_detallada = request.POST.get('descripcion_actividad')
+        actividad.prioridad_actividad = request.POST.get('prioridad_actividad')
+        actividad.fecha_limite = request.POST.get('fecha_limite')
         actividad.save()
-
         return redirect('dashboard')
 
-    contexto = {
-        'actividad': actividad
-    }
-
-    return render(
-        request,
-        'espacios/editar_actividad.html',
-        contexto
-    )
+    contexto = {'actividad': actividad}
+    return render(request, 'espacios/editar_actividad.html', contexto)
 
 
 @login_required(login_url='/login/')
 def eliminar_actividad_frontend(request, actividad_id):
 
-    """
-    Permite eliminar actividades
-    desde el dashboard.
-    """
-
-    actividad = ActividadProyecto.objects.get(
-        id=actividad_id
-    )
-
+    actividad = ActividadProyecto.objects.get(id=actividad_id)
     actividad.delete()
-
     return redirect('dashboard')
 
 
 @login_required(login_url='/login/')
-def subir_archivo_actividad(
-    request,
-    actividad_id
-):
+def subir_archivo_actividad(request, actividad_id):
 
-    """
-    Permite subir archivos
-    adjuntos a actividades.
-    """
-
-    actividad = ActividadProyecto.objects.get(
-        id=actividad_id
-    )
+    actividad = ActividadProyecto.objects.get(id=actividad_id)
 
     if request.method == 'POST':
-
-        archivo_recibido = request.FILES.get(
-            'archivo_adjunto'
-        )
-
+        archivo_recibido = request.FILES.get('archivo_adjunto')
         if archivo_recibido:
-
             ArchivoAdjuntoActividad.objects.create(
-
                 actividad=actividad,
-
                 usuario_subida=request.user,
-
                 archivo=archivo_recibido
-
             )
-
-            # Crear notificación
             if actividad.creado_por != request.user:
-
                 NotificacionSistema.objects.create(
-
                     usuario_destino=actividad.creado_por,
-
                     mensaje_notificacion=(
-                        f'{request.user.username} '
-                        f'subió un archivo en: '
-                        f'{actividad.titulo_actividad}'
+                        f'{request.user.username} subió un archivo en: {actividad.titulo_actividad}'
                     ),
-
-                    detalle_adicional=(
-                        archivo_recibido.name
-                    )
-
+                    detalle_adicional=archivo_recibido.name
                 )
 
-        return redirect(
-            'editar_actividad_frontend',
-            actividad_id=actividad.id
-        )
+        return redirect('editar_actividad_frontend', actividad_id=actividad.id)
 
 
 @login_required(login_url='/login/')
 def crear_comentario(request, actividad_id):
 
-    """
-    Permite crear comentarios
-    dinámicos desde frontend.
-    """
-
-    actividad = ActividadProyecto.objects.get(
-        id=actividad_id
-    )
+    actividad = ActividadProyecto.objects.get(id=actividad_id)
 
     if request.method == 'POST':
-
-        contenido_comentario = request.POST.get(
-            'contenido_comentario'
-        )
-
+        contenido_comentario = request.POST.get('contenido_comentario')
         nuevo_comentario = ComentarioActividad.objects.create(
-
             actividad_relacionada=actividad,
-
             usuario_comentario=request.user,
-
             contenido_comentario=contenido_comentario
-
         )
-
-        # Evita notificarse a sí mismo
         if actividad.creado_por != request.user:
-
             NotificacionSistema.objects.create(
-
                 usuario_destino=actividad.creado_por,
-
                 mensaje_notificacion=(
-                    f'{request.user.username} '
-                    f'comentó tu actividad: '
-                    f'{actividad.titulo_actividad}'
+                    f'{request.user.username} comentó tu actividad: {actividad.titulo_actividad}'
                 ),
-
-                detalle_adicional=(
-                    nuevo_comentario.contenido_comentario
-                )
-
+                detalle_adicional=nuevo_comentario.contenido_comentario
             )
-
         return JsonResponse({
-
-            'usuario':
-                request.user.username,
-
-            'comentario':
-                nuevo_comentario.contenido_comentario
-
+            'usuario': request.user.username,
+            'comentario': nuevo_comentario.contenido_comentario
         })
 
-    return JsonResponse({
+    return JsonResponse({'error': 'Método inválido'})
 
-        'error':
-            'Método inválido'
 
-    })
 @login_required(login_url='/login/')
 def mis_tareas(request):
     actividades_usuario = ActividadProyecto.objects.filter(
@@ -380,9 +212,7 @@ def espacios_view(request):
         miembros_asociados__usuario_miembro=request.user,
         miembros_asociados__miembro_activo=True
     ).distinct()
-    contexto = {
-        'espacios_usuario': espacios_usuario,
-    }
+    contexto = {'espacios_usuario': espacios_usuario}
     return render(request, 'espacios/espacios.html', contexto)
 
 
@@ -404,9 +234,7 @@ def actividades_view(request):
     actividades_usuario = ActividadProyecto.objects.filter(
         actividad_archivada=False
     ).select_related('columna_actual', 'creado_por').order_by('posicion_actividad')
-    contexto = {
-        'actividades_usuario': actividades_usuario,
-    }
+    contexto = {'actividades_usuario': actividades_usuario}
     return render(request, 'espacios/actividades.html', contexto)
 
 
@@ -421,6 +249,7 @@ def notificaciones_view(request):
         'no_leidas': no_leidas,
     }
     return render(request, 'espacios/notificaciones.html', contexto)
+
 
 def registro_usuario(request):
     if request.user.is_authenticated:
@@ -437,11 +266,12 @@ def registro_usuario(request):
     else:
         form = UserCreationForm()
     return render(request, 'registration/registro.html', {'form': form})
+
+
 @login_required(login_url='/login/')
 def marcar_notificaciones_leidas(request):
     """
-    Marca todas las notificaciones
-    del usuario como leídas.
+    Marca todas las notificaciones del usuario como leídas.
     """
     if request.method == 'POST':
         NotificacionSistema.objects.filter(
@@ -450,3 +280,53 @@ def marcar_notificaciones_leidas(request):
         ).update(leida=True)
         messages.success(request, 'Todas las notificaciones fueron marcadas como leídas.')
     return redirect('notificaciones')
+
+
+@login_required(login_url='/login/')
+def perfil_usuario(request):
+    """
+    Muestra el perfil del usuario con sus estadísticas.
+    """
+    # Contar tareas creadas por el usuario
+    total_tareas = ActividadProyecto.objects.filter(
+        creado_por=request.user,
+        actividad_archivada=False
+    ).count()
+
+    # Contar comentarios hechos
+    total_comentarios = ComentarioActividad.objects.filter(
+        usuario_comentario=request.user
+    ).count()
+
+    # Contar notificaciones no leídas
+    notif_no_leidas = NotificacionSistema.objects.filter(
+        usuario_destino=request.user,
+        leida=False
+    ).count()
+
+    # Cambio de contraseña
+    if request.method == 'POST':
+        from django.contrib.auth import update_session_auth_hash
+        password_actual = request.POST.get('password_actual')
+        password_nueva = request.POST.get('password_nueva')
+        password_confirmar = request.POST.get('password_confirmar')
+
+        if not request.user.check_password(password_actual):
+            messages.error(request, 'La contraseña actual es incorrecta.')
+        elif password_nueva != password_confirmar:
+            messages.error(request, 'Las contraseñas nuevas no coinciden.')
+        elif len(password_nueva) < 8:
+            messages.error(request, 'La contraseña debe tener al menos 8 caracteres.')
+        else:
+            request.user.set_password(password_nueva)
+            request.user.save()
+            update_session_auth_hash(request, request.user)
+            messages.success(request, 'Contraseña cambiada correctamente.')
+            return redirect('perfil_usuario')
+
+    contexto = {
+        'total_tareas': total_tareas,
+        'total_comentarios': total_comentarios,
+        'notif_no_leidas': notif_no_leidas,
+    }
+    return render(request, 'espacios/perfil.html', contexto)

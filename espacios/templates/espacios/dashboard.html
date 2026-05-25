@@ -228,6 +228,8 @@
             flex-shrink: 0;
         }
 
+        .stat-info {}
+
         .stat-number {
             font-size: 26px;
             font-weight: 700;
@@ -378,120 +380,248 @@
             margin-left: auto;
         }
 
-        /* ── KANBAN ── */
-        .kanban-section { margin-top: 35px; }
-        .kanban-board { display: flex; gap: 18px; overflow-x: auto; padding-bottom: 10px; }
-        .kanban-col { background: white; border: 1px solid #ddd; border-radius: 6px; width: 280px; flex-shrink: 0; min-height: 300px; padding: 16px; }
-        .kanban-col-header { font-size: 13px; font-weight: 700; color: #000; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 2px solid #eee; display: flex; align-items: center; justify-content: space-between; }
-        .kanban-col-count { background: #f0f0f0; color: #666; font-size: 11px; padding: 2px 8px; border-radius: 20px; }
-        .kanban-card { background: #fafafa; border: 1px solid #e8e8e8; border-radius: 5px; padding: 12px; margin-bottom: 10px; cursor: grab; transition: box-shadow 0.2s; }
-        .kanban-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-        .kanban-card-title { font-size: 13px; font-weight: 600; color: #000; margin-bottom: 6px; }
-        .kanban-card-desc { font-size: 12px; color: #777; line-height: 1.4; margin-bottom: 8px; }
-        .kanban-card-footer { display: flex; align-items: center; justify-content: space-between; }
-        .priority-badge { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
+        /* ── KANBAN SECTION ── */
+        .kanban-section {
+            margin-top: 35px;
+        }
+
+        .kanban-board {
+            display: flex;
+            gap: 18px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .kanban-col {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            width: 280px;
+            flex-shrink: 0;
+            min-height: 300px;
+            padding: 16px;
+        }
+
+        .kanban-col-header {
+            font-size: 13px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .kanban-col-count {
+            background: #f0f0f0;
+            color: #666;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+
+        .kanban-card {
+            background: #fafafa;
+            border: 1px solid #e8e8e8;
+            border-radius: 5px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: grab;
+            transition: box-shadow 0.2s;
+        }
+
+        .kanban-card:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .kanban-card-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 6px;
+        }
+
+        .kanban-card-desc {
+            font-size: 12px;
+            color: #777;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .kanban-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .priority-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+
         .priority-alta    { background: #fff0f0; color: #c53030; }
         .priority-media   { background: #fffaf0; color: #b7791f; }
         .priority-baja    { background: #f0fff4; color: #276749; }
         .priority-urgente { background: #fff5f5; color: #e53e3e; border: 1px solid #e53e3e; }
-        .card-date { font-size: 11px; color: #aaa; }
-        .kanban-card-actions { display: flex; gap: 6px; margin-top: 8px; }
-        .btn-card-action { font-size: 11px; padding: 3px 10px; border-radius: 3px; text-decoration: none; font-weight: 600; border: none; cursor: pointer; transition: opacity 0.2s; }
+
+        .card-date {
+            font-size: 11px;
+            color: #aaa;
+        }
+
+        .kanban-card-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .btn-card-action {
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 3px;
+            text-decoration: none;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
         .btn-card-action:hover { opacity: 0.8; text-decoration: none; }
+
         .btn-edit  { background: #000; color: white; }
         .btn-delete { background: #e53e3e; color: white; }
 
         /* ── FORM NUEVA ACTIVIDAD ── */
-        .form-nueva-actividad { background: white; border: 1px solid #ddd; border-radius: 6px; padding: 25px; margin-bottom: 30px; }
-        .form-nueva-actividad h3 { font-size: 15px; font-weight: 700; color: #000; margin-bottom: 18px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
-        .form-row-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
-        .form-field label { display: block; font-size: 12px; font-weight: 600; color: #444; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.4px; }
-        .form-field input, .form-field textarea, .form-field select { width: 100%; border: 1px solid #ccc; border-radius: 4px; padding: 9px 12px; font-size: 13px; font-family: inherit; transition: border-color 0.2s; color: #000; }
-        .form-field input:focus, .form-field textarea:focus, .form-field select:focus { border-color: #000; outline: none; box-shadow: 0 0 0 3px rgba(0,0,0,0.06); }
-        .form-field textarea { resize: vertical; min-height: 70px; }
-        .btn-submit { background: #000; color: white; border: none; padding: 10px 22px; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s; display: inline-flex; align-items: center; gap: 6px; }
-        .btn-submit:hover { background: #333; }
-
-        /* ── NOTIFICACIONES PANEL ── */
-        .notif-panel { background: white; border: 1px solid #ddd; border-radius: 6px; padding: 20px; margin-bottom: 30px; }
-        .notif-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
-        .notif-item:last-child { border-bottom: none; }
-        .notif-dot { width: 8px; height: 8px; background: #000; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
-        .notif-text { font-size: 13px; color: #333; font-weight: 500; }
-        .notif-detail { font-size: 12px; color: #888; margin-top: 2px; }
-        .notif-empty { font-size: 13px; color: #aaa; text-align: center; padding: 20px 0; }
-
-        /* ── NOTIFICACIONES REALTIME (alertas flotantes) ── */
-        #contenedor-alertas {
-            position: fixed;
-            top: 80px;
-            right: 24px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            max-width: 340px;
-        }
-
-        .alerta-realtime {
+        .form-nueva-actividad {
             background: white;
             border: 1px solid #ddd;
-            border-left: 4px solid #000;
             border-radius: 6px;
-            padding: 14px 16px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .form-nueva-actividad h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 18px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-row-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .form-field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .form-field input,
+        .form-field textarea,
+        .form-field select {
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 9px 12px;
+            font-size: 13px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+            color: #000;
+        }
+
+        .form-field input:focus,
+        .form-field textarea:focus,
+        .form-field select:focus {
+            border-color: #000;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
+        }
+
+        .form-field textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+
+        .btn-submit {
+            background: #000;
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-submit:hover { background: #333; }
+
+        /* ── NOTIFICACIONES ── */
+        .notif-panel {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .notif-item {
             display: flex;
             align-items: flex-start;
             gap: 12px;
-            animation: entrarAlerta 0.3s ease;
-            cursor: pointer;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
         }
 
-        .alerta-realtime.alerta-comentario { border-left-color: #22c55e; }
-        .alerta-realtime.alerta-movimiento { border-left-color: #3b82f6; }
-        .alerta-realtime.alerta-archivo    { border-left-color: #f59e0b; }
+        .notif-item:last-child { border-bottom: none; }
 
-        @keyframes entrarAlerta {
-            from { opacity: 0; transform: translateX(40px); }
-            to   { opacity: 1; transform: translateX(0); }
-        }
-
-        @keyframes salirAlerta {
-            from { opacity: 1; transform: translateX(0); }
-            to   { opacity: 0; transform: translateX(40px); }
-        }
-
-        .alerta-realtime.saliendo {
-            animation: salirAlerta 0.3s ease forwards;
-        }
-
-        .alerta-icono {
-            width: 34px;
-            height: 34px;
+        .notif-dot {
+            width: 8px;
+            height: 8px;
+            background: #000;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
+            margin-top: 6px;
             flex-shrink: 0;
         }
 
-        .alerta-icono.icono-comentario { background: #f0fdf4; color: #22c55e; }
-        .alerta-icono.icono-movimiento { background: #eff6ff; color: #3b82f6; }
-        .alerta-icono.icono-archivo    { background: #fefce8; color: #f59e0b; }
-        .alerta-icono.icono-general    { background: #f0f0f0; color: #555; }
+        .notif-text {
+            font-size: 13px;
+            color: #333;
+            font-weight: 500;
+        }
 
-        .alerta-cuerpo { flex: 1; }
-        .alerta-titulo { font-size: 13px; font-weight: 700; color: #000; margin-bottom: 2px; }
-        .alerta-detalle { font-size: 12px; color: #666; }
-        .alerta-cerrar { font-size: 14px; color: #aaa; cursor: pointer; padding: 2px; }
-        .alerta-cerrar:hover { color: #000; }
+        .notif-detail {
+            font-size: 12px;
+            color: #888;
+            margin-top: 2px;
+        }
+
+        .notif-empty {
+            font-size: 13px;
+            color: #aaa;
+            text-align: center;
+            padding: 20px 0;
+        }
     </style>
 </head>
 <body>
-
-    <!-- CONTENEDOR DE ALERTAS REALTIME -->
-    <div id="contenedor-alertas"></div>
 
     <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg">
@@ -505,12 +635,10 @@
             </button>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <div class="nav-user">
-                    <div class="nav-notif" id="icono-notif" onclick="window.location='/notificaciones/'">
+                    <div class="nav-notif">
                         <i class="fas fa-bell"></i>
                         {% if notificaciones_usuario %}
-                            <div class="notif-badge" id="badge-notif">{{ notificaciones_usuario|length }}</div>
-                        {% else %}
-                            <div class="notif-badge" id="badge-notif" style="display:none;">0</div>
+                            <div class="notif-badge">{{ notificaciones_usuario|length }}</div>
                         {% endif %}
                     </div>
                     <span class="nav-username">
@@ -533,14 +661,25 @@
         <!-- SIDEBAR -->
         <div class="sidebar">
             <div class="sidebar-section-label">Principal</div>
-            <a class="sidebar-item active" href="/"><i class="fas fa-home"></i> Inicio</a>
-            <a class="sidebar-item" href="/mis-tareas/"><i class="fas fa-tasks"></i> Mis Tareas</a>
-            <a class="sidebar-item" href="/espacios/"><i class="fas fa-users"></i> Espacios</a>
+            <a class="sidebar-item active" href="#">
+                <i class="fas fa-home"></i> Inicio
+            </a>
+            <a class="sidebar-item" href="/mis-tareas/"><i class="fas fa-tasks"></i> Mis Tareas
+            </a>
+            <a class="sidebar-item" href="/espacios/"><i class="fas fa-users"></i> Espacios
+            </a>
+
             <div class="sidebar-section-label">Trabajo</div>
-            <a class="sidebar-item" href="/paneles/"><i class="fas fa-th"></i> Paneles Kanban</a>
-            <a class="sidebar-item" href="/actividades/"><i class="fas fa-list-check"></i> Actividades</a>
-            <a class="sidebar-item" href="/notificaciones/"><i class="fas fa-bell"></i> Notificaciones</a>
+            <a class="sidebar-item" href="/paneles/"><i class="fas fa-th"></i> Paneles Kanban
+            </a>
+            <a class="sidebar-item" href="/actividades/"><i class="fas fa-list-check"></i> Actividades
+            </a>
+            <a class="sidebar-item" href="/notificaciones/"><i class="fas fa-bell"></i> Notificaciones
+            </a>
+
             <div class="sidebar-bottom">
+                <div class="sidebar-section-label">Cuenta</div>
+                <a class="sidebar-item" href="/perfil/"><i class="fas fa-user"></i> Mi Perfil</a>
                 <div class="sidebar-section-label">Sistema</div>
                 <a class="sidebar-item" href="/admin/"><i class="fas fa-cog"></i> Panel Admin</a>
             </div>
@@ -549,11 +688,13 @@
         <!-- CONTENIDO PRINCIPAL -->
         <div class="main-content">
 
+            <!-- Header -->
             <div class="page-header">
                 <h1>Bienvenido, {{ request.user.username }}</h1>
                 <p>Panel de control — Gestión de Tareas Colaborativas</p>
             </div>
 
+            <!-- Stats -->
             <div class="stats-grid">
                 <div class="stat-box">
                     <div class="stat-icon"><i class="fas fa-tasks"></i></div>
@@ -572,7 +713,7 @@
                 <div class="stat-box">
                     <div class="stat-icon"><i class="fas fa-bell"></i></div>
                     <div class="stat-info">
-                        <div class="stat-number" id="contador-notif">{{ notificaciones_usuario|length|default:"0" }}</div>
+                        <div class="stat-number">{{ notificaciones_usuario|length|default:"0" }}</div>
                         <div class="stat-label">Notificaciones</div>
                     </div>
                 </div>
@@ -585,13 +726,13 @@
                 </div>
             </div>
 
+            <!-- Cards de acceso rápido -->
             <div class="section-title">
                 <i class="fas fa-grip-horizontal"></i> Acceso Rápido
             </div>
 
             <div class="cards-grid">
-                <a class="card-item" href="/mis-tareas/">
-                    <div class="card-icon-wrap"><i class="fas fa-tasks"></i></div>
+                <a class="card-item" href="/mis-tareas/"><div class="card-icon-wrap"><i class="fas fa-tasks"></i></div>
                     <div class="card-title">Mis Tareas</div>
                     <div class="card-description">Gestiona y visualiza todas tus tareas asignadas</div>
                     <div class="card-footer-info">
@@ -599,8 +740,8 @@
                         <span class="card-arrow"><i class="fas fa-arrow-right"></i></span>
                     </div>
                 </a>
-                <a class="card-item" href="/espacios/">
-                    <div class="card-icon-wrap"><i class="fas fa-users"></i></div>
+
+                <a class="card-item" href="/espacios/"><div class="card-icon-wrap"><i class="fas fa-users"></i></div>
                     <div class="card-title">Espacios Colaborativos</div>
                     <div class="card-description">Trabaja en equipo en espacios compartidos</div>
                     <div class="card-footer-info">
@@ -608,8 +749,8 @@
                         <span class="card-arrow"><i class="fas fa-arrow-right"></i></span>
                     </div>
                 </a>
-                <a class="card-item" href="/paneles/">
-                    <div class="card-icon-wrap"><i class="fas fa-th"></i></div>
+
+                <a class="card-item" href="/paneles/"><div class="card-icon-wrap"><i class="fas fa-th"></i></div>
                     <div class="card-title">Paneles Kanban</div>
                     <div class="card-description">Organiza tareas con tableros visuales</div>
                     <div class="card-footer-info">
@@ -617,8 +758,8 @@
                         <span class="card-arrow"><i class="fas fa-arrow-right"></i></span>
                     </div>
                 </a>
-                <a class="card-item" href="/actividades/">
-                    <div class="card-icon-wrap"><i class="fas fa-list-check"></i></div>
+
+                <a class="card-item" href="/actividades/"><div class="card-icon-wrap"><i class="fas fa-list-check"></i></div>
                     <div class="card-title">Actividades</div>
                     <div class="card-description">Sigue el progreso de actividades en equipo</div>
                     <div class="card-footer-info">
@@ -626,8 +767,8 @@
                         <span class="card-arrow"><i class="fas fa-arrow-right"></i></span>
                     </div>
                 </a>
-                <a class="card-item" href="/notificaciones/">
-                    <div class="card-icon-wrap"><i class="fas fa-bell"></i></div>
+
+                <a class="card-item" href="/notificaciones/"><div class="card-icon-wrap"><i class="fas fa-bell"></i></div>
                     <div class="card-title">Notificaciones</div>
                     <div class="card-description">Recibe alertas de cambios importantes</div>
                     <div class="card-footer-info">
@@ -635,6 +776,7 @@
                         <span class="card-arrow"><i class="fas fa-arrow-right"></i></span>
                     </div>
                 </a>
+
                 <div class="card-item">
                     <div class="card-icon-wrap"><i class="fas fa-user-circle"></i></div>
                     <div class="card-title">Mi Cuenta</div>
@@ -650,6 +792,7 @@
                 </div>
             </div>
 
+            <!-- Notificaciones recientes -->
             <div class="section-title">
                 <i class="fas fa-bell"></i> Notificaciones Recientes
             </div>
@@ -673,6 +816,7 @@
                 {% endfor %}
             </div>
 
+            <!-- Formulario nueva actividad -->
             <div class="section-title">
                 <i class="fas fa-plus-circle"></i> Nueva Actividad
             </div>
@@ -710,20 +854,35 @@
                 </form>
             </div>
 
+            <!-- Tablero Kanban -->
             <div class="kanban-section">
                 <div class="section-title">
                     <i class="fas fa-th"></i> Tablero Kanban
                 </div>
-                <div class="kanban-board" id="kanban-board">
+
+                <div class="kanban-board"
+                     id="kanban-board">
                     {% for columna in columnas_sistema %}
-                        <div class="kanban-col" data-columna-id="{{ columna.id }}">
+                        <div class="kanban-col"
+                             data-columna-id="{{ columna.id }}">
                             <div class="kanban-col-header">
                                 {{ columna.nombre_columna }}
-                                <span class="kanban-col-count"></span>
+                                <span class="kanban-col-count">
+                                    {% with count=0 %}
+                                        {% for a in actividades_usuario %}
+                                            {% if a.columna_actual.id == columna.id %}
+                                                {% with count=count|add:1 %}{% endwith %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endwith %}
+                                </span>
                             </div>
+
                             {% for actividad in actividades_usuario %}
                                 {% if actividad.columna_actual.id == columna.id %}
-                                    <div class="kanban-card" draggable="true" data-actividad-id="{{ actividad.id }}">
+                                    <div class="kanban-card"
+                                         draggable="true"
+                                         data-actividad-id="{{ actividad.id }}">
                                         <div class="kanban-card-title">{{ actividad.titulo_actividad }}</div>
                                         <div class="kanban-card-desc">{{ actividad.descripcion_detallada }}</div>
                                         <div class="kanban-card-footer">
@@ -739,23 +898,31 @@
                                             {% endif %}
                                         </div>
                                         <div class="kanban-card-actions">
-                                            <a href="/editar-actividad/{{ actividad.id }}/" class="btn-card-action btn-edit"><i class="fas fa-edit"></i> Editar</a>
-                                            <a href="/eliminar-actividad/{{ actividad.id }}/" class="btn-card-action btn-delete"><i class="fas fa-trash"></i> Eliminar</a>
+                                            <a href="/editar-actividad/{{ actividad.id }}/" class="btn-card-action btn-edit">
+                                                <i class="fas fa-edit"></i> Editar
+                                            </a>
+                                            <a href="/eliminar-actividad/{{ actividad.id }}/" class="btn-card-action btn-delete">
+                                                <i class="fas fa-trash"></i> Eliminar
+                                            </a>
                                         </div>
                                     </div>
                                 {% endif %}
                             {% endfor %}
+
                         </div>
                     {% endfor %}
                 </div>
             </div>
 
+            <!-- Info de usuario -->
             <div style="margin-top: 35px;">
                 <div class="section-title">
                     <i class="fas fa-user"></i> Información de Usuario
                 </div>
                 <div class="user-profile-box">
-                    <div class="user-avatar">{{ request.user.username|first|upper }}</div>
+                    <div class="user-avatar">
+                        {{ request.user.username|first|upper }}
+                    </div>
                     <div class="user-info-detail">
                         <h3>{{ request.user.username }}</h3>
                         <p>{{ request.user.email }}</p>
@@ -766,125 +933,26 @@
                 </div>
             </div>
 
-        </div>
-    </div>
+        </div><!-- /main-content -->
+    </div><!-- /layout -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-
-        // ══════════════════════════════════════
-        // SISTEMA DE ALERTAS REALTIME
-        // ══════════════════════════════════════
-
-        const contenedorAlertas = document.getElementById('contenedor-alertas');
-        const badgeNotif = document.getElementById('badge-notif');
-        const contadorNotif = document.getElementById('contador-notif');
-        let totalNotificaciones = parseInt(contadorNotif.textContent) || 0;
-
-        // Muestra una alerta flotante en la esquina
-        function mostrarAlerta(titulo, detalle, tipo) {
-
-            // Definir icono y clase según tipo
-            const config = {
-                comentario: { icono: 'fa-comment',      claseAlerta: 'alerta-comentario', claseIcono: 'icono-comentario' },
-                movimiento: { icono: 'fa-arrows-alt',   claseAlerta: 'alerta-movimiento', claseIcono: 'icono-movimiento' },
-                archivo:    { icono: 'fa-paperclip',    claseAlerta: 'alerta-archivo',    claseIcono: 'icono-archivo'    },
-                general:    { icono: 'fa-bell',         claseAlerta: '',                  claseIcono: 'icono-general'    },
-            };
-
-            const c = config[tipo] || config.general;
-
-            // Crear elemento de alerta
-            const alerta = document.createElement('div');
-            alerta.className = `alerta-realtime ${c.claseAlerta}`;
-            alerta.innerHTML = `
-                <div class="alerta-icono ${c.claseIcono}">
-                    <i class="fas ${c.icono}"></i>
-                </div>
-                <div class="alerta-cuerpo">
-                    <div class="alerta-titulo">${titulo}</div>
-                    ${detalle ? `<div class="alerta-detalle">${detalle}</div>` : ''}
-                </div>
-                <span class="alerta-cerrar" onclick="cerrarAlerta(this.parentElement)">
-                    <i class="fas fa-times"></i>
-                </span>
-            `;
-
-            contenedorAlertas.appendChild(alerta);
-
-            // Actualizar badge de notificaciones
-            totalNotificaciones++;
-            badgeNotif.textContent = totalNotificaciones;
-            badgeNotif.style.display = 'flex';
-            contadorNotif.textContent = totalNotificaciones;
-
-            // Desaparecer automáticamente después de 4 segundos
-            setTimeout(() => cerrarAlerta(alerta), 4000);
-        }
-
-        // Cierra una alerta con animación
-        function cerrarAlerta(alerta) {
-            if (!alerta || !alerta.parentElement) return;
-            alerta.classList.add('saliendo');
-            setTimeout(() => {
-                if (alerta.parentElement) alerta.parentElement.removeChild(alerta);
-            }, 300);
-        }
-
-        // ══════════════════════════════════════
-        // WEBSOCKET KANBAN
-        // ══════════════════════════════════════
-
+        // ── WebSocket Kanban ──
         const socketKanban = new WebSocket(
             'ws://' + window.location.host + '/ws/kanban/'
         );
 
         socketKanban.onmessage = function(evento) {
             const datos = JSON.parse(evento.data);
-
-            // Evento de conexión exitosa
-            if (datos.tipo === 'conexion_exitosa') {
-                console.log('WebSocket conectado correctamente.');
-                return;
-            }
-
-            // Eventos realtime del sistema
-            if (datos.tipo === 'evento_realtime') {
-                const contenido = datos.contenido;
-
-                // Tarjeta movida entre columnas
-                if (contenido.tipo === 'actividad_movida') {
-                    const tarjeta = document.querySelector(`[data-actividad-id="${contenido.actividad_id}"]`);
-                    const columna = document.querySelector(`[data-columna-id="${contenido.columna_destino}"]`);
-                    if (tarjeta && columna) {
-                        columna.appendChild(tarjeta);
-                        mostrarAlerta(
-                            'Tarea movida',
-                            'Una tarea fue movida a otra columna.',
-                            'movimiento'
-                        );
-                    }
-                }
-
-                // Nuevo comentario
-                if (contenido.tipo === 'nuevo_comentario') {
-                    mostrarAlerta(
-                        `${contenido.usuario} comentó`,
-                        contenido.comentario,
-                        'comentario'
-                    );
-                }
+            if (datos.tipo === 'actividad_movida') {
+                const tarjeta = document.querySelector(`[data-actividad-id="${datos.actividad_id}"]`);
+                const columna = document.querySelector(`[data-columna-id="${datos.columna_destino}"]`);
+                if (tarjeta && columna) columna.appendChild(tarjeta);
             }
         };
 
-        socketKanban.onerror = function() {
-            console.log('Error en WebSocket.');
-        };
-
-        // ══════════════════════════════════════
-        // DRAG AND DROP
-        // ══════════════════════════════════════
-
+        // ── Drag & Drop ──
         document.querySelectorAll('.kanban-card').forEach(tarjeta => {
             tarjeta.addEventListener('dragstart', e => {
                 e.dataTransfer.setData('actividad_id', tarjeta.dataset.actividadId);
