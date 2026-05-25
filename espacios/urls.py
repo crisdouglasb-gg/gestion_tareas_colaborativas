@@ -14,6 +14,7 @@ from .views import (
     actividades_view,
     notificaciones_view,
     registro_usuario,
+    marcar_notificaciones_leidas,
 )
 
 urlpatterns = [
@@ -94,6 +95,12 @@ urlpatterns = [
         'registro/',
         registro_usuario,
         name='registro'
+    ),
+
+    path(
+        'marcar-notificaciones-leidas/',
+        marcar_notificaciones_leidas,
+        name='marcar_notificaciones_leidas'
     ),
 
 ]
