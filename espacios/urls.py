@@ -17,6 +17,7 @@ from .views import (
     marcar_notificaciones_leidas,
     perfil_usuario,
     asignar_usuario_actividad,
+    buscar_actividades,
 )
 
 urlpatterns = [
@@ -115,6 +116,12 @@ urlpatterns = [
         'asignar-usuario/<int:actividad_id>/',
         asignar_usuario_actividad,
         name='asignar_usuario_actividad'
+    ),
+
+    path(
+        'buscar/',
+        buscar_actividades,
+        name='buscar_actividades'
     ),
 
 ]

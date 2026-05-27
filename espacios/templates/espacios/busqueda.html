@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Búsqueda - Gestión de Tareas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f0f0f0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; min-height: 100vh; }
+        .navbar { background: #fff; border-bottom: 2px solid #222; padding: 0 25px; height: 62px; }
+        .navbar-brand { font-weight: 700; color: #000 !important; font-size: 20px; }
+        .navbar-brand span { font-weight: 400; color: #666 !important; font-size: 14px; margin-left: 8px; }
+        .nav-user { display: flex; align-items: center; gap: 18px; }
+        .nav-username { font-size: 14px; font-weight: 600; color: #333; }
+        .btn-logout { background: #000; color: white !important; border: none; padding: 7px 16px; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 6px; }
+        .btn-logout:hover { background: #333; }
+        .layout { display: flex; min-height: calc(100vh - 62px); }
+        .sidebar { background: #fff; border-right: 2px solid #222; width: 240px; flex-shrink: 0; padding: 20px 0; display: flex; flex-direction: column; }
+        .sidebar-section-label { font-size: 11px; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 1px; padding: 0 25px; margin: 18px 0 8px; }
+        .sidebar-item { padding: 11px 25px; border-left: 3px solid transparent; transition: all 0.2s; color: #444; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .sidebar-item i { width: 16px; font-size: 14px; color: #888; }
+        .sidebar-item:hover { background: #f5f5f5; border-left-color: #555; color: #000; text-decoration: none; }
+        .sidebar-item.active { background: #f0f0f0; border-left-color: #000; color: #000; font-weight: 600; }
+        .sidebar-item.active i { color: #000; }
+        .sidebar-bottom { margin-top: auto; border-top: 1px solid #e0e0e0; padding-top: 10px; }
+        .main-content { flex: 1; padding: 35px 40px; }
+        .page-header { margin-bottom: 30px; }
+        .page-header h1 { font-size: 26px; font-weight: 700; color: #000; margin-bottom: 5px; }
+        .page-header p { color: #666; font-size: 14px; }
+
+        /* BUSCADOR */
+        .buscador-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .buscador-form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .buscador-input-wrap {
+            flex: 1;
+            position: relative;
+        }
+
+        .buscador-input-wrap i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+            font-size: 16px;
+        }
+
+        .buscador-input {
+            width: 100%;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            padding: 12px 16px 12px 42px;
+            font-size: 15px;
+            font-family: inherit;
+            color: #000;
+            transition: border-color 0.2s;
+        }
+
+        .buscador-input:focus {
+            border-color: #000;
+            outline: none;
+        }
+
+        .buscador-input::placeholder { color: #bbb; }
+
+        .btn-buscar {
+            background: #000;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .btn-buscar:hover { background: #333; }
+
+        /* RESULTADOS */
+        .resultados-header {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #222;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .resultados-count {
+            font-size: 13px;
+            font-weight: 700;
+            color: #000;
+            background: #f0f0f0;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .resultado-item {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 18px 20px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+            border-left: 4px solid #ddd;
+        }
+
+        .resultado-item:hover {
+            border-color: #000;
+            border-left-color: #000;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        .resultado-item.alta    { border-left-color: #e53e3e; }
+        .resultado-item.media   { border-left-color: #f59e0b; }
+        .resultado-item.baja    { border-left-color: #22c55e; }
+        .resultado-item.urgente { border-left-color: #7c3aed; }
+
+        .resultado-titulo {
+            font-size: 15px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 6px;
+        }
+
+        .resultado-titulo mark {
+            background: #fef08a;
+            color: #000;
+            border-radius: 2px;
+            padding: 0 2px;
+        }
+
+        .resultado-desc {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .resultado-desc mark {
+            background: #fef08a;
+            color: #000;
+            border-radius: 2px;
+            padding: 0 2px;
+        }
+
+        .resultado-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .priority-badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; display: inline-block; }
+        .priority-alta    { background: #fff0f0; color: #c53030; }
+        .priority-media   { background: #fffaf0; color: #b7791f; }
+        .priority-baja    { background: #f0fff4; color: #276749; }
+        .priority-urgente { background: #f5f3ff; color: #7c3aed; }
+
+        .estado-badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; background: #eff6ff; color: #1d4ed8; }
+
+        .meta-item { font-size: 12px; color: #aaa; display: flex; align-items: center; gap: 4px; }
+
+        .resultado-acciones { display: flex; gap: 8px; margin-top: 12px; }
+
+        .btn-accion { font-size: 12px; padding: 5px 12px; border-radius: 3px; border: none; cursor: pointer; font-weight: 600; text-decoration: none; transition: opacity 0.2s; display: inline-flex; align-items: center; gap: 5px; }
+        .btn-accion:hover { opacity: 0.8; text-decoration: none; }
+        .btn-editar   { background: #000; color: white; }
+        .btn-eliminar { background: #e53e3e; color: white; }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #aaa;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        .empty-state i { font-size: 48px; margin-bottom: 16px; display: block; }
+        .empty-state h3 { font-size: 18px; font-weight: 700; color: #333; margin-bottom: 8px; }
+        .empty-state p { font-size: 14px; }
+
+        /* ESTADO INICIAL */
+        .estado-inicial {
+            text-align: center;
+            padding: 60px 20px;
+            color: #aaa;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        .estado-inicial i { font-size: 48px; margin-bottom: 16px; display: block; color: #ddd; }
+        .estado-inicial p { font-size: 14px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Gestión de Tareas <span>Colaborativas</span></a>
+            <div class="nav-user">
+                <span class="nav-username"><i class="fas fa-user-circle" style="margin-right:5px;color:#aaa;"></i>{{ request.user.username }}</span>
+                <form action="/logout/" method="POST" style="margin:0;">{% csrf_token %}<button type="submit" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button></form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="layout">
+        <div class="sidebar">
+            <div class="sidebar-section-label">Principal</div>
+            <a class="sidebar-item" href="/"><i class="fas fa-home"></i> Inicio</a>
+            <a class="sidebar-item" href="/mis-tareas/"><i class="fas fa-tasks"></i> Mis Tareas</a>
+            <a class="sidebar-item" href="/espacios/"><i class="fas fa-users"></i> Espacios</a>
+            <div class="sidebar-section-label">Trabajo</div>
+            <a class="sidebar-item" href="/paneles/"><i class="fas fa-th"></i> Paneles Kanban</a>
+            <a class="sidebar-item" href="/actividades/"><i class="fas fa-list-check"></i> Actividades</a>
+            <a class="sidebar-item" href="/notificaciones/"><i class="fas fa-bell"></i> Notificaciones</a>
+            <a class="sidebar-item active" href="/buscar/"><i class="fas fa-search"></i> Búsqueda</a>
+            <div class="sidebar-bottom">
+                <div class="sidebar-section-label">Cuenta</div>
+                <a class="sidebar-item" href="/perfil/"><i class="fas fa-user"></i> Mi Perfil</a>
+                <div class="sidebar-section-label">Sistema</div>
+                <a class="sidebar-item" href="/admin/"><i class="fas fa-cog"></i> Panel Admin</a>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="page-header">
+                <h1><i class="fas fa-search" style="margin-right:10px;"></i>Búsqueda Global</h1>
+                <p>Busca actividades por título o descripción</p>
+            </div>
+
+            <!-- Formulario de búsqueda -->
+            <div class="buscador-card">
+                <form method="GET" action="/buscar/" class="buscador-form">
+                    <div class="buscador-input-wrap">
+                        <i class="fas fa-search"></i>
+                        <input
+                            type="text"
+                            name="q"
+                            class="buscador-input"
+                            placeholder="Escribe el título o descripción de la actividad..."
+                            value="{{ consulta }}"
+                            autofocus
+                            autocomplete="off"
+                        >
+                    </div>
+                    <button type="submit" class="btn-buscar">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                </form>
+            </div>
+
+            <!-- Resultados -->
+            {% if consulta %}
+
+                <div class="resultados-header">
+                    <span>Resultados para: <strong>"{{ consulta }}"</strong></span>
+                    <span class="resultados-count">{{ total }} resultado{{ total|pluralize:"s" }}</span>
+                </div>
+
+                {% if resultados %}
+                    {% for actividad in resultados %}
+                    <div class="resultado-item {{ actividad.prioridad_actividad|lower }}">
+                        <div class="resultado-titulo">{{ actividad.titulo_actividad }}</div>
+                        {% if actividad.descripcion_detallada %}
+                            <div class="resultado-desc">{{ actividad.descripcion_detallada|truncatechars:150 }}</div>
+                        {% endif %}
+                        <div class="resultado-meta">
+                            <span class="priority-badge
+                                {% if actividad.prioridad_actividad == 'ALTA' %}priority-alta
+                                {% elif actividad.prioridad_actividad == 'MEDIA' %}priority-media
+                                {% elif actividad.prioridad_actividad == 'URGENTE' %}priority-urgente
+                                {% else %}priority-baja{% endif %}">
+                                {{ actividad.prioridad_actividad }}
+                            </span>
+                            <span class="estado-badge">{{ actividad.columna_actual.nombre_columna }}</span>
+                            {% if actividad.fecha_limite %}
+                                <span class="meta-item"><i class="fas fa-calendar-alt"></i> {{ actividad.fecha_limite }}</span>
+                            {% endif %}
+                            <span class="meta-item"><i class="fas fa-user"></i> {{ actividad.creado_por.username }}</span>
+                        </div>
+                        <div class="resultado-acciones">
+                            <a href="/editar-actividad/{{ actividad.id }}/" class="btn-accion btn-editar">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                            <a href="/eliminar-actividad/{{ actividad.id }}/" class="btn-accion btn-eliminar">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <h3>Sin resultados</h3>
+                        <p>No se encontraron actividades con "<strong>{{ consulta }}</strong>"</p>
+                    </div>
+                {% endif %}
+
+            {% else %}
+                <div class="estado-inicial">
+                    <i class="fas fa-search"></i>
+                    <p>Escribe algo en el buscador para encontrar actividades.</p>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ── Sugerencias en tiempo real ──
+        const input = document.querySelector('.buscador-input');
+        const form = document.querySelector('.buscador-form');
+
+        // Datos de actividades desde Django (via fetch)
+        let todasActividades = [];
+
+        // Crear contenedor de sugerencias
+        const sugerencias = document.createElement('div');
+        sugerencias.style.cssText = 'display:none;position:absolute;top:100%;left:0;width:100%;background:white;border:1px solid #ddd;border-radius:0 0 6px 6px;box-shadow:0 4px 12px rgba(0,0,0,0.1);z-index:9999;max-height:300px;overflow-y:auto;';
+        input.parentElement.style.position = 'relative';
+        input.parentElement.appendChild(sugerencias);
+
+        // Cargar actividades via fetch
+        fetch('/buscar/?q=&formato=json')
+        .catch(() => {});
+
+        // Buscar en el servidor mientras escribe
+        let timeout;
+        input.addEventListener('input', function() {
+            clearTimeout(timeout);
+            const texto = this.value.trim();
+
+            if (texto.length < 1) {
+                sugerencias.style.display = 'none';
+                return;
+            }
+
+            timeout = setTimeout(() => {
+                fetch(`/buscar/?q=${encodeURIComponent(texto)}`)
+                .then(r => r.text())
+                .then(html => {
+                    // Parsear resultados del HTML devuelto
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const items = doc.querySelectorAll('.resultado-item');
+
+                    sugerencias.innerHTML = '';
+
+                    if (items.length === 0) {
+                        sugerencias.innerHTML = '<div style="padding:12px 16px;font-size:13px;color:#aaa;text-align:center;">Sin resultados</div>';
+                        sugerencias.style.display = 'block';
+                        return;
+                    }
+
+                    items.forEach(item => {
+                        const titulo = item.querySelector('.resultado-titulo')?.textContent?.trim() || '';
+                        const estado = item.querySelector('.estado-badge')?.textContent?.trim() || '';
+                        const prioridad = item.querySelector('.priority-badge')?.textContent?.trim() || '';
+                        const editLink = item.querySelector('.btn-editar')?.getAttribute('href') || '#';
+
+                        const div = document.createElement('div');
+                        div.style.cssText = 'padding:10px 16px;cursor:pointer;border-bottom:1px solid #f0f0f0;transition:background 0.15s;';
+                        div.innerHTML = `
+                            <div style="font-size:13px;font-weight:600;color:#000;margin-bottom:2px;">${titulo}</div>
+                            <div style="font-size:11px;color:#aaa;">${estado} · ${prioridad}</div>`;
+                        div.addEventListener('mouseenter', () => div.style.background = '#f8f8f8');
+                        div.addEventListener('mouseleave', () => div.style.background = 'white');
+                        div.addEventListener('click', () => window.location.href = editLink);
+                        sugerencias.appendChild(div);
+                    });
+
+                    // Opcion ver todos
+                    const verTodos = document.createElement('div');
+                    verTodos.style.cssText = 'padding:10px 16px;cursor:pointer;text-align:center;font-size:12px;font-weight:600;color:#000;background:#f8f8f8;';
+                    verTodos.innerHTML = `<i class="fas fa-search" style="margin-right:5px;"></i>Ver todos los resultados (${items.length})`;
+                    verTodos.addEventListener('click', () => form.submit());
+                    sugerencias.appendChild(verTodos);
+
+                    sugerencias.style.display = 'block';
+                });
+            }, 300);
+        });
+
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') sugerencias.style.display = 'none';
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!input.contains(e.target) && !sugerencias.contains(e.target)) {
+                sugerencias.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
