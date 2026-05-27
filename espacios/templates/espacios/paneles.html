@@ -189,9 +189,20 @@
                     body: `actividad_id=${id}&columna_destino_id=${col.dataset.columnaId}`
                 }).then(r => r.json()).then(() => {
                     socketKanban.send(JSON.stringify({ tipo: 'actividad_movida', actividad_id: id, columna_destino: col.dataset.columnaId }));
+                    actualizarContadores();
                 });
             });
         });
+        // ── Contador de tarjetas por columna ──
+        function actualizarContadores() {
+            document.querySelectorAll('.kanban-col').forEach(col => {
+                const total = col.querySelectorAll('.kanban-card').length;
+                const badge = col.querySelector('.kanban-col-count');
+                if (badge) badge.textContent = total;
+            });
+        }
+        actualizarContadores();
+
         function getCSRF() {
             for (let c of document.cookie.split(';')) { c = c.trim(); if (c.startsWith('csrftoken=')) return c.substring('csrftoken='.length); } return '';
         }
