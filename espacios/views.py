@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
+from django.db import models
 
 from espacios.models import EspacioTrabajo
 from paneles.models import ColumnaEstado
@@ -105,16 +106,13 @@ def editar_actividad_frontend(request, actividad_id):
         actividad.save()
         return redirect('dashboard')
 
-    # Usuarios ya asignados a esta actividad
     asignados = AsignacionActividad.objects.filter(
         actividad_relacionada=actividad,
         asignacion_activa=True
     ).select_related('usuario_asignado')
 
-    # IDs de usuarios ya asignados para excluirlos del dropdown
     ids_asignados = asignados.values_list('usuario_asignado__id', flat=True)
 
-    # Usuarios disponibles para asignar
     usuarios_disponibles = User.objects.exclude(
         id__in=ids_asignados
     ).order_by('username')
@@ -356,3 +354,28 @@ def asignar_usuario_actividad(request, actividad_id):
             messages.success(request, f'{usuario.username} removido de la actividad.')
 
     return redirect('editar_actividad_frontend', actividad_id=actividad_id)
+
+
+@login_required(login_url='/login/')
+def buscar_actividades(request):
+    """
+    Búsqueda global de actividades
+    por título o descripción.
+    """
+    consulta = request.GET.get('q', '')
+    resultados = []
+
+    if consulta:
+        resultados = ActividadProyecto.objects.filter(
+            actividad_archivada=False
+        ).filter(
+            models.Q(titulo_actividad__icontains=consulta) |
+            models.Q(descripcion_detallada__icontains=consulta)
+        ).select_related('columna_actual', 'creado_por').order_by('-fecha_creacion')
+
+    contexto = {
+        'consulta': consulta,
+        'resultados': resultados,
+        'total': len(resultados),
+    }
+    return render(request, 'espacios/busqueda.html', contexto)

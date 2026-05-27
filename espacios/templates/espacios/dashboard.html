@@ -674,8 +674,8 @@
             </a>
             <a class="sidebar-item" href="/actividades/"><i class="fas fa-list-check"></i> Actividades
             </a>
-            <a class="sidebar-item" href="/notificaciones/"><i class="fas fa-bell"></i> Notificaciones
-            </a>
+            <a class="sidebar-item" href="/notificaciones/"><i class="fas fa-bell"></i> Notificaciones</a>
+            <a class="sidebar-item" href="/buscar/"><i class="fas fa-search"></i> Búsqueda</a>
 
             <div class="sidebar-bottom">
                 <div class="sidebar-section-label">Sistema</div>
@@ -867,7 +867,15 @@
                              data-columna-id="{{ columna.id }}">
                             <div class="kanban-col-header">
                                 {{ columna.nombre_columna }}
-                                <span class="kanban-col-count" id="count-{{ columna.id }}">0</span>
+                                <span class="kanban-col-count">
+                                    {% with count=0 %}
+                                        {% for a in actividades_usuario %}
+                                            {% if a.columna_actual.id == columna.id %}
+                                                {% with count=count|add:1 %}{% endwith %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endwith %}
+                                </span>
                             </div>
 
                             {% for actividad in actividades_usuario %}
@@ -977,16 +985,6 @@
                 });
             });
         });
-
-        // ── Contador de tarjetas por columna ──
-        function actualizarContadores() {
-            document.querySelectorAll('.kanban-col').forEach(col => {
-                const total = col.querySelectorAll('.kanban-card').length;
-                const badge = col.querySelector('.kanban-col-count');
-                if (badge) badge.textContent = total;
-            });
-        }
-        actualizarContadores();
 
         function obtenerCSRF() {
             for (let c of document.cookie.split(';')) {
