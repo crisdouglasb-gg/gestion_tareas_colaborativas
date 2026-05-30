@@ -70,11 +70,6 @@ urlpatterns = [
         name='mis_tareas'
     ),
 
-    path(
-        'espacios/',
-        espacios_view,
-        name='espacios'
-    ),
 
     path(
         'paneles/',

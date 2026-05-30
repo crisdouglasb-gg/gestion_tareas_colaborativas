@@ -46,7 +46,6 @@
         .filtro-btn:hover { border-color: #000; color: #000; }
         .filtro-btn.active { background: #000; color: white; border-color: #000; }
 
-        /* Filtros de fecha con colores */
         .filtro-btn.filtro-vencida { border-color: #fca5a5; color: #e53e3e; }
         .filtro-btn.filtro-vencida:hover { background: #fff0f0; border-color: #e53e3e; }
         .filtro-btn.filtro-vencida.active { background: #e53e3e; color: white; border-color: #e53e3e; }
@@ -62,40 +61,11 @@
         .contador-tareas { margin-left: auto; font-size: 13px; color: #888; }
         .contador-tareas span { font-weight: 700; color: #000; }
 
-        /* FILTRO FECHA PERSONALIZADA */
-        .filtro-fecha-wrap {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        .filtro-fecha-label {
-            font-size: 13px;
-            color: #555;
-            font-weight: 500;
-        }
-        .filtro-fecha-input {
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 6px 12px;
-            font-size: 13px;
-            font-family: inherit;
-            color: #000;
-            cursor: pointer;
-            transition: border-color 0.2s;
-        }
+        .filtro-fecha-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .filtro-fecha-label { font-size: 13px; color: #555; font-weight: 500; }
+        .filtro-fecha-input { border: 1px solid #ddd; border-radius: 4px; padding: 6px 12px; font-size: 13px; font-family: inherit; color: #000; cursor: pointer; transition: border-color 0.2s; }
         .filtro-fecha-input:focus { border-color: #000; outline: none; }
-        .btn-limpiar-fecha {
-            font-size: 12px;
-            color: #aaa;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 3px;
-            transition: color 0.2s;
-        }
+        .btn-limpiar-fecha { font-size: 12px; color: #aaa; background: none; border: none; cursor: pointer; padding: 4px 8px; border-radius: 3px; transition: color 0.2s; }
         .btn-limpiar-fecha:hover { color: #000; }
 
         /* BUSCADOR */
@@ -124,7 +94,6 @@
         .estado-progreso   { background: #fefce8; color: #a16207; }
         .estado-completado { background: #f0fdf4; color: #15803d; }
 
-        /* Fecha vencida resaltada */
         .fecha-text { font-size: 13px; color: #666; }
         .fecha-text.vencida { color: #e53e3e; font-weight: 600; }
         .fecha-text.hoy { color: #f59e0b; font-weight: 600; }
@@ -167,12 +136,14 @@
             <div class="sidebar-section-label">Principal</div>
             <a class="sidebar-item" href="/"><i class="fas fa-home"></i> Inicio</a>
             <a class="sidebar-item active" href="/mis-tareas/"><i class="fas fa-tasks"></i> Mis Tareas</a>
-            <a class="sidebar-item" href="/espacios/"><i class="fas fa-users"></i> Espacios</a>
             <div class="sidebar-section-label">Trabajo</div>
             <a class="sidebar-item" href="/paneles/"><i class="fas fa-th"></i> Paneles Kanban</a>
             <a class="sidebar-item" href="/actividades/"><i class="fas fa-list-check"></i> Actividades</a>
             <a class="sidebar-item" href="/notificaciones/"><i class="fas fa-bell"></i> Notificaciones</a>
+            <a class="sidebar-item" href="/buscar/"><i class="fas fa-search"></i> Búsqueda</a>
             <div class="sidebar-bottom">
+                <div class="sidebar-section-label">Cuenta</div>
+                <a class="sidebar-item" href="/perfil/"><i class="fas fa-user"></i> Mi Perfil</a>
                 <div class="sidebar-section-label">Sistema</div>
                 <a class="sidebar-item" href="/admin/"><i class="fas fa-cog"></i> Panel Admin</a>
             </div>
@@ -213,8 +184,6 @@
                         <i class="fas fa-calendar-times"></i> Sin fecha
                     </button>
                     <div class="divisor-filtros"></div>
-
-                    <!-- Rango de fechas personalizado -->
                     <span class="filtro-fecha-label">Desde:</span>
                     <input type="date" id="fecha-desde" class="filtro-fecha-input">
                     <span class="filtro-fecha-label">Hasta:</span>
@@ -301,7 +270,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // ── Variables principales ──
         const filas = document.querySelectorAll('.tarea-row');
         const contador = document.getElementById('contador');
         const sinResultados = document.getElementById('sin-resultados');
@@ -313,39 +281,29 @@
         let filtroFechaActual = null;
         let textoBusqueda = '';
 
-        // ── Fecha de hoy en formato YYYY-MM-DD ──
         const hoy = new Date();
         hoy.setHours(0, 0, 0, 0);
         const hoyStr = hoy.toISOString().split('T')[0];
 
-        // ── Fecha de 7 días en adelante ──
         const semana = new Date(hoy);
         semana.setDate(semana.getDate() + 7);
 
-        // ── Colorear fechas según estado ──
         filas.forEach(fila => {
             const fechaStr = fila.dataset.fecha;
             const celdaFecha = fila.querySelector('.fecha-text');
             if (!fechaStr || !celdaFecha) return;
-
             const fecha = new Date(fechaStr + 'T00:00:00');
-            if (fecha < hoy) {
-                celdaFecha.classList.add('vencida');
-            } else if (fecha.toISOString().split('T')[0] === hoyStr) {
-                celdaFecha.classList.add('hoy');
-            } else if (fecha <= semana) {
-                celdaFecha.classList.add('proxima');
-            }
+            if (fecha < hoy) celdaFecha.classList.add('vencida');
+            else if (fecha.toISOString().split('T')[0] === hoyStr) celdaFecha.classList.add('hoy');
+            else if (fecha <= semana) celdaFecha.classList.add('proxima');
         });
 
-        // ── Actualizar contador ──
         function actualizarContador() {
             const visibles = document.querySelectorAll('.tarea-row:not(.oculta)').length;
             contador.textContent = visibles;
             sinResultados.style.display = visibles === 0 && filas.length > 0 ? 'block' : 'none';
         }
 
-        // ── Aplicar todos los filtros ──
         function aplicarFiltros() {
             const rangoDesde = fechaDesde.value ? new Date(fechaDesde.value + 'T00:00:00') : null;
             const rangoHasta = fechaHasta.value ? new Date(fechaHasta.value + 'T23:59:59') : null;
@@ -356,61 +314,45 @@
                 const titulo    = fila.dataset.titulo    || '';
                 const fechaStr  = fila.dataset.fecha     || '';
 
-                // ── Filtro por estado/prioridad ──
                 let pasaEstado = false;
-                if (filtroActual === 'todas')      pasaEstado = true;
+                if (filtroActual === 'todas')           pasaEstado = true;
                 else if (filtroActual === 'alta')       pasaEstado = prioridad === 'alta';
                 else if (filtroActual === 'urgente')    pasaEstado = prioridad === 'urgente';
                 else if (filtroActual === 'pendiente')  pasaEstado = estado.includes('pendiente');
                 else if (filtroActual === 'progreso')   pasaEstado = estado.includes('progreso');
                 else if (filtroActual === 'completado') pasaEstado = estado.includes('complet');
 
-                // ── Filtro por fecha rápida ──
                 let pasaFecha = true;
                 if (filtroFechaActual) {
-                    if (filtroFechaActual === 'sin-fecha') {
-                        pasaFecha = fechaStr === '';
-                    } else if (fechaStr === '') {
-                        pasaFecha = false;
-                    } else {
+                    if (filtroFechaActual === 'sin-fecha') { pasaFecha = fechaStr === ''; }
+                    else if (fechaStr === '') { pasaFecha = false; }
+                    else {
                         const fecha = new Date(fechaStr + 'T00:00:00');
-                        if (filtroFechaActual === 'vencida') {
-                            pasaFecha = fecha < hoy;
-                        } else if (filtroFechaActual === 'hoy') {
-                            pasaFecha = fechaStr === hoyStr;
-                        } else if (filtroFechaActual === 'semana') {
-                            pasaFecha = fecha >= hoy && fecha <= semana;
-                        }
+                        if (filtroFechaActual === 'vencida') pasaFecha = fecha < hoy;
+                        else if (filtroFechaActual === 'hoy') pasaFecha = fechaStr === hoyStr;
+                        else if (filtroFechaActual === 'semana') pasaFecha = fecha >= hoy && fecha <= semana;
                     }
                 }
 
-                // ── Filtro por rango de fechas personalizado ──
                 let pasaRango = true;
                 if (rangoDesde || rangoHasta) {
-                    if (fechaStr === '') {
-                        pasaRango = false;
-                    } else {
+                    if (fechaStr === '') { pasaRango = false; }
+                    else {
                         const fecha = new Date(fechaStr + 'T00:00:00');
                         if (rangoDesde && fecha < rangoDesde) pasaRango = false;
                         if (rangoHasta && fecha > rangoHasta) pasaRango = false;
                     }
                 }
 
-                // ── Filtro por búsqueda ──
                 const pasaBusqueda = titulo.includes(textoBusqueda.toLowerCase());
 
-                // ── Mostrar u ocultar ──
-                if (pasaEstado && pasaFecha && pasaRango && pasaBusqueda) {
-                    fila.classList.remove('oculta');
-                } else {
-                    fila.classList.add('oculta');
-                }
+                if (pasaEstado && pasaFecha && pasaRango && pasaBusqueda) fila.classList.remove('oculta');
+                else fila.classList.add('oculta');
             });
 
             actualizarContador();
         }
 
-        // ── Botones filtro estado/prioridad ──
         document.querySelectorAll('[data-filtro]').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('[data-filtro]').forEach(b => b.classList.remove('active'));
@@ -420,7 +362,6 @@
             });
         });
 
-        // ── Botones filtro fecha rápida ──
         document.querySelectorAll('[data-filtro-fecha]').forEach(btn => {
             btn.addEventListener('click', function() {
                 if (this.classList.contains('active')) {
@@ -430,7 +371,6 @@
                     document.querySelectorAll('[data-filtro-fecha]').forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
                     filtroFechaActual = this.dataset.filtroFecha;
-                    // Limpiar rango personalizado
                     fechaDesde.value = '';
                     fechaHasta.value = '';
                 }
@@ -438,9 +378,7 @@
             });
         });
 
-        // ── Rango de fechas personalizado ──
         fechaDesde.addEventListener('change', function() {
-            // Limpiar filtros rápidos
             document.querySelectorAll('[data-filtro-fecha]').forEach(b => b.classList.remove('active'));
             filtroFechaActual = null;
             aplicarFiltros();
@@ -452,7 +390,6 @@
             aplicarFiltros();
         });
 
-        // ── Limpiar filtro de fecha ──
         document.getElementById('btn-limpiar-fecha').addEventListener('click', function() {
             fechaDesde.value = '';
             fechaHasta.value = '';
@@ -461,13 +398,11 @@
             aplicarFiltros();
         });
 
-        // ── Buscador ──
         buscador.addEventListener('input', function() {
             textoBusqueda = this.value.toLowerCase();
             aplicarFiltros();
         });
 
-        // ── Inicializar ──
         actualizarContador();
     </script>
 </body>
