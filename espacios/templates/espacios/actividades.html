@@ -33,7 +33,6 @@
         .btn-nuevo { background: #000; color: white; border: none; padding: 8px 16px; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: background 0.2s; }
         .btn-nuevo:hover { background: #333; color: white; text-decoration: none; }
 
-        /* STATS RÁPIDOS */
         .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 28px; }
         .stat-mini { background: white; border: 1px solid #ddd; border-radius: 6px; padding: 16px 18px; display: flex; align-items: center; gap: 12px; }
         .stat-mini-icon { width: 38px; height: 38px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
@@ -44,7 +43,6 @@
         .stat-mini-num { font-size: 22px; font-weight: 700; color: #000; line-height: 1; }
         .stat-mini-label { font-size: 12px; color: #777; margin-top: 2px; }
 
-        /* CARDS DE ACTIVIDADES */
         .actividades-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
         .actividad-card { background: white; border: 1px solid #ddd; border-radius: 6px; padding: 20px; transition: all 0.2s; border-left: 4px solid #ddd; }
         .actividad-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.08); transform: translateY(-1px); }
@@ -89,12 +87,14 @@
             <div class="sidebar-section-label">Principal</div>
             <a class="sidebar-item" href="/"><i class="fas fa-home"></i> Inicio</a>
             <a class="sidebar-item" href="/mis-tareas/"><i class="fas fa-tasks"></i> Mis Tareas</a>
-            <a class="sidebar-item" href="/espacios/"><i class="fas fa-users"></i> Espacios</a>
             <div class="sidebar-section-label">Trabajo</div>
             <a class="sidebar-item" href="/paneles/"><i class="fas fa-th"></i> Paneles Kanban</a>
             <a class="sidebar-item active" href="/actividades/"><i class="fas fa-list-check"></i> Actividades</a>
             <a class="sidebar-item" href="/notificaciones/"><i class="fas fa-bell"></i> Notificaciones</a>
+            <a class="sidebar-item" href="/buscar/"><i class="fas fa-search"></i> Búsqueda</a>
             <div class="sidebar-bottom">
+                <div class="sidebar-section-label">Cuenta</div>
+                <a class="sidebar-item" href="/perfil/"><i class="fas fa-user"></i> Mi Perfil</a>
                 <div class="sidebar-section-label">Sistema</div>
                 <a class="sidebar-item" href="/admin/"><i class="fas fa-cog"></i> Panel Admin</a>
             </div>
@@ -106,7 +106,6 @@
                 <p>Seguimiento de todas las actividades del equipo</p>
             </div>
 
-            <!-- Stats rápidos -->
             <div class="stats-row">
                 <div class="stat-mini">
                     <div class="stat-mini-icon icon-total"><i class="fas fa-layer-group"></i></div>
@@ -138,7 +137,6 @@
                 </div>
             </div>
 
-            <!-- Lista de actividades -->
             <div class="section-title">
                 <span><i class="fas fa-th-list"></i> Todas las Actividades</span>
                 <a href="/crear-actividad/" class="btn-nuevo"><i class="fas fa-plus"></i> Nueva Actividad</a>

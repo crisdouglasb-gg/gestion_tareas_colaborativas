@@ -33,7 +33,6 @@
         .btn-nuevo { background: #000; color: white; border: none; padding: 8px 16px; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: background 0.2s; }
         .btn-nuevo:hover { background: #333; color: white; text-decoration: none; }
 
-        /* KANBAN */
         .kanban-board { display: flex; gap: 18px; overflow-x: auto; padding-bottom: 20px; }
         .kanban-col { background: white; border: 1px solid #ddd; border-radius: 6px; width: 290px; flex-shrink: 0; min-height: 400px; display: flex; flex-direction: column; }
         .kanban-col-header { padding: 14px 16px; border-bottom: 2px solid #222; display: flex; align-items: center; justify-content: space-between; }
@@ -86,12 +85,14 @@
             <div class="sidebar-section-label">Principal</div>
             <a class="sidebar-item" href="/"><i class="fas fa-home"></i> Inicio</a>
             <a class="sidebar-item" href="/mis-tareas/"><i class="fas fa-tasks"></i> Mis Tareas</a>
-            <a class="sidebar-item" href="/espacios/"><i class="fas fa-users"></i> Espacios</a>
             <div class="sidebar-section-label">Trabajo</div>
             <a class="sidebar-item active" href="/paneles/"><i class="fas fa-th"></i> Paneles Kanban</a>
             <a class="sidebar-item" href="/actividades/"><i class="fas fa-list-check"></i> Actividades</a>
             <a class="sidebar-item" href="/notificaciones/"><i class="fas fa-bell"></i> Notificaciones</a>
+            <a class="sidebar-item" href="/buscar/"><i class="fas fa-search"></i> Búsqueda</a>
             <div class="sidebar-bottom">
+                <div class="sidebar-section-label">Cuenta</div>
+                <a class="sidebar-item" href="/perfil/"><i class="fas fa-user"></i> Mi Perfil</a>
                 <div class="sidebar-section-label">Sistema</div>
                 <a class="sidebar-item" href="/admin/"><i class="fas fa-cog"></i> Panel Admin</a>
             </div>
@@ -109,7 +110,6 @@
             </div>
 
             <div class="kanban-board">
-
                 {% for columna in columnas_sistema %}
                 <div class="kanban-col" data-columna-id="{{ columna.id }}">
                     <div class="kanban-col-header">
@@ -120,7 +120,6 @@
                         <span class="kanban-col-count">0</span>
                     </div>
                     <div class="kanban-col-body">
-
                         {% for actividad in actividades_usuario %}
                             {% if actividad.columna_actual.id == columna.id %}
                             <div class="kanban-card" draggable="true" data-actividad-id="{{ actividad.id }}">
@@ -146,17 +145,14 @@
                             {% endif %}
                         {% empty %}
                         {% endfor %}
-
                         <div class="empty-col">
                             <i class="fas fa-inbox"></i>
                             Sin tareas
                         </div>
-
                     </div>
                     <button class="kanban-add-btn"><i class="fas fa-plus"></i> Agregar tarea</button>
                 </div>
                 {% endfor %}
-
             </div>
         </div>
     </div>
@@ -193,7 +189,6 @@
                 });
             });
         });
-        // ── Contador de tarjetas por columna ──
         function actualizarContadores() {
             document.querySelectorAll('.kanban-col').forEach(col => {
                 const total = col.querySelectorAll('.kanban-card').length;
@@ -202,7 +197,6 @@
             });
         }
         actualizarContadores();
-
         function getCSRF() {
             for (let c of document.cookie.split(';')) { c = c.trim(); if (c.startsWith('csrftoken=')) return c.substring('csrftoken='.length); } return '';
         }

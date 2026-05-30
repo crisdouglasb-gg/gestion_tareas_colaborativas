@@ -26,100 +26,34 @@
         .sidebar-item.active i { color: #000; }
         .sidebar-bottom { margin-top: auto; border-top: 1px solid #e0e0e0; padding-top: 10px; }
         .main-content { flex: 1; padding: 35px 40px; }
-
         .page-header { margin-bottom: 30px; display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
         .page-header h1 { font-size: 26px; font-weight: 700; color: #000; margin-bottom: 5px; }
         .page-header p { color: #666; font-size: 14px; }
-
         .header-acciones { display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
-
-        .btn-marcar {
-            background: #000;
-            color: white;
-            border: none;
-            padding: 9px 18px;
-            border-radius: 4px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            text-decoration: none;
-        }
+        .btn-marcar { background: #000; color: white; border: none; padding: 9px 18px; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
         .btn-marcar:hover { background: #333; color: white; text-decoration: none; }
-        .btn-marcar:disabled { background: #ccc; cursor: not-allowed; }
-
-        .contador-no-leidas {
-            background: #e53e3e;
-            color: white;
-            font-size: 12px;
-            font-weight: 700;
-            padding: 3px 10px;
-            border-radius: 20px;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        /* NOTIFICACIONES */
+        .contador-no-leidas { background: #e53e3e; color: white; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 5px; }
         .notif-container { max-width: 700px; }
         .notif-card { background: white; border: 1px solid #ddd; border-radius: 6px; overflow: hidden; }
-
-        .notif-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 16px;
-            padding: 18px 20px;
-            border-bottom: 1px solid #f0f0f0;
-            transition: background 0.15s;
-        }
+        .notif-item { display: flex; align-items: flex-start; gap: 16px; padding: 18px 20px; border-bottom: 1px solid #f0f0f0; transition: background 0.15s; }
         .notif-item:last-child { border-bottom: none; }
         .notif-item:hover { background: #fafafa; }
-
-        /* No leída — resaltada */
-        .notif-item.no-leida {
-            background: #f8f9ff;
-            border-left: 3px solid #000;
-        }
-
-        /* Ya leída — opaca */
-        .notif-item.leida {
-            opacity: 0.6;
-            border-left: 3px solid transparent;
-        }
-
+        .notif-item.no-leida { background: #f8f9ff; border-left: 3px solid #000; }
+        .notif-item.leida { opacity: 0.6; border-left: 3px solid transparent; }
         .notif-icono { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
         .notif-icono.asignacion { background: #eff6ff; color: #1d4ed8; }
         .notif-icono.comentario  { background: #f0fdf4; color: #15803d; }
         .notif-icono.sistema     { background: #fefce8; color: #a16207; }
-
         .notif-body { flex: 1; }
         .notif-titulo { font-size: 14px; font-weight: 600; color: #000; margin-bottom: 4px; }
         .notif-detalle { font-size: 13px; color: #666; line-height: 1.5; }
         .notif-tiempo { font-size: 12px; color: #aaa; margin-top: 4px; }
-
         .notif-dot { width: 8px; height: 8px; background: #000; border-radius: 50%; margin-top: 8px; flex-shrink: 0; }
         .notif-dot.leida { background: #ccc; }
-
         .empty-state { text-align: center; padding: 60px 20px; color: #aaa; }
         .empty-state i { font-size: 48px; margin-bottom: 16px; display: block; }
         .empty-state p { font-size: 15px; }
-
-        /* Mensaje de éxito */
-        .mensaje-exito {
-            background: #f0fdf4;
-            border: 1px solid #22c55e;
-            color: #15803d;
-            border-radius: 4px;
-            padding: 10px 16px;
-            font-size: 13px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .mensaje-exito { background: #f0fdf4; border: 1px solid #22c55e; color: #15803d; border-radius: 4px; padding: 10px 16px; font-size: 13px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
     </style>
 </head>
 <body>
@@ -138,19 +72,20 @@
             <div class="sidebar-section-label">Principal</div>
             <a class="sidebar-item" href="/"><i class="fas fa-home"></i> Inicio</a>
             <a class="sidebar-item" href="/mis-tareas/"><i class="fas fa-tasks"></i> Mis Tareas</a>
-            <a class="sidebar-item" href="/espacios/"><i class="fas fa-users"></i> Espacios</a>
             <div class="sidebar-section-label">Trabajo</div>
             <a class="sidebar-item" href="/paneles/"><i class="fas fa-th"></i> Paneles Kanban</a>
             <a class="sidebar-item" href="/actividades/"><i class="fas fa-list-check"></i> Actividades</a>
             <a class="sidebar-item active" href="/notificaciones/"><i class="fas fa-bell"></i> Notificaciones</a>
+            <a class="sidebar-item" href="/buscar/"><i class="fas fa-search"></i> Búsqueda</a>
             <div class="sidebar-bottom">
+                <div class="sidebar-section-label">Cuenta</div>
+                <a class="sidebar-item" href="/perfil/"><i class="fas fa-user"></i> Mi Perfil</a>
                 <div class="sidebar-section-label">Sistema</div>
                 <a class="sidebar-item" href="/admin/"><i class="fas fa-cog"></i> Panel Admin</a>
             </div>
         </div>
 
         <div class="main-content">
-
             <div class="page-header">
                 <div>
                     <h1><i class="fas fa-bell" style="margin-right:10px;"></i>Notificaciones</h1>
