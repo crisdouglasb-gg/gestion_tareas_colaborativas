@@ -37,11 +37,17 @@ def dashboard_principal(request):
         usuario_destino=request.user
     ).order_by('-fecha_creacion')[:10]
 
+    notif_no_leidas = NotificacionSistema.objects.filter(
+        usuario_destino=request.user,
+        leida=False
+    ).count()
+
     contexto = {
         'espacios_usuario': espacios_usuario,
         'columnas_sistema': columnas_sistema,
         'actividades_usuario': actividades_usuario,
         'notificaciones_usuario': notificaciones_usuario,
+        'notif_no_leidas': notif_no_leidas,
     }
 
     return render(request, 'espacios/dashboard.html', contexto)
