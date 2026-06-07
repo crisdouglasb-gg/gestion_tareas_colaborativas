@@ -105,8 +105,8 @@
                 <div class="nav-user">
                     <div class="nav-notif">
                         <i class="fas fa-bell"></i>
-                        {% if notificaciones_usuario %}
-                            <div class="notif-badge">{{ notificaciones_usuario|length }}</div>
+                        {% if notif_no_leidas > 0 %}
+                            <div class="notif-badge">{{ notif_no_leidas }}</div>
                         {% endif %}
                     </div>
                     <span class="nav-username">
@@ -148,6 +148,7 @@
                 <p>Panel de control — Gestión de Tareas Colaborativas</p>
             </div>
 
+            <!-- STATS GRID: 5 cajas, cada una con su propio </div> de cierre -->
             <div class="stats-grid">
                 <div class="stat-box">
                     <div class="stat-icon"><i class="fas fa-tasks"></i></div>
@@ -159,25 +160,33 @@
                 <div class="stat-box">
                     <div class="stat-icon"><i class="fas fa-bell"></i></div>
                     <div class="stat-info">
-                        <div class="stat-number">{{ notificaciones_usuario|length|default:"0" }}</div>
-                        <div class="stat-label">Notificaciones</div>
+                        <div class="stat-number">{{ notif_no_leidas|default:"0" }}</div>
+                        <div class="stat-label">Notificaciones sin leer</div>
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-number" id="stat-pendientes">{{ pendientes|default:"0" }}</div>
+                        <div class="stat-label">Pendientes</div>
                     </div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-icon"><i class="fas fa-spinner"></i></div>
                     <div class="stat-info">
-                        <div class="stat-number">0</div>
-                        <div class="stat-label">En Progreso</div>
+                        <div class="stat-number" id="stat-en-proceso">{{ en_proceso|default:"0" }}</div>
+                        <div class="stat-label">En Proceso</div>
                     </div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
                     <div class="stat-info">
-                        <div class="stat-number">0</div>
+                        <div class="stat-number" id="stat-completadas">{{ completadas|default:"0" }}</div>
                         <div class="stat-label">Completadas</div>
                     </div>
                 </div>
             </div>
+            <!-- FIN STATS GRID -->
 
             <div class="section-title">
                 <i class="fas fa-grip-horizontal"></i> Acceso Rápido
@@ -193,7 +202,6 @@
                         <span class="card-arrow"><i class="fas fa-arrow-right"></i></span>
                     </div>
                 </a>
-
                 <a class="card-item" href="/paneles/">
                     <div class="card-icon-wrap"><i class="fas fa-th"></i></div>
                     <div class="card-title">Paneles Kanban</div>
@@ -203,7 +211,6 @@
                         <span class="card-arrow"><i class="fas fa-arrow-right"></i></span>
                     </div>
                 </a>
-
                 <a class="card-item" href="/actividades/">
                     <div class="card-icon-wrap"><i class="fas fa-list-check"></i></div>
                     <div class="card-title">Actividades</div>
@@ -213,17 +220,15 @@
                         <span class="card-arrow"><i class="fas fa-arrow-right"></i></span>
                     </div>
                 </a>
-
                 <a class="card-item" href="/notificaciones/">
                     <div class="card-icon-wrap"><i class="fas fa-bell"></i></div>
                     <div class="card-title">Notificaciones</div>
                     <div class="card-description">Recibe alertas de cambios importantes</div>
                     <div class="card-footer-info">
-                        <span class="card-count">{{ notificaciones_usuario|length|default:"0" }} nuevas</span>
+                        <span class="card-count">{{ notif_no_leidas|default:"0" }} sin leer</span>
                         <span class="card-arrow"><i class="fas fa-arrow-right"></i></span>
                     </div>
                 </a>
-
                 <a class="card-item" href="/buscar/">
                     <div class="card-icon-wrap"><i class="fas fa-search"></i></div>
                     <div class="card-title">Búsqueda</div>
@@ -233,7 +238,6 @@
                         <span class="card-arrow"><i class="fas fa-arrow-right"></i></span>
                     </div>
                 </a>
-
                 <a class="card-item" href="/perfil/">
                     <div class="card-icon-wrap"><i class="fas fa-user-circle"></i></div>
                     <div class="card-title">Mi Cuenta</div>
@@ -313,7 +317,6 @@
                 <div class="section-title">
                     <i class="fas fa-th"></i> Tablero Kanban
                 </div>
-
                 <div class="kanban-board" id="kanban-board">
                     {% for columna in columnas_sistema %}
                         <div class="kanban-col" data-columna-id="{{ columna.id }}">
@@ -321,7 +324,6 @@
                                 {{ columna.nombre_columna }}
                                 <span class="kanban-col-count" id="count-{{ columna.id }}">0</span>
                             </div>
-
                             {% for actividad in actividades_usuario %}
                                 {% if actividad.columna_actual.id == columna.id %}
                                     <div class="kanban-card" draggable="true" data-actividad-id="{{ actividad.id }}">
@@ -350,7 +352,6 @@
                                     </div>
                                 {% endif %}
                             {% endfor %}
-
                         </div>
                     {% endfor %}
                 </div>
@@ -405,24 +406,61 @@
                 columna.appendChild(tarjeta);
                 fetch('/actualizar-columna/', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': obtenerCSRF() },
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': obtenerCSRF()
+                    },
                     body: `actividad_id=${actividadId}&columna_destino_id=${columna.dataset.columnaId}`
                 })
                 .then(r => r.json())
                 .then(() => {
-                    socketKanban.send(JSON.stringify({ tipo: 'actividad_movida', actividad_id: actividadId, columna_destino: columna.dataset.columnaId }));
+                    socketKanban.send(JSON.stringify({
+                        tipo: 'actividad_movida',
+                        actividad_id: actividadId,
+                        columna_destino: columna.dataset.columnaId
+                    }));
                     actualizarContadores();
                 });
             });
         });
 
         function actualizarContadores() {
+            // Actualiza el badge de cada encabezado de columna
             document.querySelectorAll('.kanban-col').forEach(col => {
                 const total = col.querySelectorAll('.kanban-card').length;
                 const badge = col.querySelector('.kanban-col-count');
                 if (badge) badge.textContent = total;
             });
+
+            // Actualiza los stat-box del dashboard
+            let totalPendientes  = 0;
+            let totalEnProceso   = 0;
+            let totalCompletadas = 0;
+
+            document.querySelectorAll('.kanban-col').forEach(col => {
+                const header = col.querySelector('.kanban-col-header');
+                if (!header) return;
+                const nombreColumna = header.textContent.trim().toLowerCase();
+                const cantidad = col.querySelectorAll('.kanban-card').length;
+
+                if (nombreColumna.includes('pendiente')) {
+                    totalPendientes = cantidad;
+                } else if (nombreColumna.includes('proceso')) {
+                    totalEnProceso = cantidad;
+                } else if (nombreColumna.includes('complet')) {
+                    totalCompletadas = cantidad;
+                }
+            });
+
+            const elPendientes  = document.getElementById('stat-pendientes');
+            const elEnProceso   = document.getElementById('stat-en-proceso');
+            const elCompletadas = document.getElementById('stat-completadas');
+
+            if (elPendientes)  elPendientes.textContent  = totalPendientes;
+            if (elEnProceso)   elEnProceso.textContent   = totalEnProceso;
+            if (elCompletadas) elCompletadas.textContent = totalCompletadas;
         }
+
         actualizarContadores();
 
         function obtenerCSRF() {
