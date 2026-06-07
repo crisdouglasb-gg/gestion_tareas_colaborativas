@@ -51,11 +51,36 @@ def dashboard_principal(request):
         )[:10]
     )
 
+    notif_no_leidas = NotificacionSistema.objects.filter(
+        usuario_destino=request.user,
+        leida=False
+    ).count()
+
+    # Contadores por columna Kanban
+    pendientes = ActividadProyecto.objects.filter(
+        actividad_archivada=False,
+        columna_actual__nombre_columna__icontains='pendiente'
+    ).count()
+
+    en_proceso = ActividadProyecto.objects.filter(
+        actividad_archivada=False,
+        columna_actual__nombre_columna__icontains='proceso'
+    ).count()
+
+    completadas = ActividadProyecto.objects.filter(
+        actividad_archivada=False,
+        columna_actual__nombre_columna__icontains='complet'
+    ).count()
+
     contexto = {
         'espacios_usuario': espacios_usuario,
         'columnas_sistema': columnas_sistema,
         'actividades_usuario': actividades_usuario,
         'notificaciones_usuario': notificaciones_usuario,
+        'notif_no_leidas': notif_no_leidas,
+        'pendientes': pendientes,
+        'en_proceso': en_proceso,
+        'completadas': completadas,
     }
 
     return render(
@@ -63,7 +88,6 @@ def dashboard_principal(request):
         'espacios/dashboard.html',
         contexto
     )
-
 
 @login_required
 def actualizar_columna_actividad(request):
