@@ -1,0 +1,63 @@
+DÍA 1 - Configuración inicial y estructura base
+- Instalación y configuración de Python 3.12.
+- Instalación de Django 5.2.
+- Creación del proyecto principal Django.
+- Configuración del entorno virtual.
+- Creación de aplicaciones modulares:
+  * usuarios
+  * espacios
+  * paneles
+  * actividades
+  * notificaciones
+
+- Registro de aplicaciones en settings.py.
+- Diseño inicial del modelo EspacioTrabajo.
+- Implementación del modelo MiembroEspacio con roles y restricciones.
+- Implementación del modelo PanelTrabajo con soporte de orden visual.
+- Registro de modelos en Django Admin.
+- Creación de migraciones iniciales.
+- Pruebas funcionales desde panel administrativo.
+
+Registro adicional de avances
+- Se realizaron pruebas de persistencia desde Django Admin.
+- Se verificó el funcionamiento de relaciones entre espacios y paneles.
+- Se configuró la estructura inicial para futuras funcionalidades Kanban.
+- Se dejó preparada la estructura base para implementación de flujo Kanban.
+- Se organizó la arquitectura modular del proyecto para facilitar escalabilidad.
+
+Implementación inicial del flujo Kanban
+- Se implementó el modelo ColumnaEstado.
+- Se agregó relación entre paneles y columnas Kanban.
+- Se configuró orden visual persistente para futuras funciones drag & drop.
+- Se registraron columnas de estado en Django Admin.
+- Se realizaron pruebas funcionales de flujo Kanban desde panel administrativo.
+
+Implementación de actividades y tarjetas Kanban
+- Se implementó el modelo ActividadProyecto.
+- Se agregó relación entre columnas y actividades.
+- Se configuró sistema de prioridades para tareas.
+- Se incorporó soporte para fechas límite y archivado lógico.
+- Se agregó estructura de posicionamiento para drag & drop futuro.
+- Se realizaron pruebas funcionales creando actividades desde Django Admin.
+
+Sistema de asignaciones colaborativas
+- Se implementó el modelo AsignacionActividad.
+- Se agregó relación entre usuarios y actividades.
+- Se incorporó control de asignaciones activas.
+- Se agregó trazabilidad de usuario asignador.
+- Se implementaron restricciones para evitar asignaciones duplicadas.
+- Se realizaron pruebas funcionales desde Django Admin.
+
+ Implementación de sistema de notificaciones internas
+- Se implementó el modelo NotificacionSistema.
+- Se agregó persistencia de notificaciones por usuario.
+- Se incorporó control de lectura de notificaciones.
+- Se preparó estructura para futuras actualizaciones en tiempo real.
+- Se realizaron pruebas funcionales desde Django Admin.
+
+Configuración de entorno colaborativo multiusuario
+- Se crearon usuarios de prueba para simulación de equipo de trabajo.
+- Se configuraron perfiles para backend, frontend y testing.
+- Se realizaron asignaciones reales entre usuarios y actividades.
+- Se validó funcionamiento colaborativo del sistema Kanban.
+- Se preparó estructura para futuras notificaciones automáticas.

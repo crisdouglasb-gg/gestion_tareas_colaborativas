@@ -64,7 +64,8 @@
 
         .kanban-add-btn { margin: 0 12px 12px; padding: 8px; border: 1px dashed #ccc; border-radius: 5px; background: transparent; color: #888; font-size: 13px; cursor: pointer; width: calc(100% - 24px); transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
         .kanban-add-btn:hover { border-color: #000; color: #000; background: #f8f8f8; }
-
+        a.kanban-add-btn {text-decoration: none;}
+        a.kanban-add-btn:hover  {text-decoration: none;}
         .empty-col { text-align: center; padding: 30px 16px; color: #ccc; font-size: 13px; }
         .empty-col i { font-size: 28px; margin-bottom: 8px; display: block; }
     </style>
@@ -145,12 +146,8 @@
                             {% endif %}
                         {% empty %}
                         {% endfor %}
-                        <div class="empty-col">
-                            <i class="fas fa-inbox"></i>
-                            Sin tareas
-                        </div>
                     </div>
-                    <button class="kanban-add-btn"><i class="fas fa-plus"></i> Agregar tarea</button>
+                    <a href="/crear-actividad/" class="kanban-add-btn"><i class="fas fa-plus"></i> Agregar Tarea</a>
                 </div>
                 {% endfor %}
             </div>
