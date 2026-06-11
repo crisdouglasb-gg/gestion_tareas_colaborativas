@@ -78,7 +78,7 @@ def crear_actividad_frontend(request):
         titulo_actividad = request.POST.get('titulo_actividad')
         descripcion_actividad = request.POST.get('descripcion_actividad')
         prioridad_actividad = request.POST.get('prioridad_actividad')
-        fecha_limite = request.POST.get('fecha_limite')
+        fecha_limite = request.POST.get('fecha_limite') or None
 
         columna_inicial = ColumnaEstado.objects.filter(nombre_columna='Pendiente').first()
 
