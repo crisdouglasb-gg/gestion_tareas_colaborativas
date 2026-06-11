@@ -163,3 +163,80 @@ Se agregó barra superior personalizada al dashboard.
 - Se incorporó comunicación realtime mediante WebSockets.
 - Se habilitó sincronización colaborativa de comentarios.
 - Se realizaron pruebas funcionales de comentarios multiusuario.                                   
+
+========================================
+FECHA: 25/05/2026
+ETAPA: CONTROL DE CALIDAD Y ANÁLISIS FUNCIONAL
+========================================
+
+Durante esta sesión se realizaron pruebas funcionales completas
+sobre los módulos desarrollados hasta el momento.
+
+Se verificó el funcionamiento de:
+
+- Creación de actividades.
+- Edición de actividades.
+- Eliminación de actividades.
+- Movimiento de actividades entre columnas.
+- Sistema de comentarios.
+- Comentarios en tiempo real mediante WebSockets.
+- Subida de archivos adjuntos.
+- Sistema de notificaciones.
+- Dashboard principal.
+
+Actividades realizadas como control de calidad (QA):
+
+1. Se analizaron posibles errores de visualización
+   entre distintos usuarios autenticados.
+
+2. Se detectó que inicialmente las actividades
+   creadas por un usuario no eran visibles para
+   los demás usuarios del sistema.
+
+3. Se revisó la lógica de consulta utilizada en
+   dashboard_principal para permitir visualizar
+   actividades compartidas.
+
+4. Se verificó el flujo completo de comentarios
+   en tiempo real entre usuarios distintos.
+
+5. Se evaluó la necesidad futura de implementar
+   asignación formal de usuarios a actividades
+   para mejorar la colaboración.
+
+6. Se analizó la arquitectura de roles y permisos
+   para futuras vistas diferenciadas según tipo
+   de usuario.
+
+7. Se estudió una posible división de vistas para:
+
+   - Administradores.
+   - Miembros.
+   - Usuarios invitados.
+
+8. Se revisó la estructura modular del proyecto
+   para mantener una separación adecuada entre:
+
+   - usuarios
+   - espacios
+   - paneles
+   - actividades
+   - notificaciones
+   - realtime
+
+9. Se validó el correcto funcionamiento de los
+   modelos de comentarios, adjuntos y notificaciones.
+
+10. Se identificaron futuras mejoras relacionadas con:
+
+   - Asignación de usuarios.
+   - Roles y permisos.
+   - Notificaciones por movimiento de tareas.
+   - Historial de actividades.
+   - Estadísticas del sistema.
+
+Resultado:
+
+El sistema continúa estable y las funcionalidades
+implementadas funcionan correctamente después de las
+pruebas realizadas.
