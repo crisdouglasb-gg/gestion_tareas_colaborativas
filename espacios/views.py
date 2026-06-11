@@ -82,7 +82,7 @@ def crear_actividad_frontend(request):
 
         columna_inicial = ColumnaEstado.objects.filter(nombre_columna='Pendiente').first()
 
-        ActividadProyecto.objects.create(
+        nueva_actividad = ActividadProyecto.objects.create(
             columna_actual=columna_inicial,
             creado_por=request.user,
             titulo_actividad=titulo_actividad,
@@ -91,7 +91,7 @@ def crear_actividad_frontend(request):
             fecha_limite=fecha_limite
         )
 
-        return redirect('dashboard')
+        return redirect('editar_actividad_frontend', actividad_id=nueva_actividad.id)
 
     return render(request, 'espacios/crear_actividad.html')
 
