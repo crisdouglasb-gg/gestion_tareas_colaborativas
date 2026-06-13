@@ -18,6 +18,12 @@
         .nav-notif:hover { color: #000; }
         .notif-badge { position: absolute; top: -5px; right: -6px; background: #e53e3e; color: white; font-size: 10px; font-weight: 700; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         .nav-username { font-size: 14px; font-weight: 600; color: #333; }
+        .nav-rol-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.3px; }
+        .nav-rol-badge.admin  { background: #000; color: #fff; }
+        .nav-rol-badge.lider  { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+        .nav-rol-badge.miembro{ background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+        body.dark .nav-rol-badge.lider  { background: #1e3a5f; color: #93c5fd; border-color: #1e3a5f; }
+        body.dark .nav-rol-badge.miembro{ background: #052e16; color: #86efac; border-color: #052e16; }
         .btn-logout { background: #000; color: white !important; border: none; padding: 7px 16px; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; transition: background 0.2s; display: flex; align-items: center; gap: 6px; }
         .btn-logout:hover { background: #333; }
         .layout { display: flex; min-height: calc(100vh - 62px); }
@@ -180,6 +186,15 @@
                         <i class="fas fa-user-circle" style="margin-right:5px;color:#aaa;"></i>
                         {{ request.user.username }}
                     </span>
+                    {% if mi_perfil %}
+                        {% if mi_perfil.rol == 'ADMIN' %}
+                            <span class="nav-rol-badge admin"><i class="fas fa-shield-alt" style="margin-right:4px;"></i>Administrador</span>
+                        {% elif mi_perfil.rol == 'LIDER' %}
+                            <span class="nav-rol-badge lider"><i class="fas fa-star" style="margin-right:4px;"></i>Líder</span>
+                        {% else %}
+                            <span class="nav-rol-badge miembro"><i class="fas fa-user" style="margin-right:4px;"></i>Miembro</span>
+                        {% endif %}
+                    {% endif %}
                     <form action="/logout/" method="POST" style="margin:0;">
                         {% csrf_token %}
                         <button type="submit" class="btn-logout">
@@ -205,8 +220,11 @@
             <div class="sidebar-bottom">
                 <div class="sidebar-section-label">Cuenta</div>
                 <a class="sidebar-item" href="/perfil/"><i class="fas fa-user"></i> Mi Perfil</a>
-                <div class="sidebar-section-label">Sistema</div>
+                {% if mi_perfil and mi_perfil.es_admin %}
+                <div class="sidebar-section-label">Admin</div>
+                <a class="sidebar-item" href="/usuarios/"><i class="fas fa-users-cog"></i> Gestionar Usuarios</a>
                 <a class="sidebar-item" href="/admin/"><i class="fas fa-cog"></i> Panel Admin</a>
+                {% endif %}
             </div>
         </div>
 

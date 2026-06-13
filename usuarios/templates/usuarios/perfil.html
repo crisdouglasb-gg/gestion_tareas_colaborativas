@@ -131,8 +131,11 @@
             <div class="sidebar-bottom">
                 <div class="sidebar-section-label">Cuenta</div>
                 <a class="sidebar-item active" href="/perfil/"><i class="fas fa-user"></i> Mi Perfil</a>
-                <div class="sidebar-section-label">Sistema</div>
+                {% if mi_perfil and mi_perfil.es_admin %}
+                <div class="sidebar-section-label">Admin</div>
+                <a class="sidebar-item" href="/usuarios/"><i class="fas fa-users-cog"></i> Gestionar Usuarios</a>
                 <a class="sidebar-item" href="/admin/"><i class="fas fa-cog"></i> Panel Admin</a>
+                {% endif %}
             </div>
         </div>
 
@@ -151,10 +154,15 @@
                         {% if request.user.is_superuser %}
                             <span class="perfil-badge superusuario"><i class="fas fa-crown" style="margin-right:4px;"></i>Superusuario</span>
                         {% endif %}
-                        {% if request.user.is_staff %}
-                            <span class="perfil-badge">Staff</span>
+                        {% if mi_perfil %}
+                            {% if mi_perfil.rol == 'ADMIN' %}
+                                <span class="perfil-badge" style="background:#000;color:white;"><i class="fas fa-shield-alt" style="margin-right:4px;"></i>Administrador</span>
+                            {% elif mi_perfil.rol == 'LIDER' %}
+                                <span class="perfil-badge" style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;"><i class="fas fa-star" style="margin-right:4px;"></i>Líder</span>
+                            {% else %}
+                                <span class="perfil-badge" style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;"><i class="fas fa-user" style="margin-right:4px;"></i>Miembro</span>
+                            {% endif %}
                         {% endif %}
-                        <span class="perfil-badge">Colaborador</span>
                     </div>
                     <div class="perfil-fecha">
                         <i class="fas fa-calendar-alt" style="margin-right:4px;"></i>
