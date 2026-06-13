@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Actividad - Gestión de Tareas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f0f0f0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; min-height: 100vh; padding: 40px 20px; }
+        .page-wrapper { max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+        .back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #555; text-decoration: none; transition: color 0.2s; }
+        .back-link:hover { color: #000; text-decoration: none; }
+
+        /* Barra de estado de la tarea */
+        .task-status-bar { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 18px 22px; display: flex; align-items: center; gap: 0; overflow: hidden; }
+        .status-step { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; }
+        .status-step:not(:last-child)::after { content: ''; position: absolute; top: 14px; left: 50%; width: 100%; height: 2px; background: #e0e0e0; z-index: 0; }
+        .status-step.done:not(:last-child)::after { background: #000; }
+        .step-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; z-index: 1; border: 2px solid #e0e0e0; background: white; color: #aaa; }
+        .status-step.done .step-dot { background: #000; border-color: #000; color: white; }
+        .status-step.active .step-dot { background: white; border-color: #000; color: #000; box-shadow: 0 0 0 3px rgba(0,0,0,0.1); }
+        .step-label { font-size: 11px; color: #aaa; margin-top: 6px; font-weight: 500; text-align: center; }
+        .status-step.done .step-label { color: #000; font-weight: 600; }
+        .status-step.active .step-label { color: #000; font-weight: 700; }
+
+        .section-card { background: white; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
+        .section-card-header { padding: 18px 24px; border-bottom: 2px solid #222; display: flex; align-items: center; gap: 10px; }
+        .section-card-header.dark { background: #000; color: white; }
+        .section-card-header h2 { font-size: 16px; font-weight: 700; margin: 0; }
+        .section-card-header p { font-size: 12px; color: #aaa; margin: 2px 0 0; }
+        .section-card-body { padding: 24px; }
+        .form-field { margin-bottom: 18px; }
+        .form-field label { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #444; margin-bottom: 7px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-field label i { color: #bbb; font-size: 11px; }
+
+        .input-wrap { position: relative; }
+        .input-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #bbb; font-size: 13px; pointer-events: none; }
+        .textarea-wrap .input-icon { top: 13px; transform: none; }
+
+        .form-field input, .form-field textarea, .form-field select { width: 100%; border: 1.5px solid #ddd; border-radius: 6px; padding: 10px 13px 10px 36px; font-size: 14px; font-family: inherit; color: #000; transition: border-color 0.2s, box-shadow 0.2s; background: #fafafa; }
+        .form-field input:focus, .form-field textarea:focus, .form-field select:focus { border-color: #000; outline: none; box-shadow: 0 0 0 3px rgba(0,0,0,0.07); background: #fff; }
+        .form-field textarea { resize: vertical; min-height: 90px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .btn-submit { background: #000; color: white; border: none; padding: 10px 22px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s; display: inline-flex; align-items: center; gap: 7px; }
+        .btn-submit:hover { background: #333; }
+        .btn-secondary { background: transparent; color: #555; border: 1.5px solid #ddd; padding: 10px 18px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-secondary:hover { border-color: #000; color: #000; text-decoration: none; }
+        .archivo-item { display: flex; align-items: center; gap: 12px; background: #f8f8f8; border: 1px solid #e8e8e8; border-radius: 5px; padding: 10px 14px; margin-bottom: 10px; }
+        .archivo-item i { font-size: 18px; color: #666; }
+        .archivo-item a { font-size: 13px; color: #000; text-decoration: none; font-weight: 500; flex: 1; }
+        .archivo-item a:hover { text-decoration: underline; }
+        .archivo-meta { font-size: 12px; color: #aaa; }
+        .archivo-empty { font-size: 13px; color: #aaa; text-align: center; padding: 16px 0; }
+        .comentario-item { padding: 14px 0; border-bottom: 1px solid #f0f0f0; }
+        .comentario-item:last-child { border-bottom: none; }
+        .comentario-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+        .comentario-avatar { width: 30px; height: 30px; background: #222; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+        .comentario-usuario { font-size: 13px; font-weight: 700; color: #000; }
+        .comentario-texto { font-size: 13px; color: #444; line-height: 1.5; margin-left: 40px; }
+        .comentarios-empty { font-size: 13px; color: #aaa; text-align: center; padding: 16px 0; }
+        input[type="file"] { width: 100%; border: 1px dashed #ccc; border-radius: 4px; padding: 10px 13px; font-size: 13px; cursor: pointer; background: #fafafa; color: #555; }
+        input[type="file"]:hover { border-color: #000; }
+        .form-actions { display: flex; gap: 10px; align-items: center; margin-top: 4px; }
+
+        .usuarios-asignados { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+
+        .usuario-asignado-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 6px 12px;
+        }
+
+        .usuario-avatar {
+            width: 26px;
+            height: 26px;
+            background: #000;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .usuario-nombre {
+            font-size: 13px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .btn-desasignar {
+            background: none;
+            border: none;
+            color: #aaa;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 0;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-desasignar:hover { color: #e53e3e; }
+
+        .usuarios-empty {
+            font-size: 13px;
+            color: #aaa;
+            padding: 10px 0;
+        }
+
+        .asignar-form {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #eee;
+        }
+
+        .asignar-form .form-field {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .btn-asignar {
+            background: #000;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-asignar:hover { background: #333; }
+
+        .alerta-success {
+            background: #f0fdf4;
+            border: 1px solid #22c55e;
+            color: #15803d;
+            border-radius: 4px;
+            padding: 10px 14px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-dark-float{position:fixed;top:16px;right:16px;background:#fff;border:1.5px solid #ddd;border-radius:6px;color:#555;padding:6px 12px;font-size:14px;cursor:pointer;transition:all 0.2s;z-index:100;}
+        .btn-dark-float:hover{border-color:#000;color:#000;}
+        body.dark{background:#1a1a1a;color:#e0e0e0;}
+        body.dark .section-card{background:#111;border-color:#333;}
+        body.dark .section-card-header:not([class*="dark"]){border-bottom-color:#333;color:#e0e0e0;}
+        body.dark .task-status-bar{background:#111;border-color:#333;}
+        body.dark .step-label{color:#777;}
+        body.dark .step-dot{border-color:#444;color:#777;background:#111;}
+        body.dark .status-step.done .step-dot{background:#fff;border-color:#fff;color:#000;}
+        body.dark .status-step.active .step-dot{background:#111;border-color:#fff;color:#fff;}
+        body.dark .form-field input,.form-field textarea,.form-field select{transition:border-color 0.2s;}
+        body.dark .form-field input{background:#1a1a1a;border-color:#444;color:#e0e0e0;}
+        body.dark .form-field textarea{background:#1a1a1a;border-color:#444;color:#e0e0e0;}
+        body.dark .form-field select{background:#1a1a1a;border-color:#444;color:#e0e0e0;}
+        body.dark .form-field label{color:#aaa;}
+        body.dark .btn-secondary{border-color:#444;color:#aaa;}
+        body.dark .archivo-item{background:#1a1a1a;border-color:#333;}
+        body.dark .archivo-item a{color:#ccc;}
+        body.dark .comentario-item{border-bottom-color:#333;}
+        body.dark .comentario-texto{color:#aaa;}
+        body.dark .comentario-usuario{color:#e0e0e0;}
+        body.dark .back-link{color:#aaa;}
+        body.dark .btn-dark-float{background:#111;border-color:#444;color:#ccc;}
+        body.dark .usuarios-asignados .usuario-asignado-item{background:#222;border-color:#333;color:#ccc;}
+    </style>
+</head>
+<body>
+    <script>if(localStorage.getItem('darkMode')==='1')document.body.classList.add('dark');</script>
+    <button class="btn-dark-float" id="btn-dark" title="Modo oscuro/claro"><i class="fas fa-moon" id="dark-icon"></i></button>
+
+    <div class="page-wrapper">
+
+        <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Volver al Dashboard</a>
+
+        <!-- BARRA DE ESTADO -->
+        {% with nombre=actividad.columna_actual.nombre_columna|lower %}
+        <div class="task-status-bar">
+            <div class="status-step {% if 'pendiente' in nombre %}active{% elif 'progres' in nombre or 'revision' in nombre or 'complet' in nombre %}done{% endif %}">
+                <div class="step-dot"><i class="fas fa-{% if 'progres' in nombre or 'revision' in nombre or 'complet' in nombre %}check{% else %}clock{% endif %}"></i></div>
+                <span class="step-label">Pendiente</span>
+            </div>
+            <div class="status-step {% if 'progres' in nombre %}active{% elif 'revision' in nombre or 'complet' in nombre %}done{% endif %}">
+                <div class="step-dot"><i class="fas fa-{% if 'revision' in nombre or 'complet' in nombre %}check{% else %}spinner{% endif %}"></i></div>
+                <span class="step-label">En Progreso</span>
+            </div>
+            <div class="status-step {% if 'revision' in nombre %}active{% elif 'complet' in nombre %}done{% endif %}">
+                <div class="step-dot"><i class="fas fa-{% if 'complet' in nombre %}check{% else %}search{% endif %}"></i></div>
+                <span class="step-label">Revisión</span>
+            </div>
+            <div class="status-step {% if 'complet' in nombre %}active{% endif %}">
+                <div class="step-dot"><i class="fas fa-flag-checkered"></i></div>
+                <span class="step-label">Completado</span>
+            </div>
+        </div>
+        {% endwith %}
+
+        <!-- EDITAR ACTIVIDAD -->
+        <div class="section-card">
+            <div class="section-card-header dark">
+                <div>
+                    <h2><i class="fas fa-edit"></i> Editar Actividad</h2>
+                    <p>Modifica los datos de esta tarea</p>
+                </div>
+            </div>
+            <div class="section-card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="form-field">
+                        <label><i class="fas fa-heading"></i> Título *</label>
+                        <div class="input-wrap">
+                            <i class="input-icon fas fa-pencil-alt"></i>
+                            <input type="text" name="titulo_actividad" value="{{ actividad.titulo_actividad }}" required>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label><i class="fas fa-align-left"></i> Descripción</label>
+                        <div class="input-wrap textarea-wrap">
+                            <i class="input-icon fas fa-align-justify"></i>
+                            <textarea name="descripcion_actividad">{{ actividad.descripcion_detallada }}</textarea>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label><i class="fas fa-flag"></i> Prioridad</label>
+                            <div class="input-wrap">
+                                <i class="input-icon fas fa-layer-group"></i>
+                                <select name="prioridad_actividad">
+                                    <option value="BAJA"    {% if actividad.prioridad_actividad == 'BAJA'    %}selected{% endif %}>🟢 Baja</option>
+                                    <option value="MEDIA"   {% if actividad.prioridad_actividad == 'MEDIA'   %}selected{% endif %}>🟡 Media</option>
+                                    <option value="ALTA"    {% if actividad.prioridad_actividad == 'ALTA'    %}selected{% endif %}>🔴 Alta</option>
+                                    <option value="URGENTE" {% if actividad.prioridad_actividad == 'URGENTE' %}selected{% endif %}>🚨 Urgente</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-field">
+                            <label><i class="fas fa-calendar-alt"></i> Fecha Límite</label>
+                            <div class="input-wrap">
+                                <i class="input-icon fas fa-calendar"></i>
+                                <input type="date" name="fecha_limite" value="{{ actividad.fecha_limite|date:'Y-m-d' }}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit"><i class="fas fa-save"></i> Guardar Cambios</button>
+                        <a href="/" class="btn-secondary"><i class="fas fa-times"></i> Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- USUARIOS ASIGNADOS -->
+        <div class="section-card">
+            <div class="section-card-header">
+                <div>
+                    <h2><i class="fas fa-users"></i> Usuarios Asignados</h2>
+                </div>
+            </div>
+            <div class="section-card-body">
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alerta-success">
+                            <i class="fas fa-check-circle"></i> {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <div class="usuarios-asignados">
+                    {% for asignacion in asignados %}
+                        <div class="usuario-asignado-item">
+                            <div class="usuario-avatar">
+                                {{ asignacion.usuario_asignado.username|first|upper }}
+                            </div>
+                            <span class="usuario-nombre">{{ asignacion.usuario_asignado.username }}</span>
+                            <form method="POST" action="/asignar-usuario/{{ actividad.id }}/" style="margin:0;">
+                                {% csrf_token %}
+                                <input type="hidden" name="usuario_id" value="{{ asignacion.usuario_asignado.id }}">
+                                <input type="hidden" name="accion" value="desasignar">
+                                <button type="submit" class="btn-desasignar" title="Remover">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </form>
+                        </div>
+                    {% empty %}
+                        <div class="usuarios-empty">
+                            <i class="fas fa-user-slash" style="margin-right:6px;"></i>
+                            No hay usuarios asignados todavía.
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {% if usuarios_disponibles %}
+                <form method="POST" action="/asignar-usuario/{{ actividad.id }}/" class="asignar-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="accion" value="asignar">
+                    <div class="form-field">
+                        <label>Asignar usuario</label>
+                        <select name="usuario_id">
+                            {% for usuario in usuarios_disponibles %}
+                                <option value="{{ usuario.id }}">{{ usuario.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-asignar">
+                        <i class="fas fa-user-plus"></i> Asignar
+                    </button>
+                </form>
+                {% else %}
+                    <p style="font-size:13px;color:#aaa;margin-top:16px;padding-top:16px;border-top:1px solid #eee;">
+                        Todos los usuarios ya están asignados.
+                    </p>
+                {% endif %}
+
+            </div>
+        </div>
+
+        <!-- ARCHIVOS ADJUNTOS -->
+        <div class="section-card">
+            <div class="section-card-header">
+                <div><h2><i class="fas fa-paperclip"></i> Archivos Adjuntos</h2></div>
+            </div>
+            <div class="section-card-body">
+                {% for archivo in actividad.archivos_adjuntos.all %}
+                    <div class="archivo-item">
+                        <i class="fas fa-file-alt"></i>
+                        <a href="{{ archivo.archivo.url }}" target="_blank">{{ archivo.archivo.name }}</a>
+                        <span class="archivo-meta">Subido por: {{ archivo.usuario_subida }}</span>
+                    </div>
+                {% empty %}
+                    <div class="archivo-empty">
+                        <i class="fas fa-folder-open" style="font-size:22px;margin-bottom:6px;display:block;"></i>
+                        No hay archivos adjuntos aún.
+                    </div>
+                {% endfor %}
+
+                <hr style="border:none;border-top:1px solid #eee;margin:20px 0;">
+
+                <form method="POST" enctype="multipart/form-data" action="/subir-archivo/{{ actividad.id }}/">
+                    {% csrf_token %}
+                    <div class="form-field">
+                        <label>Subir nuevo archivo</label>
+                        <input type="file" name="archivo_adjunto" required>
+                    </div>
+                    <button type="submit" class="btn-submit"><i class="fas fa-upload"></i> Subir Archivo</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- COMENTARIOS -->
+        <div class="section-card">
+            <div class="section-card-header">
+                <div><h2><i class="fas fa-comments"></i> Comentarios</h2></div>
+            </div>
+            <div class="section-card-body">
+                <div id="contenedor-comentarios">
+                    {% for comentario in actividad.comentarios_actividad.all %}
+                        <div class="comentario-item">
+                            <div class="comentario-header">
+                                <div class="comentario-avatar">{{ comentario.usuario_comentario.username|first|upper }}</div>
+                                <span class="comentario-usuario">{{ comentario.usuario_comentario.username }}</span>
+                            </div>
+                            <div class="comentario-texto">{{ comentario.contenido_comentario }}</div>
+                        </div>
+                    {% empty %}
+                        <div class="comentarios-empty">
+                            <i class="fas fa-comment-slash" style="font-size:22px;margin-bottom:6px;display:block;"></i>
+                            Aún no hay comentarios.
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <hr style="border:none;border-top:1px solid #eee;margin:20px 0;">
+
+                <form id="formulario-comentario">
+                    {% csrf_token %}
+                    <div class="form-field">
+                        <label>Nuevo Comentario</label>
+                        <textarea id="comentario-texto" placeholder="Escribe un comentario..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> Comentar</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="toast-container" style="position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px;"></div>
+    <style>@keyframes slideInToast{from{transform:translateX(110px);opacity:0}to{transform:translateX(0);opacity:1}}</style>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showToast(msg,type){const bg=type==='error'?'#c53030':type==='warning'?'#b7791f':'#15803d';const icon=type==='error'?'fa-exclamation-circle':type==='warning'?'fa-exclamation-triangle':'fa-check-circle';const t=document.createElement('div');t.style.cssText=`background:${bg};color:white;padding:14px 18px;border-radius:6px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:10px;box-shadow:0 4px 16px rgba(0,0,0,0.18);max-width:320px;animation:slideInToast 0.3s ease;`;t.innerHTML=`<i class="fas ${icon}"></i><span>${msg}</span><button onclick="this.parentElement.remove()" style="background:none;border:none;color:rgba(255,255,255,0.75);cursor:pointer;margin-left:auto;font-size:18px;line-height:1;">×</button>`;document.getElementById('toast-container').appendChild(t);setTimeout(()=>{t.style.transition='opacity 0.4s';t.style.opacity='0';setTimeout(()=>t.remove(),400);},4500);}
+        {% for message in messages %}showToast('{{ message|escapejs }}','{{ message.tags }}');{% endfor %}
+        const socketComentarios = new WebSocket('ws://' + window.location.host + '/ws/kanban/');
+
+        document.getElementById('formulario-comentario').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const texto = document.getElementById('comentario-texto').value;
+            fetch('/crear-comentario/{{ actividad.id }}/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': obtenerCSRF() },
+                body: `contenido_comentario=${texto}`
+            })
+            .then(r => r.json())
+            .then(data => {
+                socketComentarios.send(JSON.stringify({ tipo: 'nuevo_comentario', actividad_id: '{{ actividad.id }}', usuario: data.usuario, comentario: data.comentario }));
+                document.getElementById('comentario-texto').value = '';
+            });
+        });
+
+        socketComentarios.onmessage = function(e) {
+            const datos = JSON.parse(e.data);
+            const contenido = datos.contenido;
+            if (contenido && contenido.tipo === 'nuevo_comentario' && contenido.actividad_id == '{{ actividad.id }}') {
+                const inicial = contenido.usuario.charAt(0).toUpperCase();
+                const nuevoComentario = `
+                    <div class="comentario-item">
+                        <div class="comentario-header">
+                            <div class="comentario-avatar">${inicial}</div>
+                            <span class="comentario-usuario">${contenido.usuario}</span>
+                        </div>
+                        <div class="comentario-texto">${contenido.comentario}</div>
+                    </div>`;
+                document.getElementById('contenedor-comentarios').innerHTML = nuevoComentario + document.getElementById('contenedor-comentarios').innerHTML;
+            }
+        };
+
+        function obtenerCSRF() {
+            for (let c of document.cookie.split(';')) { c = c.trim(); if (c.startsWith('csrftoken=')) return c.substring('csrftoken='.length); } return '';
+        }
+        (function(){const b=document.getElementById('btn-dark');const i=document.getElementById('dark-icon');function a(on){document.body.classList.toggle('dark',on);if(i)i.className=on?'fas fa-sun':'fas fa-moon';}a(localStorage.getItem('darkMode')==='1');if(b)b.addEventListener('click',function(){const on=!document.body.classList.contains('dark');a(on);localStorage.setItem('darkMode',on?'1':'0');});})();
+    </script>
+</body>
+</html>

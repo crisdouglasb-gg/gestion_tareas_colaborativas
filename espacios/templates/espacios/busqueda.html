@@ -214,13 +214,49 @@
 
         .estado-inicial i { font-size: 48px; margin-bottom: 16px; display: block; color: #ddd; }
         .estado-inicial p { font-size: 14px; }
+        .btn-dark-toggle{background:none;border:1.5px solid #ddd;border-radius:6px;color:#555;padding:5px 10px;font-size:14px;cursor:pointer;transition:all 0.2s;}
+        .btn-dark-toggle:hover{border-color:#000;color:#000;}
+        body.dark{background:#1a1a1a;color:#e0e0e0;}
+        body.dark .navbar{background:#111;border-bottom-color:#333;}
+        body.dark .navbar-brand{color:#fff !important;}
+        body.dark .navbar-brand span{color:#777 !important;}
+        body.dark .sidebar{background:#111;border-right-color:#333;}
+        body.dark .sidebar-item{color:#bbb;}
+        body.dark .sidebar-item:hover{background:#1e1e1e;color:#fff;}
+        body.dark .sidebar-item.active{background:#222;color:#fff;}
+        body.dark .sidebar-section-label{color:#555;}
+        body.dark .sidebar-bottom{border-top-color:#333;}
+        body.dark .nav-username{color:#ccc;}
+        body.dark .btn-logout{background:#333;}
+        body.dark .btn-dark-toggle{border-color:#444;color:#ccc;}
+        body.dark .section-title{color:#e0e0e0;border-bottom-color:#444;}
+        body.dark .page-header h1{color:#e0e0e0;}
+        body.dark .page-header p{color:#777;}
+        body.dark .buscador-card{background:#111;border-color:#333;}
+        body.dark .buscador-input{background:#1a1a1a;border-color:#444;color:#e0e0e0;}
+        body.dark .resultado-item{background:#111;border-color:#333;}
+        body.dark .resultado-item:hover{border-color:#555;}
+        body.dark .resultado-titulo{color:#e0e0e0;}
+        body.dark .resultado-desc{color:#888;}
+        body.dark .estado-badge{background:#1e2a3a;color:#60a5fa;}
+        body.dark .resultados-header{color:#aaa;border-bottom-color:#444;}
+        body.dark .resultados-count{background:#222;color:#aaa;}
+        body.dark .empty-state{background:#111;border-color:#333;}
+        body.dark .estado-inicial{background:#111;border-color:#333;}
+        body.dark .main-content{background:#1a1a1a;}
     </style>
 </head>
 <body>
+    <script>if(localStorage.getItem('darkMode')==='1')document.body.classList.add('dark');</script>
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">Gestión de Tareas <span>Colaborativas</span></a>
             <div class="nav-user">
+                <button class="btn-dark-toggle" id="btn-dark" title="Modo oscuro/claro"><i class="fas fa-moon" id="dark-icon"></i></button>
+                <a href="/notificaciones/" style="position:relative;color:#444;font-size:18px;text-decoration:none;">
+                    <i class="fas fa-bell"></i>
+                    {% if notif_no_leidas > 0 %}<span style="position:absolute;top:-5px;right:-6px;background:#e53e3e;color:white;font-size:10px;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;">{{ notif_no_leidas }}</span>{% endif %}
+                </a>
                 <span class="nav-username"><i class="fas fa-user-circle" style="margin-right:5px;color:#aaa;"></i>{{ request.user.username }}</span>
                 <form action="/logout/" method="POST" style="margin:0;">{% csrf_token %}<button type="submit" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button></form>
             </div>
@@ -415,6 +451,7 @@
                 sugerencias.style.display = 'none';
             }
         });
+        (function(){const b=document.getElementById('btn-dark');const i=document.getElementById('dark-icon');function a(on){document.body.classList.toggle('dark',on);if(i)i.className=on?'fas fa-sun':'fas fa-moon';}a(localStorage.getItem('darkMode')==='1');if(b)b.addEventListener('click',function(){const on=!document.body.classList.contains('dark');a(on);localStorage.setItem('darkMode',on?'1':'0');});})();
     </script>
 </body>
 </html>

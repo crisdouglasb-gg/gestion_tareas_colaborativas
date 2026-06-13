@@ -12,7 +12,6 @@ urlpatterns = [
         admin.site.urls
     ),
 
-    # Login del sistema
     path(
         'login/',
         auth_views.LoginView.as_view(
@@ -21,26 +20,22 @@ urlpatterns = [
         name='login'
     ),
 
-    # Logout del sistema
     path(
-    'logout/',
-    auth_views.LogoutView.as_view(
-        next_page='/login/'
+        'logout/',
+        auth_views.LogoutView.as_view(
+            next_page='/login/'
+        ),
+        name='logout'
     ),
-    name='logout'
-),
 
-    # Dashboard principal
-    path(
-        '',
-        include('espacios.urls')
-    ),
+    path('', include('espacios.urls')),
+    path('', include('actividades.urls')),
+    path('', include('paneles.urls')),
+    path('', include('notificaciones.urls')),
+    path('', include('usuarios.urls')),
 
 ]
 urlpatterns += static(
-
     settings.MEDIA_URL,
-
     document_root=settings.MEDIA_ROOT
-
 )
