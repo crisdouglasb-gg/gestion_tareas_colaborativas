@@ -294,6 +294,7 @@
                                 {{ asignacion.usuario_asignado.username|first|upper }}
                             </div>
                             <span class="usuario-nombre">{{ asignacion.usuario_asignado.username }}</span>
+                            {% if mi_perfil and mi_perfil.es_lider_o_superior %}
                             <form method="POST" action="/asignar-usuario/{{ actividad.id }}/" style="margin:0;">
                                 {% csrf_token %}
                                 <input type="hidden" name="usuario_id" value="{{ asignacion.usuario_asignado.id }}">
@@ -302,6 +303,7 @@
                                     <i class="fas fa-times"></i>
                                 </button>
                             </form>
+                            {% endif %}
                         </div>
                     {% empty %}
                         <div class="usuarios-empty">
@@ -311,26 +313,28 @@
                     {% endfor %}
                 </div>
 
-                {% if usuarios_disponibles %}
-                <form method="POST" action="/asignar-usuario/{{ actividad.id }}/" class="asignar-form">
-                    {% csrf_token %}
-                    <input type="hidden" name="accion" value="asignar">
-                    <div class="form-field">
-                        <label>Asignar usuario</label>
-                        <select name="usuario_id">
-                            {% for usuario in usuarios_disponibles %}
-                                <option value="{{ usuario.id }}">{{ usuario.username }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <button type="submit" class="btn-asignar">
-                        <i class="fas fa-user-plus"></i> Asignar
-                    </button>
-                </form>
-                {% else %}
-                    <p style="font-size:13px;color:#aaa;margin-top:16px;padding-top:16px;border-top:1px solid #eee;">
-                        Todos los usuarios ya están asignados.
-                    </p>
+                {% if mi_perfil and mi_perfil.es_lider_o_superior %}
+                    {% if usuarios_disponibles %}
+                    <form method="POST" action="/asignar-usuario/{{ actividad.id }}/" class="asignar-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="accion" value="asignar">
+                        <div class="form-field">
+                            <label>Asignar usuario</label>
+                            <select name="usuario_id">
+                                {% for usuario in usuarios_disponibles %}
+                                    <option value="{{ usuario.id }}">{{ usuario.username }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-asignar">
+                            <i class="fas fa-user-plus"></i> Asignar
+                        </button>
+                    </form>
+                    {% else %}
+                        <p style="font-size:13px;color:#aaa;margin-top:16px;padding-top:16px;border-top:1px solid #eee;">
+                            Todos los usuarios ya están asignados.
+                        </p>
+                    {% endif %}
                 {% endif %}
 
             </div>

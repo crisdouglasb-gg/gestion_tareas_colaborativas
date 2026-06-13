@@ -6,13 +6,21 @@ from django.shortcuts import render, redirect, get_object_or_404
 from actividades.models import ActividadProyecto, ComentarioActividad, ArchivoAdjuntoActividad
 from paneles.models import ColumnaEstado
 from notificaciones.models import NotificacionSistema
+from usuarios.decorators import rol_requerido
 
 
 @login_required(login_url='/login/')
 def actividades_view(request):
-    actividades_usuario = ActividadProyecto.objects.filter(
-        actividad_archivada=False
-    ).select_related('columna_actual', 'creado_por').order_by('posicion_actividad')
+    perfil = getattr(request.user, 'perfil', None)
+    if perfil and perfil.rol == 'MIEMBRO':
+        actividades_usuario = ActividadProyecto.objects.filter(
+            actividad_archivada=False,
+            creado_por=request.user
+        ).select_related('columna_actual', 'creado_por').order_by('posicion_actividad')
+    else:
+        actividades_usuario = ActividadProyecto.objects.filter(
+            actividad_archivada=False
+        ).select_related('columna_actual', 'creado_por').order_by('posicion_actividad')
     contexto = {'actividades_usuario': actividades_usuario}
     return render(request, 'actividades/actividades.html', contexto)
 
@@ -48,6 +56,13 @@ def editar_actividad_frontend(request, actividad_id):
 
     actividad = get_object_or_404(ActividadProyecto, id=actividad_id)
 
+    perfil = getattr(request.user, 'perfil', None)
+    es_miembro = perfil and perfil.rol == 'MIEMBRO'
+
+    if es_miembro and actividad.creado_por != request.user:
+        messages.error(request, 'Solo puedes editar tus propias actividades.')
+        return redirect('actividades')
+
     if request.method == 'POST':
         actividad.titulo_actividad = request.POST.get('titulo_actividad')
         actividad.descripcion_detallada = request.POST.get('descripcion_actividad')
@@ -77,6 +92,7 @@ def editar_actividad_frontend(request, actividad_id):
 
 
 @login_required(login_url='/login/')
+@rol_requerido('ADMIN', 'LIDER')
 def eliminar_actividad_frontend(request, actividad_id):
     actividad = get_object_or_404(ActividadProyecto, id=actividad_id)
     if request.method == 'POST':
@@ -139,6 +155,7 @@ def crear_comentario(request, actividad_id):
 
 
 @login_required(login_url='/login/')
+@rol_requerido('ADMIN', 'LIDER')
 def asignar_usuario_actividad(request, actividad_id):
     from django.contrib.auth.models import User
     from actividades.models import AsignacionActividad

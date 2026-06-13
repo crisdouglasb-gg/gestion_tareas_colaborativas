@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar Usuarios - Gestión de Tareas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f0f0f0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; min-height: 100vh; }
+        .navbar { background: #fff; border-bottom: 2px solid #222; padding: 0 25px; height: 62px; display: flex; align-items: center; justify-content: space-between; }
+        .navbar-brand { font-weight: 700; color: #000; font-size: 20px; text-decoration: none; }
+        .navbar-brand span { font-weight: 400; color: #666; font-size: 14px; margin-left: 8px; }
+        .nav-user { display: flex; align-items: center; gap: 18px; }
+        .nav-username { font-size: 14px; font-weight: 600; color: #333; }
+        .btn-logout { background: #000; color: white !important; border: none; padding: 7px 16px; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 6px; }
+        .btn-logout:hover { background: #333; }
+        .layout { display: flex; min-height: calc(100vh - 62px); }
+        .sidebar { background: #fff; border-right: 2px solid #222; width: 240px; flex-shrink: 0; padding: 20px 0; display: flex; flex-direction: column; }
+        .sidebar-section-label { font-size: 11px; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 1px; padding: 0 25px; margin: 18px 0 8px; }
+        .sidebar-item { padding: 11px 25px; border-left: 3px solid transparent; transition: all 0.2s; color: #444; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .sidebar-item i { width: 16px; font-size: 14px; color: #888; }
+        .sidebar-item:hover { background: #f5f5f5; border-left-color: #555; color: #000; text-decoration: none; }
+        .sidebar-item.active { background: #f0f0f0; border-left-color: #000; color: #000; font-weight: 600; }
+        .sidebar-item.active i { color: #000; }
+        .sidebar-bottom { margin-top: auto; border-top: 1px solid #e0e0e0; padding-top: 10px; }
+        .main-content { flex: 1; padding: 35px 40px; }
+        .page-header { margin-bottom: 30px; }
+        .page-header h1 { font-size: 26px; font-weight: 700; color: #000; margin-bottom: 5px; }
+        .page-header p { color: #666; font-size: 14px; }
+
+        .usuarios-table { background: white; border: 1px solid #ddd; border-radius: 6px; overflow: hidden; }
+        .table-header { display: grid; grid-template-columns: 2fr 2fr 1.5fr 1fr 48px; gap: 16px; padding: 12px 20px; background: #f8f8f8; border-bottom: 2px solid #222; font-size: 11px; font-weight: 700; color: #666; text-transform: uppercase; letter-spacing: 0.5px; }
+        .usuario-row { display: grid; grid-template-columns: 2fr 2fr 1.5fr 1fr 48px; gap: 16px; padding: 14px 20px; border-bottom: 1px solid #f0f0f0; align-items: center; transition: background 0.15s; }
+        .usuario-row:last-child { border-bottom: none; }
+        .usuario-row:hover { background: #fafafa; }
+        .usuario-avatar { width: 34px; height: 34px; background: #222; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+        .usuario-info { display: flex; align-items: center; gap: 10px; }
+        .usuario-nombre { font-size: 14px; font-weight: 600; color: #000; }
+        .usuario-email { font-size: 12px; color: #888; }
+        .superuser-badge { font-size: 10px; background: #000; color: white; padding: 2px 7px; border-radius: 20px; font-weight: 600; margin-left: 6px; }
+
+        .rol-badge { font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; display: inline-block; }
+        .rol-ADMIN  { background: #000; color: white; }
+        .rol-LIDER  { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+        .rol-MIEMBRO { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+
+        .rol-form { display: flex; align-items: center; gap: 8px; }
+        .rol-select { border: 1.5px solid #ddd; border-radius: 4px; padding: 5px 10px; font-size: 13px; color: #333; cursor: pointer; background: #fafafa; }
+        .rol-select:focus { border-color: #000; outline: none; }
+        .btn-guardar { background: #000; color: white; border: none; padding: 5px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+        .btn-guardar:hover { background: #333; }
+        .yo-badge { font-size: 11px; color: #aaa; font-style: italic; }
+        .acciones-col { display: flex; gap: 6px; }
+        .btn-editar-usuario { background: none; border: 1.5px solid #ddd; color: #555; border-radius: 4px; padding: 5px 9px; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+        .btn-editar-usuario:hover { border-color: #000; color: #000; }
+        .btn-eliminar-usuario { background: none; border: 1.5px solid #e53e3e; color: #e53e3e; border-radius: 4px; padding: 5px 9px; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+        .btn-eliminar-usuario:hover { background: #e53e3e; color: white; }
+        .btn-eliminar-usuario:disabled { opacity: 0.3; cursor: not-allowed; border-color: #ccc; color: #ccc; }
+
+        /* Modal */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-overlay.active { display: flex; }
+        .modal-box { background: white; border-radius: 8px; padding: 32px; max-width: 440px; width: 90%; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+        .modal-icon { width: 52px; height: 52px; background: #fff5f5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 22px; color: #e53e3e; }
+        .modal-title { font-size: 18px; font-weight: 700; color: #000; text-align: center; margin-bottom: 8px; }
+        .modal-desc { font-size: 13px; color: #666; text-align: center; line-height: 1.6; margin-bottom: 20px; }
+        .modal-warning { background: #fff5f5; border: 1px solid #feb2b2; border-radius: 4px; padding: 10px 14px; font-size: 12px; color: #c53030; margin-bottom: 20px; }
+        .modal-warning ul { margin: 6px 0 0 16px; }
+        .modal-confirm-input { width: 100%; border: 1.5px solid #ddd; border-radius: 4px; padding: 9px 12px; font-size: 14px; margin-bottom: 16px; }
+        .modal-confirm-input:focus { border-color: #e53e3e; outline: none; }
+        .modal-actions { display: flex; gap: 10px; }
+        .btn-modal-cancel { flex: 1; background: transparent; border: 1.5px solid #ddd; border-radius: 4px; padding: 10px; font-size: 13px; font-weight: 600; cursor: pointer; color: #555; }
+        .btn-modal-cancel:hover { border-color: #000; color: #000; }
+        .btn-modal-confirm { flex: 1; background: #e53e3e; border: none; border-radius: 4px; padding: 10px; font-size: 13px; font-weight: 600; cursor: pointer; color: white; transition: background 0.2s; }
+        .btn-modal-confirm:hover { background: #c53030; }
+        .btn-modal-confirm:disabled { background: #ccc; cursor: not-allowed; }
+        body.dark .modal-box { background: #1a1a1a; border: 1px solid #333; }
+        body.dark .modal-title { color: #e0e0e0; }
+        body.dark .modal-desc { color: #888; }
+        body.dark .modal-confirm-input { background: #111; border-color: #444; color: #e0e0e0; }
+        body.dark .modal-warning { background: #2a1010; border-color: #c53030; }
+
+        .btn-dark-toggle { background: none; border: 1.5px solid #ddd; border-radius: 6px; color: #555; padding: 5px 10px; font-size: 14px; cursor: pointer; transition: all 0.2s; }
+        .btn-dark-toggle:hover { border-color: #000; color: #000; }
+
+        body.dark { background: #1a1a1a; color: #e0e0e0; }
+        body.dark .navbar { background: #111; border-bottom-color: #333; }
+        body.dark .navbar-brand { color: #fff; }
+        body.dark .navbar-brand span { color: #777; }
+        body.dark .sidebar { background: #111; border-right-color: #333; }
+        body.dark .sidebar-item { color: #bbb; }
+        body.dark .sidebar-item:hover { background: #1e1e1e; color: #fff; }
+        body.dark .sidebar-item.active { background: #222; color: #fff; }
+        body.dark .sidebar-section-label { color: #555; }
+        body.dark .sidebar-bottom { border-top-color: #333; }
+        body.dark .nav-username { color: #ccc; }
+        body.dark .btn-logout { background: #333; }
+        body.dark .btn-dark-toggle { border-color: #444; color: #ccc; }
+        body.dark .page-header h1 { color: #e0e0e0; }
+        body.dark .page-header p { color: #777; }
+        body.dark .main-content { background: #1a1a1a; }
+        body.dark .usuarios-table { background: #111; border-color: #333; }
+        body.dark .table-header { background: #1a1a1a; border-bottom-color: #444; color: #888; }
+        body.dark .usuario-row { border-bottom-color: #2a2a2a; }
+        body.dark .usuario-row:hover { background: #1a1a1a; }
+        body.dark .usuario-nombre { color: #e0e0e0; }
+        body.dark .usuario-email { color: #666; }
+        body.dark .rol-select { background: #1a1a1a; border-color: #444; color: #ccc; }
+    </style>
+</head>
+<body>
+    <script>if(localStorage.getItem('darkMode')==='1')document.body.classList.add('dark');</script>
+
+    <nav class="navbar">
+        <a class="navbar-brand" href="/">Gestión de Tareas <span>Colaborativas</span></a>
+        <div class="nav-user">
+            <button class="btn-dark-toggle" id="btn-dark" title="Modo oscuro/claro"><i class="fas fa-moon" id="dark-icon"></i></button>
+            <a href="/notificaciones/" style="position:relative;color:#444;font-size:18px;text-decoration:none;">
+                <i class="fas fa-bell"></i>
+                {% if notif_no_leidas > 0 %}<span style="position:absolute;top:-5px;right:-6px;background:#e53e3e;color:white;font-size:10px;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;">{{ notif_no_leidas }}</span>{% endif %}
+            </a>
+            <span class="nav-username"><i class="fas fa-user-circle" style="margin-right:5px;color:#aaa;"></i>{{ request.user.username }}</span>
+            <form action="/logout/" method="POST" style="margin:0;">{% csrf_token %}<button type="submit" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button></form>
+        </div>
+    </nav>
+
+    <div class="layout">
+        <div class="sidebar">
+            <div class="sidebar-section-label">Principal</div>
+            <a class="sidebar-item" href="/"><i class="fas fa-home"></i> Inicio</a>
+            <a class="sidebar-item" href="/mis-tareas/"><i class="fas fa-tasks"></i> Mis Tareas</a>
+            <div class="sidebar-section-label">Trabajo</div>
+            <a class="sidebar-item" href="/paneles/"><i class="fas fa-th"></i> Paneles Kanban</a>
+            <a class="sidebar-item" href="/actividades/"><i class="fas fa-list-check"></i> Actividades</a>
+            <a class="sidebar-item" href="/notificaciones/"><i class="fas fa-bell"></i> Notificaciones</a>
+            <a class="sidebar-item" href="/buscar/"><i class="fas fa-search"></i> Búsqueda</a>
+            <div class="sidebar-bottom">
+                <div class="sidebar-section-label">Cuenta</div>
+                <a class="sidebar-item" href="/perfil/"><i class="fas fa-user"></i> Mi Perfil</a>
+                <div class="sidebar-section-label">Admin</div>
+                <a class="sidebar-item active" href="/usuarios/"><i class="fas fa-users-cog"></i> Gestionar Usuarios</a>
+                <a class="sidebar-item" href="/admin/"><i class="fas fa-cog"></i> Panel Admin</a>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="page-header">
+                <h1><i class="fas fa-users-cog" style="margin-right:10px;"></i>Gestionar Usuarios</h1>
+                <p>Administra los roles de los miembros del equipo</p>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div style="background:{% if message.tags == 'error' %}#fff5f5;border-color:#e53e3e;color:#c53030{% else %}#f0fdf4;border-color:#22c55e;color:#15803d{% endif %};border:1px solid;border-radius:4px;padding:10px 16px;font-size:13px;margin-bottom:20px;display:flex;align-items:center;gap:8px;">
+                        <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="usuarios-table">
+                <div class="table-header">
+                    <div>Usuario</div>
+                    <div>Email</div>
+                    <div>Rol actual</div>
+                    <div>Cambiar rol</div>
+                    <div></div>
+                </div>
+
+                {% for usuario in usuarios %}
+                <div class="usuario-row">
+                    <div class="usuario-info">
+                        <div class="usuario-avatar">{{ usuario.username|first|upper }}</div>
+                        <div>
+                            <div class="usuario-nombre">
+                                {{ usuario.username }}
+                                {% if usuario.is_superuser %}<span class="superuser-badge">Superuser</span>{% endif %}
+                                {% if usuario == request.user %}<span style="font-size:11px;color:#aaa;font-style:italic;margin-left:4px;">(tú)</span>{% endif %}
+                            </div>
+                            {% if usuario.first_name %}<div class="usuario-email">{{ usuario.first_name }}</div>{% endif %}
+                        </div>
+                    </div>
+                    <div style="font-size:13px;color:#666;">{{ usuario.email|default:"—" }}</div>
+                    <div>
+                        {% if usuario.perfil %}
+                            <span class="rol-badge rol-{{ usuario.perfil.rol }}">{{ usuario.perfil.get_rol_display }}</span>
+                        {% else %}
+                            <span class="rol-badge rol-MIEMBRO">Miembro</span>
+                        {% endif %}
+                    </div>
+                    <div>
+                        {% if usuario != request.user %}
+                        <form method="POST" class="rol-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
+                            <select name="rol" class="rol-select">
+                                <option value="ADMIN" {% if usuario.perfil.rol == 'ADMIN' %}selected{% endif %}>Admin</option>
+                                <option value="LIDER" {% if usuario.perfil.rol == 'LIDER' %}selected{% endif %}>Líder</option>
+                                <option value="MIEMBRO" {% if usuario.perfil.rol == 'MIEMBRO' %}selected{% endif %}>Miembro</option>
+                            </select>
+                            <button type="submit" class="btn-guardar"><i class="fas fa-save"></i></button>
+                        </form>
+                        {% else %}
+                            <span class="yo-badge">Tu propio rol</span>
+                        {% endif %}
+                    </div>
+                    <div class="acciones-col">
+                        <button class="btn-editar-usuario"
+                                onclick="abrirModalEditar('{{ usuario.id }}', '{{ usuario.username }}', '{{ usuario.first_name|escapejs }}')"
+                                title="Editar nombre">
+                            <i class="fas fa-pen"></i>
+                        </button>
+                        {% if usuario != request.user and not usuario.is_superuser %}
+                        <button class="btn-eliminar-usuario"
+                                onclick="abrirModal('{{ usuario.id }}', '{{ usuario.username }}')"
+                                title="Eliminar usuario">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal editar nombre -->
+    <div class="modal-overlay" id="modal-editar">
+        <div class="modal-box">
+            <div class="modal-icon" style="background:#f0f9ff;color:#1d4ed8;"><i class="fas fa-pen"></i></div>
+            <div class="modal-title">Editar usuario</div>
+            <p class="modal-desc">Modifica los datos de <strong id="editar-username-display"></strong></p>
+            <form method="POST" id="form-editar">
+                {% csrf_token %}
+                <div style="margin-bottom:14px;">
+                    <label style="font-size:12px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Nombre de usuario (login)</label>
+                    <input type="text" name="nuevo_username" id="editar-input-username" class="modal-confirm-input" style="margin-bottom:0;" placeholder="Nombre de usuario">
+                </div>
+                <div style="margin-bottom:20px;">
+                    <label style="font-size:12px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Nombre completo</label>
+                    <input type="text" name="nuevo_nombre" id="editar-input-nombre" class="modal-confirm-input" style="margin-bottom:0;" placeholder="Nombre completo (opcional)">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-modal-cancel" onclick="cerrarModalEditar()"><i class="fas fa-times" style="margin-right:5px;"></i>Cancelar</button>
+                    <button type="submit" class="btn-modal-confirm" style="background:#1d4ed8;"><i class="fas fa-save" style="margin-right:5px;"></i>Guardar cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación eliminación -->
+    <div class="modal-overlay" id="modal-eliminar">
+        <div class="modal-box">
+            <div class="modal-icon"><i class="fas fa-exclamation-triangle"></i></div>
+            <div class="modal-title">¿Eliminar usuario?</div>
+            <p class="modal-desc">Estás a punto de eliminar a <strong id="modal-username-display"></strong>. Esta acción no se puede deshacer.</p>
+            <div class="modal-warning">
+                <strong><i class="fas fa-exclamation-circle" style="margin-right:5px;"></i>Se eliminará permanentemente:</strong>
+                <ul>
+                    <li>Su cuenta de acceso</li>
+                    <li>Sus actividades y comentarios</li>
+                    <li>Sus notificaciones</li>
+                    <li>Sus asignaciones</li>
+                </ul>
+            </div>
+            <p style="font-size:13px;color:#666;margin-bottom:8px;">Escribe <strong id="modal-username-hint"></strong> para confirmar:</p>
+            <input type="text" class="modal-confirm-input" id="modal-confirm-input" placeholder="Nombre de usuario..." oninput="validarConfirmacion()">
+            <div class="modal-actions">
+                <button class="btn-modal-cancel" onclick="cerrarModal()"><i class="fas fa-times" style="margin-right:5px;"></i>Cancelar</button>
+                <form method="POST" id="form-eliminar" style="flex:1;">
+                    {% csrf_token %}
+                    <input type="hidden" name="confirmacion_username" id="hidden-confirmacion">
+                    <button type="submit" class="btn-modal-confirm" id="btn-confirmar-eliminar" disabled style="width:100%;">
+                        <i class="fas fa-trash" style="margin-right:5px;"></i>Sí, eliminar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function abrirModalEditar(userId, username, nombre) {
+            document.getElementById('editar-username-display').textContent = username;
+            document.getElementById('editar-input-username').value = username;
+            document.getElementById('editar-input-nombre').value = nombre;
+            document.getElementById('form-editar').action = '/usuarios/editar/' + userId + '/';
+            document.getElementById('modal-editar').classList.add('active');
+            setTimeout(() => document.getElementById('editar-input-username').focus(), 100);
+        }
+
+        function cerrarModalEditar() {
+            document.getElementById('modal-editar').classList.remove('active');
+        }
+
+        document.getElementById('modal-editar').addEventListener('click', function(e) {
+            if (e.target === this) cerrarModalEditar();
+        });
+
+        let usernameObjetivo = '';
+
+        function abrirModal(userId, username) {
+            usernameObjetivo = username;
+            document.getElementById('modal-username-display').textContent = username;
+            document.getElementById('modal-username-hint').textContent = username;
+            document.getElementById('modal-confirm-input').value = '';
+            document.getElementById('btn-confirmar-eliminar').disabled = true;
+            document.getElementById('form-eliminar').action = '/usuarios/eliminar/' + userId + '/';
+            document.getElementById('modal-eliminar').classList.add('active');
+            setTimeout(() => document.getElementById('modal-confirm-input').focus(), 100);
+        }
+
+        function cerrarModal() {
+            document.getElementById('modal-eliminar').classList.remove('active');
+        }
+
+        function validarConfirmacion() {
+            const val = document.getElementById('modal-confirm-input').value;
+            const btn = document.getElementById('btn-confirmar-eliminar');
+            const hidden = document.getElementById('hidden-confirmacion');
+            const ok = val === usernameObjetivo;
+            btn.disabled = !ok;
+            hidden.value = val;
+        }
+
+        document.getElementById('modal-eliminar').addEventListener('click', function(e) {
+            if (e.target === this) cerrarModal();
+        });
+
+        (function(){const b=document.getElementById('btn-dark');const i=document.getElementById('dark-icon');function a(on){document.body.classList.toggle('dark',on);if(i)i.className=on?'fas fa-sun':'fas fa-moon';}a(localStorage.getItem('darkMode')==='1');if(b)b.addEventListener('click',function(){const on=!document.body.classList.contains('dark');a(on);localStorage.setItem('darkMode',on?'1':'0');});})();
+    </script>
+</body>
+</html>
