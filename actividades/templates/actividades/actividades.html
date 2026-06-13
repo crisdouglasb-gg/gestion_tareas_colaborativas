@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actividades - Gestión de Tareas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f0f0f0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; min-height: 100vh; }
+        .navbar { background: #fff; border-bottom: 2px solid #222; padding: 0 25px; height: 62px; }
+        .navbar-brand { font-weight: 700; color: #000 !important; font-size: 20px; }
+        .navbar-brand span { font-weight: 400; color: #666 !important; font-size: 14px; margin-left: 8px; }
+        .nav-user { display: flex; align-items: center; gap: 18px; }
+        .nav-username { font-size: 14px; font-weight: 600; color: #333; }
+        .btn-logout { background: #000; color: white !important; border: none; padding: 7px 16px; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 6px; }
+        .btn-logout:hover { background: #333; }
+        .layout { display: flex; min-height: calc(100vh - 62px); }
+        .sidebar { background: #fff; border-right: 2px solid #222; width: 240px; flex-shrink: 0; padding: 20px 0; display: flex; flex-direction: column; }
+        .sidebar-section-label { font-size: 11px; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 1px; padding: 0 25px; margin: 18px 0 8px; }
+        .sidebar-item { padding: 11px 25px; border-left: 3px solid transparent; transition: all 0.2s; color: #444; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .sidebar-item i { width: 16px; font-size: 14px; color: #888; }
+        .sidebar-item:hover { background: #f5f5f5; border-left-color: #555; color: #000; text-decoration: none; }
+        .sidebar-item.active { background: #f0f0f0; border-left-color: #000; color: #000; font-weight: 600; }
+        .sidebar-item.active i { color: #000; }
+        .sidebar-bottom { margin-top: auto; border-top: 1px solid #e0e0e0; padding-top: 10px; }
+        .main-content { flex: 1; padding: 35px 40px; }
+        .page-header { margin-bottom: 30px; }
+        .page-header h1 { font-size: 26px; font-weight: 700; color: #000; margin-bottom: 5px; }
+        .page-header p { color: #666; font-size: 14px; }
+        .section-title { font-size: 15px; font-weight: 700; color: #000; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #222; display: flex; align-items: center; justify-content: space-between; }
+        .btn-nuevo { background: #000; color: white; border: none; padding: 8px 16px; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: background 0.2s; }
+        .btn-nuevo:hover { background: #333; color: white; text-decoration: none; }
+        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 28px; }
+        .stat-mini { background: white; border: 1px solid #ddd; border-radius: 6px; padding: 16px 18px; display: flex; align-items: center; gap: 12px; }
+        .stat-mini-icon { width: 38px; height: 38px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+        .icon-total    { background: #f0f0f0; color: #333; }
+        .icon-alta     { background: #fff0f0; color: #c53030; }
+        .icon-progreso { background: #fefce8; color: #a16207; }
+        .icon-ok       { background: #f0fdf4; color: #15803d; }
+        .stat-mini-num { font-size: 22px; font-weight: 700; color: #000; line-height: 1; }
+        .stat-mini-label { font-size: 12px; color: #777; margin-top: 2px; }
+        .actividades-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+        .actividad-card { background: white; border: 1px solid #ddd; border-radius: 6px; padding: 20px; transition: all 0.2s; border-left: 4px solid #ddd; }
+        .actividad-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.08); transform: translateY(-1px); }
+        .actividad-card.alta    { border-left-color: #e53e3e; }
+        .actividad-card.media   { border-left-color: #f59e0b; }
+        .actividad-card.baja    { border-left-color: #22c55e; }
+        .actividad-card.urgente { border-left-color: #7c3aed; }
+        .actividad-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+        .actividad-titulo { font-size: 14px; font-weight: 700; color: #000; flex: 1; margin-right: 10px; }
+        .priority-badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; flex-shrink: 0; }
+        .priority-alta    { background: #fff0f0; color: #c53030; }
+        .priority-media   { background: #fffaf0; color: #b7791f; }
+        .priority-baja    { background: #f0fff4; color: #276749; }
+        .priority-urgente { background: #f5f3ff; color: #7c3aed; }
+        .actividad-desc { font-size: 13px; color: #666; line-height: 1.5; margin-bottom: 14px; }
+        .actividad-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; border-top: 1px solid #f0f0f0; }
+        .actividad-meta { font-size: 12px; color: #aaa; display: flex; align-items: center; gap: 5px; }
+        .actividad-acciones { display: flex; gap: 6px; }
+        .btn-accion { font-size: 11px; padding: 4px 10px; border-radius: 3px; border: none; cursor: pointer; font-weight: 600; text-decoration: none; transition: opacity 0.2s; }
+        .btn-accion:hover { opacity: 0.8; text-decoration: none; }
+        .btn-editar   { background: #000; color: white; }
+        .btn-eliminar { background: #e53e3e; color: white; }
+        .empty-state { text-align: center; padding: 60px 20px; color: #aaa; background: white; border: 1px solid #ddd; border-radius: 6px; grid-column: 1/-1; }
+        .empty-state i { font-size: 48px; margin-bottom: 16px; display: block; }
+        .empty-state p { font-size: 15px; margin-bottom: 20px; }
+        .view-toggle { display: flex; gap: 4px; }
+        .btn-view { background: #f0f0f0; border: 1px solid #ddd; color: #666; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 13px; transition: all 0.2s; }
+        .btn-view.active { background: #000; color: white; border-color: #000; }
+        .btn-view:hover:not(.active) { background: #e0e0e0; }
+        /* VISTA LISTA */
+        .lista-view { display: none; background: white; border: 1px solid #ddd; border-radius: 6px; overflow: hidden; }
+        .lista-view.activa { display: block; }
+        .actividades-grid.oculta { display: none; }
+        .lista-header { display: grid; grid-template-columns: 2fr 1fr 1fr 100px; padding: 11px 18px; background: #f8f8f8; border-bottom: 2px solid #222; font-size: 11px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }
+        .lista-row { display: grid; grid-template-columns: 2fr 1fr 1fr 100px; padding: 14px 18px; border-bottom: 1px solid #f0f0f0; align-items: center; transition: background 0.15s; }
+        .lista-row:last-child { border-bottom: none; }
+        .lista-row:hover { background: #fafafa; }
+        .lista-titulo { font-size: 14px; font-weight: 600; color: #000; margin-bottom: 3px; }
+        .lista-desc { font-size: 12px; color: #888; }
+        .lista-acciones { display: flex; gap: 6px; }
+        .btn-dark-toggle{background:none;border:1.5px solid #ddd;border-radius:6px;color:#555;padding:5px 10px;font-size:14px;cursor:pointer;transition:all 0.2s;}
+        .btn-dark-toggle:hover{border-color:#000;color:#000;}
+        body.dark{background:#1a1a1a;color:#e0e0e0;}
+        body.dark .navbar{background:#111;border-bottom-color:#333;}
+        body.dark .navbar-brand{color:#fff !important;}
+        body.dark .navbar-brand span{color:#777 !important;}
+        body.dark .sidebar{background:#111;border-right-color:#333;}
+        body.dark .sidebar-item{color:#bbb;}
+        body.dark .sidebar-item:hover{background:#1e1e1e;color:#fff;}
+        body.dark .sidebar-item.active{background:#222;color:#fff;}
+        body.dark .sidebar-section-label{color:#555;}
+        body.dark .sidebar-bottom{border-top-color:#333;}
+        body.dark .nav-username{color:#ccc;}
+        body.dark .btn-logout{background:#333;}
+        body.dark .btn-dark-toggle{border-color:#444;color:#ccc;}
+        body.dark .section-title{color:#e0e0e0;border-bottom-color:#444;}
+        body.dark .page-header h1{color:#e0e0e0;}
+        body.dark .page-header p{color:#777;}
+        body.dark .actividad-card{background:#111;border-color:#333;}
+        body.dark .actividad-titulo{color:#e0e0e0;}
+        body.dark .actividad-desc{color:#888;}
+        body.dark .actividad-footer{border-top-color:#333;}
+        body.dark .actividad-meta{color:#777;}
+        body.dark .stat-mini{background:#111;border-color:#333;}
+        body.dark .stat-mini-num{color:#fff;}
+        body.dark .stat-mini-label{color:#888;}
+        body.dark .empty-state{background:#111;border-color:#333;}
+        body.dark .lista-view{background:#111;border-color:#333;}
+        body.dark .lista-header{background:#1a1a1a;border-bottom-color:#444;color:#888;}
+        body.dark .lista-row{border-bottom-color:#333;}
+        body.dark .lista-row:hover{background:#1a1a1a;}
+        body.dark .lista-titulo{color:#e0e0e0;}
+        body.dark .lista-desc{color:#777;}
+        body.dark .btn-view{background:#222;border-color:#333;color:#aaa;}
+        body.dark .btn-view.active{background:#fff;color:#000;border-color:#fff;}
+        body.dark .main-content{background:#1a1a1a;}
+    </style>
+</head>
+<body>
+    <script>if(localStorage.getItem('darkMode')==='1')document.body.classList.add('dark');</script>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Gestión de Tareas <span>Colaborativas</span></a>
+            <div class="nav-user">
+                <button class="btn-dark-toggle" id="btn-dark" title="Modo oscuro/claro"><i class="fas fa-moon" id="dark-icon"></i></button>
+                <a href="/notificaciones/" style="position:relative;color:#444;font-size:18px;text-decoration:none;">
+                    <i class="fas fa-bell"></i>
+                    {% if notif_no_leidas > 0 %}<span style="position:absolute;top:-5px;right:-6px;background:#e53e3e;color:white;font-size:10px;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;">{{ notif_no_leidas }}</span>{% endif %}
+                </a>
+                <span class="nav-username"><i class="fas fa-user-circle" style="margin-right:5px;color:#aaa;"></i>{{ request.user.username }}</span>
+                <form action="/logout/" method="POST" style="margin:0;">{% csrf_token %}<button type="submit" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button></form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="layout">
+        <div class="sidebar">
+            <div class="sidebar-section-label">Principal</div>
+            <a class="sidebar-item" href="/"><i class="fas fa-home"></i> Inicio</a>
+            <a class="sidebar-item" href="/mis-tareas/"><i class="fas fa-tasks"></i> Mis Tareas</a>
+            <div class="sidebar-section-label">Trabajo</div>
+            <a class="sidebar-item" href="/paneles/"><i class="fas fa-th"></i> Paneles Kanban</a>
+            <a class="sidebar-item active" href="/actividades/"><i class="fas fa-list-check"></i> Actividades</a>
+            <a class="sidebar-item" href="/notificaciones/"><i class="fas fa-bell"></i> Notificaciones</a>
+            <a class="sidebar-item" href="/buscar/"><i class="fas fa-search"></i> Búsqueda</a>
+            <div class="sidebar-bottom">
+                <div class="sidebar-section-label">Cuenta</div>
+                <a class="sidebar-item" href="/perfil/"><i class="fas fa-user"></i> Mi Perfil</a>
+                <div class="sidebar-section-label">Sistema</div>
+                <a class="sidebar-item" href="/admin/"><i class="fas fa-cog"></i> Panel Admin</a>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="page-header">
+                <h1><i class="fas fa-list-check" style="margin-right:10px;"></i>Actividades</h1>
+                <p>Seguimiento de todas las actividades del equipo</p>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-mini">
+                    <div class="stat-mini-icon icon-total"><i class="fas fa-layer-group"></i></div>
+                    <div>
+                        <div class="stat-mini-num">{{ actividades_usuario|length|default:"0" }}</div>
+                        <div class="stat-mini-label">Total</div>
+                    </div>
+                </div>
+                <div class="stat-mini">
+                    <div class="stat-mini-icon icon-alta"><i class="fas fa-exclamation-circle"></i></div>
+                    <div>
+                        <div class="stat-mini-num" id="count-alta">0</div>
+                        <div class="stat-mini-label">Alta Prioridad</div>
+                    </div>
+                </div>
+                <div class="stat-mini">
+                    <div class="stat-mini-icon icon-ok"><i class="fas fa-check-circle"></i></div>
+                    <div>
+                        <div class="stat-mini-num" id="count-completadas">0</div>
+                        <div class="stat-mini-label">Completadas</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-title">
+                <span><i class="fas fa-th-list"></i> Todas las Actividades</span>
+                <div style="display:flex;gap:10px;align-items:center;">
+                    <div class="view-toggle">
+                        <button class="btn-view active" id="btn-cards" title="Vista tarjetas"><i class="fas fa-th-large"></i></button>
+                        <button class="btn-view" id="btn-lista" title="Vista lista"><i class="fas fa-list"></i></button>
+                    </div>
+                    <a href="/crear-actividad/" class="btn-nuevo"><i class="fas fa-plus"></i> Nueva Actividad</a>
+                </div>
+            </div>
+
+            <!-- VISTA LISTA -->
+            <div class="lista-view" id="lista-view">
+                <div class="lista-header"><span>Actividad</span><span>Prioridad</span><span>Estado</span><span>Acciones</span></div>
+                {% for actividad in actividades_usuario %}
+                <div class="lista-row">
+                    <div>
+                        <div class="lista-titulo">{{ actividad.titulo_actividad }}</div>
+                        <div class="lista-desc">{{ actividad.descripcion_detallada|truncatechars:60 }}</div>
+                    </div>
+                    <div>
+                        <span class="priority-badge {% if actividad.prioridad_actividad == 'ALTA' %}priority-alta{% elif actividad.prioridad_actividad == 'MEDIA' %}priority-media{% elif actividad.prioridad_actividad == 'URGENTE' %}priority-urgente{% else %}priority-baja{% endif %}">{{ actividad.prioridad_actividad }}</span>
+                    </div>
+                    <div style="font-size:13px;color:#666;">{{ actividad.columna_actual.nombre_columna }}</div>
+                    <div class="lista-acciones">
+                        <a href="/editar-actividad/{{ actividad.id }}/" class="btn-accion btn-editar"><i class="fas fa-edit"></i></a>
+                        <a href="/eliminar-actividad/{{ actividad.id }}/" class="btn-accion btn-eliminar"><i class="fas fa-trash"></i></a>
+                    </div>
+                </div>
+                {% empty %}
+                <div style="text-align:center;padding:40px;color:#aaa;font-size:13px;">No hay actividades aún.</div>
+                {% endfor %}
+            </div>
+
+            <div class="actividades-grid" id="cards-view">
+                {% for actividad in actividades_usuario %}
+                <div class="actividad-card {{ actividad.prioridad_actividad|lower }}"
+                     data-columna="{{ actividad.columna_actual.nombre_columna|lower }}"
+                     data-prioridad="{{ actividad.prioridad_actividad|lower }}">
+                    <div class="actividad-header">
+                        <div class="actividad-titulo">{{ actividad.titulo_actividad }}</div>
+                        <span class="priority-badge
+                            {% if actividad.prioridad_actividad == 'ALTA' %}priority-alta
+                            {% elif actividad.prioridad_actividad == 'MEDIA' %}priority-media
+                            {% elif actividad.prioridad_actividad == 'URGENTE' %}priority-urgente
+                            {% else %}priority-baja{% endif %}">
+                            {{ actividad.prioridad_actividad }}
+                        </span>
+                    </div>
+                    <div class="actividad-desc">{{ actividad.descripcion_detallada|truncatechars:100 }}</div>
+                    <div class="actividad-footer">
+                        <div class="actividad-meta">
+                            <i class="fas fa-columns"></i>
+                            {{ actividad.columna_actual.nombre_columna }}
+                            {% if actividad.fecha_limite %}
+                            &nbsp;·&nbsp;<i class="fas fa-calendar-alt"></i> {{ actividad.fecha_limite }}
+                            {% endif %}
+                        </div>
+                        <div class="actividad-acciones">
+                            <a href="/editar-actividad/{{ actividad.id }}/" class="btn-accion btn-editar"><i class="fas fa-edit"></i></a>
+                            <a href="/eliminar-actividad/{{ actividad.id }}/" class="btn-accion btn-eliminar"><i class="fas fa-trash"></i></a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    <i class="fas fa-clipboard-list"></i>
+                    <p>No hay actividades registradas todavía.</p>
+                    <a href="/crear-actividad/" class="btn-nuevo"><i class="fas fa-plus"></i> Crear Actividad</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" style="position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px;"></div>
+    <style>@keyframes slideInToast{from{transform:translateX(110px);opacity:0}to{transform:translateX(0);opacity:1}}</style>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showToast(msg,type){const bg=type==='error'?'#c53030':type==='warning'?'#b7791f':'#15803d';const icon=type==='error'?'fa-exclamation-circle':type==='warning'?'fa-exclamation-triangle':'fa-check-circle';const t=document.createElement('div');t.style.cssText=`background:${bg};color:white;padding:14px 18px;border-radius:6px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:10px;box-shadow:0 4px 16px rgba(0,0,0,0.18);max-width:320px;animation:slideInToast 0.3s ease;`;t.innerHTML=`<i class="fas ${icon}"></i><span>${msg}</span><button onclick="this.parentElement.remove()" style="background:none;border:none;color:rgba(255,255,255,0.75);cursor:pointer;margin-left:auto;font-size:18px;line-height:1;">×</button>`;document.getElementById('toast-container').appendChild(t);setTimeout(()=>{t.style.transition='opacity 0.4s';t.style.opacity='0';setTimeout(()=>t.remove(),400);},4500);}
+        {% for message in messages %}showToast('{{ message|escapejs }}','{{ message.tags }}');{% endfor %}
+        let alta = 0, completadas = 0;
+        document.querySelectorAll('.actividad-card').forEach(card => {
+            const columna = card.dataset.columna || '';
+            const prioridad = card.dataset.prioridad || '';
+            if (columna.includes('complet')) completadas++;
+            if (prioridad === 'alta' || prioridad === 'urgente') alta++;
+        });
+        document.getElementById('count-alta').textContent = alta;
+        document.getElementById('count-completadas').textContent = completadas;
+
+        // ── Toggle vista ──
+        const btnCards = document.getElementById('btn-cards');
+        const btnLista = document.getElementById('btn-lista');
+        const cardsView = document.getElementById('cards-view');
+        const listaView = document.getElementById('lista-view');
+        const savedView = localStorage.getItem('actividadesView') || 'cards';
+        function setView(v) {
+            if (v === 'lista') {
+                cardsView.classList.add('oculta'); listaView.classList.add('activa');
+                btnLista.classList.add('active'); btnCards.classList.remove('active');
+            } else {
+                cardsView.classList.remove('oculta'); listaView.classList.remove('activa');
+                btnCards.classList.add('active'); btnLista.classList.remove('active');
+            }
+            localStorage.setItem('actividadesView', v);
+        }
+        setView(savedView);
+        btnCards.addEventListener('click', () => setView('cards'));
+        btnLista.addEventListener('click', () => setView('lista'));
+        (function(){const b=document.getElementById('btn-dark');const i=document.getElementById('dark-icon');function a(on){document.body.classList.toggle('dark',on);if(i)i.className=on?'fas fa-sun':'fas fa-moon';}a(localStorage.getItem('darkMode')==='1');if(b)b.addEventListener('click',function(){const on=!document.body.classList.contains('dark');a(on);localStorage.setItem('darkMode',on?'1':'0');});})();
+    </script>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paneles Kanban - Gestión de Tareas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f0f0f0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; min-height: 100vh; }
+        .navbar { background: #fff; border-bottom: 2px solid #222; padding: 0 25px; height: 62px; }
+        .navbar-brand { font-weight: 700; color: #000 !important; font-size: 20px; }
+        .navbar-brand span { font-weight: 400; color: #666 !important; font-size: 14px; margin-left: 8px; }
+        .nav-user { display: flex; align-items: center; gap: 18px; }
+        .nav-username { font-size: 14px; font-weight: 600; color: #333; }
+        .btn-logout { background: #000; color: white !important; border: none; padding: 7px 16px; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 6px; }
+        .btn-logout:hover { background: #333; }
+        .layout { display: flex; min-height: calc(100vh - 62px); }
+        .sidebar { background: #fff; border-right: 2px solid #222; width: 240px; flex-shrink: 0; padding: 20px 0; display: flex; flex-direction: column; }
+        .sidebar-section-label { font-size: 11px; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 1px; padding: 0 25px; margin: 18px 0 8px; }
+        .sidebar-item { padding: 11px 25px; border-left: 3px solid transparent; transition: all 0.2s; color: #444; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .sidebar-item i { width: 16px; font-size: 14px; color: #888; }
+        .sidebar-item:hover { background: #f5f5f5; border-left-color: #555; color: #000; text-decoration: none; }
+        .sidebar-item.active { background: #f0f0f0; border-left-color: #000; color: #000; font-weight: 600; }
+        .sidebar-item.active i { color: #000; }
+        .sidebar-bottom { margin-top: auto; border-top: 1px solid #e0e0e0; padding-top: 10px; }
+        .main-content { flex: 1; padding: 35px 40px; overflow-x: auto; }
+        .page-header { margin-bottom: 30px; }
+        .page-header h1 { font-size: 26px; font-weight: 700; color: #000; margin-bottom: 5px; }
+        .page-header p { color: #666; font-size: 14px; }
+        .section-title { font-size: 15px; font-weight: 700; color: #000; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #222; display: flex; align-items: center; justify-content: space-between; }
+        .btn-nuevo { background: #000; color: white; border: none; padding: 8px 16px; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: background 0.2s; }
+        .btn-nuevo:hover { background: #333; color: white; text-decoration: none; }
+
+        .kanban-board { display: flex; gap: 18px; overflow-x: auto; padding-bottom: 20px; }
+        .kanban-col { background: white; border: 1px solid #ddd; border-radius: 6px; width: 290px; flex-shrink: 0; min-height: 400px; display: flex; flex-direction: column; }
+        .kanban-col-header { padding: 14px 16px; border-bottom: 2px solid #222; display: flex; align-items: center; justify-content: space-between; }
+        .kanban-col-titulo { font-size: 14px; font-weight: 700; color: #000; display: flex; align-items: center; gap: 8px; }
+        .kanban-col-titulo .col-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .col-dot-pendiente  { background: #3b82f6; }
+        .col-dot-progreso   { background: #f59e0b; }
+        .col-dot-revision   { background: #8b5cf6; }
+        .col-dot-completado { background: #22c55e; }
+        .kanban-col-count { background: #f0f0f0; color: #666; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+        .kanban-col-body { padding: 12px; flex: 1; }
+
+        .kanban-card { background: #fafafa; border: 1px solid #e8e8e8; border-radius: 5px; padding: 14px; margin-bottom: 10px; cursor: grab; transition: box-shadow 0.2s, transform 0.15s; }
+        .kanban-card:hover { box-shadow: 0 3px 10px rgba(0,0,0,0.1); transform: translateY(-1px); }
+        .kanban-card-titulo { font-size: 13px; font-weight: 700; color: #000; margin-bottom: 6px; }
+        .kanban-card-desc { font-size: 12px; color: #777; line-height: 1.4; margin-bottom: 10px; }
+        .kanban-card-footer { display: flex; align-items: center; justify-content: space-between; }
+        .priority-badge { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
+        .priority-alta    { background: #fff0f0; color: #c53030; }
+        .priority-media   { background: #fffaf0; color: #b7791f; }
+        .priority-baja    { background: #f0fff4; color: #276749; }
+        .priority-urgente { background: #fff5f5; color: #e53e3e; }
+        .card-date { font-size: 11px; color: #aaa; }
+        .kanban-card-actions { display: flex; gap: 6px; margin-top: 10px; }
+        .btn-card { font-size: 11px; padding: 3px 10px; border-radius: 3px; border: none; cursor: pointer; font-weight: 600; text-decoration: none; transition: opacity 0.2s; }
+        .btn-card:hover { opacity: 0.8; text-decoration: none; }
+        .btn-editar  { background: #000; color: white; }
+        .btn-eliminar { background: #e53e3e; color: white; }
+        .avatares-row { display: flex; gap: -4px; margin-top: 8px; }
+        .avatar-mini { width: 24px; height: 24px; border-radius: 50%; background: #333; color: white; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 2px solid white; margin-left: -5px; flex-shrink: 0; }
+        .avatar-mini:first-child { margin-left: 0; }
+        .avatar-more { background: #e0e0e0; color: #555; }
+        .col-progress-bar { height: 3px; background: #f0f0f0; margin: 0 12px 8px; border-radius: 2px; overflow: hidden; }
+        .col-progress-fill { height: 100%; background: #000; border-radius: 2px; transition: width 0.4s ease; }
+
+        .kanban-add-btn { margin: 0 12px 12px; padding: 8px; border: 1px dashed #ccc; border-radius: 5px; background: transparent; color: #888; font-size: 13px; cursor: pointer; width: calc(100% - 24px); transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .kanban-add-btn:hover { border-color: #000; color: #000; background: #f8f8f8; }
+        a.kanban-add-btn {text-decoration: none;}
+        a.kanban-add-btn:hover  {text-decoration: none;}
+        .empty-col { text-align: center; padding: 30px 16px; color: #ccc; font-size: 13px; }
+        .empty-col i { font-size: 28px; margin-bottom: 8px; display: block; }
+        @keyframes shimmer { 0%{background-position:-400px 0} 100%{background-position:400px 0} }
+        .skeleton { background: linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%); background-size: 800px 100%; animation: shimmer 1.4s infinite; border-radius: 4px; }
+        .skeleton-board { display: flex; gap: 18px; padding: 0 0 20px; }
+        .skeleton-col { background: white; border: 1px solid #ddd; border-radius: 6px; width: 290px; flex-shrink: 0; padding: 16px; }
+        .sk-header { height: 18px; width: 120px; margin-bottom: 16px; }
+        .sk-card { border-radius: 5px; padding: 14px; margin-bottom: 10px; background: #fafafa; border: 1px solid #e8e8e8; }
+        .sk-line { height: 12px; margin-bottom: 8px; }
+        .sk-line.short { width: 60%; }
+        .sk-line.xshort { width: 35%; }
+        .btn-dark-toggle{background:none;border:1.5px solid #ddd;border-radius:6px;color:#555;padding:5px 10px;font-size:14px;cursor:pointer;transition:all 0.2s;}
+        .btn-dark-toggle:hover{border-color:#000;color:#000;}
+        body.dark{background:#1a1a1a;color:#e0e0e0;}
+        body.dark .navbar{background:#111;border-bottom-color:#333;}
+        body.dark .navbar-brand{color:#fff !important;}
+        body.dark .navbar-brand span{color:#777 !important;}
+        body.dark .sidebar{background:#111;border-right-color:#333;}
+        body.dark .sidebar-item{color:#bbb;}
+        body.dark .sidebar-item:hover{background:#1e1e1e;color:#fff;}
+        body.dark .sidebar-item.active{background:#222;color:#fff;}
+        body.dark .sidebar-section-label{color:#555;}
+        body.dark .sidebar-bottom{border-top-color:#333;}
+        body.dark .nav-username{color:#ccc;}
+        body.dark .btn-logout{background:#333;}
+        body.dark .btn-dark-toggle{border-color:#444;color:#ccc;}
+        body.dark .section-title{color:#e0e0e0;border-bottom-color:#444;}
+        body.dark .page-header h1{color:#e0e0e0;}
+        body.dark .page-header p{color:#777;}
+        body.dark .kanban-col{background:#111;border-color:#333;}
+        body.dark .kanban-col-header{border-bottom-color:#333;color:#e0e0e0;}
+        body.dark .kanban-col-titulo{color:#e0e0e0;}
+        body.dark .kanban-col-count{background:#222;color:#aaa;}
+        body.dark .kanban-card{background:#1a1a1a;border-color:#333;}
+        body.dark .kanban-card-titulo{color:#e0e0e0;}
+        body.dark .kanban-card-desc{color:#888;}
+        body.dark .col-progress-bar{background:#333;}
+        body.dark .kanban-add-btn{border-color:#444;color:#777;}
+        body.dark .kanban-add-btn:hover{border-color:#888;color:#ccc;background:#222;}
+        body.dark .skeleton-col{background:#111;border-color:#333;}
+        body.dark .main-content{background:#1a1a1a;}
+    </style>
+</head>
+<body>
+    <script>if(localStorage.getItem('darkMode')==='1')document.body.classList.add('dark');</script>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Gestión de Tareas <span>Colaborativas</span></a>
+            <div class="nav-user">
+                <button class="btn-dark-toggle" id="btn-dark" title="Modo oscuro/claro"><i class="fas fa-moon" id="dark-icon"></i></button>
+                <a href="/notificaciones/" style="position:relative;color:#444;font-size:18px;text-decoration:none;">
+                    <i class="fas fa-bell"></i>
+                    {% if notif_no_leidas > 0 %}<span style="position:absolute;top:-5px;right:-6px;background:#e53e3e;color:white;font-size:10px;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;">{{ notif_no_leidas }}</span>{% endif %}
+                </a>
+                <span class="nav-username"><i class="fas fa-user-circle" style="margin-right:5px;color:#aaa;"></i>{{ request.user.username }}</span>
+                <form action="/logout/" method="POST" style="margin:0;">{% csrf_token %}<button type="submit" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button></form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="layout">
+        <div class="sidebar">
+            <div class="sidebar-section-label">Principal</div>
+            <a class="sidebar-item" href="/"><i class="fas fa-home"></i> Inicio</a>
+            <a class="sidebar-item" href="/mis-tareas/"><i class="fas fa-tasks"></i> Mis Tareas</a>
+            <div class="sidebar-section-label">Trabajo</div>
+            <a class="sidebar-item active" href="/paneles/"><i class="fas fa-th"></i> Paneles Kanban</a>
+            <a class="sidebar-item" href="/actividades/"><i class="fas fa-list-check"></i> Actividades</a>
+            <a class="sidebar-item" href="/notificaciones/"><i class="fas fa-bell"></i> Notificaciones</a>
+            <a class="sidebar-item" href="/buscar/"><i class="fas fa-search"></i> Búsqueda</a>
+            <div class="sidebar-bottom">
+                <div class="sidebar-section-label">Cuenta</div>
+                <a class="sidebar-item" href="/perfil/"><i class="fas fa-user"></i> Mi Perfil</a>
+                <div class="sidebar-section-label">Sistema</div>
+                <a class="sidebar-item" href="/admin/"><i class="fas fa-cog"></i> Panel Admin</a>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="page-header">
+                <h1><i class="fas fa-th" style="margin-right:10px;"></i>Paneles Kanban</h1>
+                <p>Organiza y mueve tareas entre columnas</p>
+            </div>
+
+            <div class="section-title">
+                <span><i class="fas fa-columns"></i> Tablero Principal</span>
+                <a href="/crear-actividad/" class="btn-nuevo"><i class="fas fa-plus"></i> Nueva Tarea</a>
+            </div>
+
+            <!-- Skeleton loader (se oculta cuando carga el JS) -->
+            <div class="skeleton-board" id="skeleton-board">
+                {% for _ in columnas_sistema %}
+                <div class="skeleton-col">
+                    <div class="sk-header skeleton"></div>
+                    <div class="sk-card"><div class="sk-line skeleton"></div><div class="sk-line short skeleton"></div><div class="sk-line xshort skeleton"></div></div>
+                    <div class="sk-card"><div class="sk-line skeleton"></div><div class="sk-line short skeleton"></div></div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="kanban-board" id="kanban-board" style="display:none;">
+                {% for columna in columnas_sistema %}
+                <div class="kanban-col" data-columna-id="{{ columna.id }}">
+                    <div class="kanban-col-header">
+                        <div class="kanban-col-titulo">
+                            <span class="col-dot col-dot-pendiente"></span>
+                            {{ columna.nombre_columna }}
+                        </div>
+                        <span class="kanban-col-count">0</span>
+                    </div>
+                    <div class="col-progress-bar"><div class="col-progress-fill" style="width:0%" data-col="{{ columna.id }}"></div></div>
+                    <div class="kanban-col-body">
+                        {% for actividad in actividades_usuario %}
+                            {% if actividad.columna_actual.id == columna.id %}
+                            <div class="kanban-card" draggable="true" data-actividad-id="{{ actividad.id }}">
+                                <div class="kanban-card-titulo">{{ actividad.titulo_actividad }}</div>
+                                <div class="kanban-card-desc">{{ actividad.descripcion_detallada|truncatechars:80 }}</div>
+                                <div class="kanban-card-footer">
+                                    <span class="priority-badge
+                                        {% if actividad.prioridad_actividad == 'ALTA' %}priority-alta
+                                        {% elif actividad.prioridad_actividad == 'MEDIA' %}priority-media
+                                        {% elif actividad.prioridad_actividad == 'URGENTE' %}priority-urgente
+                                        {% else %}priority-baja{% endif %}">
+                                        {{ actividad.prioridad_actividad }}
+                                    </span>
+                                    {% if actividad.fecha_limite %}
+                                    <span class="card-date"><i class="fas fa-calendar-alt"></i> {{ actividad.fecha_limite }}</span>
+                                    {% endif %}
+                                </div>
+                                {% if actividad.usuarios_asignados_list %}
+                                <div class="avatares-row">
+                                    {% for u in actividad.usuarios_asignados_list|slice:":4" %}
+                                    <div class="avatar-mini" title="{{ u.username }}">{{ u.username|first|upper }}</div>
+                                    {% endfor %}
+                                    {% if actividad.usuarios_asignados_list|length > 4 %}
+                                    <div class="avatar-mini avatar-more">+{{ actividad.usuarios_asignados_list|length|add:"-4" }}</div>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                                <div class="kanban-card-actions">
+                                    <a href="/editar-actividad/{{ actividad.id }}/" class="btn-card btn-editar"><i class="fas fa-edit"></i> Editar</a>
+                                    <a href="/eliminar-actividad/{{ actividad.id }}/" class="btn-card btn-eliminar"><i class="fas fa-trash"></i></a>
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% empty %}
+                        {% endfor %}
+                    </div>
+                    <a href="/crear-actividad/" class="kanban-add-btn"><i class="fas fa-plus"></i> Agregar Tarea</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" style="position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px;"></div>
+    <style>@keyframes slideInToast{from{transform:translateX(110px);opacity:0}to{transform:translateX(0);opacity:1}}</style>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showToast(msg,type){const bg=type==='error'?'#c53030':type==='warning'?'#b7791f':'#15803d';const icon=type==='error'?'fa-exclamation-circle':type==='warning'?'fa-exclamation-triangle':'fa-check-circle';const t=document.createElement('div');t.style.cssText=`background:${bg};color:white;padding:14px 18px;border-radius:6px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:10px;box-shadow:0 4px 16px rgba(0,0,0,0.18);max-width:320px;animation:slideInToast 0.3s ease;`;t.innerHTML=`<i class="fas ${icon}"></i><span>${msg}</span><button onclick="this.parentElement.remove()" style="background:none;border:none;color:rgba(255,255,255,0.75);cursor:pointer;margin-left:auto;font-size:18px;line-height:1;">×</button>`;document.getElementById('toast-container').appendChild(t);setTimeout(()=>{t.style.transition='opacity 0.4s';t.style.opacity='0';setTimeout(()=>t.remove(),400);},4500);}
+        {% for message in messages %}showToast('{{ message|escapejs }}','{{ message.tags }}');{% endfor %}
+        const socketKanban = new WebSocket('ws://' + window.location.host + '/ws/kanban/');
+        socketKanban.onmessage = function(e) {
+            const datos = JSON.parse(e.data);
+            if (datos.tipo === 'actividad_movida') {
+                const tarjeta = document.querySelector(`[data-actividad-id="${datos.actividad_id}"]`);
+                const columna = document.querySelector(`[data-columna-id="${datos.columna_destino}"]`);
+                if (tarjeta && columna) columna.querySelector('.kanban-col-body').appendChild(tarjeta);
+            }
+        };
+        document.querySelectorAll('.kanban-card').forEach(t => {
+            t.addEventListener('dragstart', e => e.dataTransfer.setData('actividad_id', t.dataset.actividadId));
+        });
+        document.querySelectorAll('.kanban-col').forEach(col => {
+            col.addEventListener('dragover', e => e.preventDefault());
+            col.addEventListener('drop', e => {
+                e.preventDefault();
+                const id = e.dataTransfer.getData('actividad_id');
+                const tarjeta = document.querySelector(`[data-actividad-id="${id}"]`);
+                if (!tarjeta) return;
+                col.querySelector('.kanban-col-body').appendChild(tarjeta);
+                fetch('/actualizar-columna/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': getCSRF() },
+                    body: `actividad_id=${id}&columna_destino_id=${col.dataset.columnaId}`
+                }).then(r => r.json()).then(() => {
+                    socketKanban.send(JSON.stringify({ tipo: 'actividad_movida', actividad_id: id, columna_destino: col.dataset.columnaId }));
+                    actualizarContadores();
+                });
+            });
+        });
+        function actualizarContadores() {
+            let totalGlobal = 0;
+            document.querySelectorAll('.kanban-col').forEach(col => {
+                totalGlobal += col.querySelectorAll('.kanban-card').length;
+            });
+            document.querySelectorAll('.kanban-col').forEach(col => {
+                const total = col.querySelectorAll('.kanban-card').length;
+                const badge = col.querySelector('.kanban-col-count');
+                if (badge) badge.textContent = total;
+                const fill = col.querySelector('.col-progress-fill');
+                if (fill) fill.style.width = totalGlobal > 0 ? (total / totalGlobal * 100) + '%' : '0%';
+            });
+        }
+        // Ocultar skeleton y mostrar kanban real
+        document.getElementById('skeleton-board').style.display = 'none';
+        document.getElementById('kanban-board').style.display = 'flex';
+        actualizarContadores();
+        function getCSRF() {
+            for (let c of document.cookie.split(';')) { c = c.trim(); if (c.startsWith('csrftoken=')) return c.substring('csrftoken='.length); } return '';
+        }
+        (function(){const b=document.getElementById('btn-dark');const i=document.getElementById('dark-icon');function a(on){document.body.classList.toggle('dark',on);if(i)i.className=on?'fas fa-sun':'fas fa-moon';}a(localStorage.getItem('darkMode')==='1');if(b)b.addEventListener('click',function(){const on=!document.body.classList.contains('dark');a(on);localStorage.setItem('darkMode',on?'1':'0');});})();
+    </script>
+</body>
+</html>

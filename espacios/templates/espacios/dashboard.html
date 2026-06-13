@@ -6,6 +6,7 @@
     <title>Panel Principal - Gestión de Tareas</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #f0f0f0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; min-height: 100vh; }
@@ -91,24 +92,90 @@
         .notif-text { font-size: 13px; color: #333; font-weight: 500; }
         .notif-detail { font-size: 12px; color: #888; margin-top: 2px; }
         .notif-empty { font-size: 13px; color: #aaa; text-align: center; padding: 20px 0; }
+        .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 35px; }
+        .chart-card { background: white; border: 1px solid #ddd; border-radius: 6px; padding: 22px; }
+        .chart-card-title { font-size: 13px; font-weight: 700; color: #000; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .chart-wrap { position: relative; height: 220px; }
+        @keyframes slideIn { from { transform: translateX(110px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        #toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+        .toast-item { display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; color: white; box-shadow: 0 4px 16px rgba(0,0,0,0.18); max-width: 320px; animation: slideIn 0.3s ease; }
+        .toast-close { background: none; border: none; color: rgba(255,255,255,0.75); cursor: pointer; margin-left: auto; font-size: 18px; line-height: 1; }
+        .btn-dark-toggle { background: none; border: 1.5px solid #ddd; border-radius: 6px; color: #555; padding: 5px 10px; font-size: 14px; cursor: pointer; transition: all 0.2s; }
+        .btn-dark-toggle:hover { border-color: #000; color: #000; }
+        body.dark { background: #1a1a1a; color: #e0e0e0; }
+        body.dark .navbar { background: #111; border-bottom-color: #333; }
+        body.dark .navbar-brand { color: #fff !important; }
+        body.dark .navbar-brand span { color: #777 !important; }
+        body.dark .sidebar { background: #111; border-right-color: #333; }
+        body.dark .sidebar-item { color: #bbb; }
+        body.dark .sidebar-item:hover { background: #1e1e1e; color: #fff; }
+        body.dark .sidebar-item.active { background: #222; color: #fff; }
+        body.dark .sidebar-section-label { color: #555; }
+        body.dark .sidebar-bottom { border-top-color: #333; }
+        body.dark .stat-box { background: #111; border-color: #333; }
+        body.dark .stat-icon { background: #222; color: #ccc; }
+        body.dark .stat-number { color: #fff; }
+        body.dark .section-title { color: #e0e0e0; border-bottom-color: #444; }
+        body.dark .chart-card { background: #111; border-color: #333; }
+        body.dark .chart-card-title { color: #e0e0e0; }
+        body.dark .card-item { background: #111; border-color: #333; color: #e0e0e0; }
+        body.dark .card-item:hover { border-color: #666; color: #fff; }
+        body.dark .card-title { color: #fff; }
+        body.dark .card-description { color: #999; }
+        body.dark .card-count { background: #222; color: #aaa; }
+        body.dark .notif-panel { background: #111; border-color: #333; }
+        body.dark .notif-text { color: #ddd; }
+        body.dark .form-nueva-actividad { background: #111; border-color: #333; }
+        body.dark .form-nueva-actividad h3 { color: #e0e0e0; border-bottom-color: #333; }
+        body.dark .form-field input, body.dark .form-field textarea, body.dark .form-field select { background: #1a1a1a; border-color: #444; color: #e0e0e0; }
+        body.dark .form-field label { color: #aaa; }
+        body.dark .kanban-col { background: #111; border-color: #333; }
+        body.dark .kanban-col-header { border-bottom-color: #333; color: #e0e0e0; }
+        body.dark .kanban-col-count { background: #222; color: #aaa; }
+        body.dark .kanban-card { background: #1a1a1a; border-color: #333; }
+        body.dark .kanban-card-title { color: #e0e0e0; }
+        body.dark .kanban-card-desc { color: #888; }
+        body.dark .user-profile-box { background: #111; border-color: #333; }
+        body.dark .user-info-detail h3 { color: #fff; }
+        body.dark .nav-username { color: #ccc; }
+        body.dark .btn-dark-toggle { border-color: #444; color: #ccc; }
+        body.dark .btn-logout { background: #333; }
+        /* RESPONSIVE */
+        .btn-sidebar-toggle { display: none; background: none; border: none; font-size: 20px; color: #333; cursor: pointer; padding: 4px 8px; }
+        @media (max-width: 768px) {
+            .btn-sidebar-toggle { display: flex; align-items: center; }
+            .sidebar { position: fixed; left: -260px; top: 62px; height: calc(100vh - 62px); z-index: 500; transition: left 0.3s ease; box-shadow: 4px 0 16px rgba(0,0,0,0.15); }
+            .sidebar.open { left: 0; }
+            .sidebar-overlay { display: none; position: fixed; inset: 0; top: 62px; background: rgba(0,0,0,0.4); z-index: 499; }
+            .sidebar-overlay.open { display: block; }
+            .main-content { padding: 20px 16px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .charts-grid { grid-template-columns: 1fr; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .form-row-grid { grid-template-columns: 1fr; }
+            .kanban-board { flex-direction: column; }
+            .kanban-col { width: 100%; }
+        }
     </style>
 </head>
 <body>
+    <script>if(localStorage.getItem('darkMode')==='1')document.body.classList.add('dark');</script>
 
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Gestión de Tareas <span>Colaborativas</span></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <div style="display:flex;align-items:center;gap:10px;">
+                <button class="btn-sidebar-toggle" id="btn-sidebar-toggle"><i class="fas fa-bars"></i></button>
+                <a class="navbar-brand" href="/">Gestión de Tareas <span>Colaborativas</span></a>
+            </div>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <div class="nav-user">
-                    <div class="nav-notif">
+                    <button class="btn-dark-toggle" id="btn-dark" title="Modo oscuro"><i class="fas fa-moon" id="dark-icon"></i></button>
+                    <a class="nav-notif" href="/notificaciones/" style="text-decoration:none;color:inherit;">
                         <i class="fas fa-bell"></i>
                         {% if notif_no_leidas > 0 %}
                             <div class="notif-badge">{{ notif_no_leidas }}</div>
                         {% endif %}
-                    </div>
+                    </a>
                     <span class="nav-username">
                         <i class="fas fa-user-circle" style="margin-right:5px;color:#aaa;"></i>
                         {{ request.user.username }}
@@ -124,8 +191,9 @@
         </div>
     </nav>
 
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
     <div class="layout">
-        <div class="sidebar">
+        <div class="sidebar" id="sidebar">
             <div class="sidebar-section-label">Principal</div>
             <a class="sidebar-item active" href="/"><i class="fas fa-home"></i> Inicio</a>
             <a class="sidebar-item" href="/mis-tareas/"><i class="fas fa-tasks"></i> Mis Tareas</a>
@@ -148,7 +216,6 @@
                 <p>Panel de control — Gestión de Tareas Colaborativas</p>
             </div>
 
-            <!-- STATS GRID: 5 cajas, cada una con su propio </div> de cierre -->
             <div class="stats-grid">
                 <div class="stat-box">
                     <div class="stat-icon"><i class="fas fa-tasks"></i></div>
@@ -186,7 +253,18 @@
                     </div>
                 </div>
             </div>
-            <!-- FIN STATS GRID -->
+
+            <div class="section-title"><i class="fas fa-chart-pie"></i> Resumen Visual</div>
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-card-title"><i class="fas fa-circle-half-stroke"></i> Tareas por Estado</div>
+                    <div class="chart-wrap"><canvas id="chartEstado"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-card-title"><i class="fas fa-bar-chart"></i> Tareas por Prioridad</div>
+                    <div class="chart-wrap"><canvas id="chartPrioridad"></canvas></div>
+                </div>
+            </div>
 
             <div class="section-title">
                 <i class="fas fa-grip-horizontal"></i> Acceso Rápido
@@ -445,7 +523,7 @@
 
                 if (nombreColumna.includes('pendiente')) {
                     totalPendientes = cantidad;
-                } else if (nombreColumna.includes('proceso')) {
+                } else if (nombreColumna.includes('progres')) {
                     totalEnProceso = cantidad;
                 } else if (nombreColumna.includes('complet')) {
                     totalCompletadas = cantidad;
@@ -470,6 +548,88 @@
             }
             return '';
         }
+
+        // ── Chart.js ──
+        const colLabels = {{ chart_col_labels|safe }};
+        const colData   = {{ chart_col_data|safe }};
+        const priData   = {{ chart_pri_data|safe }};
+
+        const colColors = ['#3b82f6','#f59e0b','#8b5cf6','#22c55e','#94a3b8','#f87171'];
+
+        new Chart(document.getElementById('chartEstado'), {
+            type: 'doughnut',
+            data: {
+                labels: colLabels.length ? colLabels : ['Sin datos'],
+                datasets: [{ data: colData.length ? colData : [1], backgroundColor: colColors, borderWidth: 2, borderColor: '#fff' }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom', labels: { font: { size: 12 }, padding: 14 } } },
+                cutout: '62%'
+            }
+        });
+
+        new Chart(document.getElementById('chartPrioridad'), {
+            type: 'bar',
+            data: {
+                labels: ['Baja', 'Media', 'Alta', 'Urgente'],
+                datasets: [{
+                    data: priData,
+                    backgroundColor: ['#22c55e','#f59e0b','#e53e3e','#7c3aed'],
+                    borderRadius: 4, borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: '#f0f0f0' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // ── Toast system ──
+        function showToast(msg, type) {
+            const bg = type === 'error' ? '#c53030' : (type === 'warning' ? '#b7791f' : '#15803d');
+            const icon = type === 'error' ? 'fa-exclamation-circle' : (type === 'warning' ? 'fa-exclamation-triangle' : 'fa-check-circle');
+            const t = document.createElement('div');
+            t.className = 'toast-item';
+            t.style.background = bg;
+            t.innerHTML = `<i class="fas ${icon}"></i><span>${msg}</span><button class="toast-close" onclick="this.parentElement.remove()">×</button>`;
+            document.getElementById('toast-container').appendChild(t);
+            setTimeout(() => { t.style.transition = 'opacity 0.4s'; t.style.opacity = '0'; setTimeout(() => t.remove(), 400); }, 4500);
+        }
+        {% for message in messages %}showToast('{{ message|escapejs }}', '{{ message.tags }}');{% endfor %}
+
+        // ── Sidebar responsive ──
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        document.getElementById('btn-sidebar-toggle').addEventListener('click', function() {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        });
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+        });
+
+        // ── Modo oscuro ──
+        (function() {
+            const btn  = document.getElementById('btn-dark');
+            const icon = document.getElementById('dark-icon');
+            function applyDark(on) {
+                document.body.classList.toggle('dark', on);
+                icon.className = on ? 'fas fa-sun' : 'fas fa-moon';
+            }
+            applyDark(localStorage.getItem('darkMode') === '1');
+            btn.addEventListener('click', function() {
+                const on = !document.body.classList.contains('dark');
+                applyDark(on);
+                localStorage.setItem('darkMode', on ? '1' : '0');
+            });
+        })();
     </script>
+    <div id="toast-container"></div>
 </body>
 </html>

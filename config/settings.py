@@ -41,12 +41,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'usuarios',
-    'espacios',
-    'paneles',
-    'actividades',
+    'espacios',      # dashboard, mis tareas, búsqueda
+    'paneles',       # paneles kanban
+    'actividades',   # actividades
+    'notificaciones',# notificaciones
+    'usuarios',      # perfil, registro
     'channels',
-    'notificaciones',
 ]
 
 MIDDLEWARE = [
@@ -71,6 +71,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'notificaciones.context_processors.notificaciones_no_leidas',
             ],
         },
     },
