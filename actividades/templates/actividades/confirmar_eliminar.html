@@ -30,9 +30,30 @@
         .btn-cancelar:hover { background: #e0e0e0; color: #000; text-decoration: none; }
         .btn-eliminar { background: #e53e3e; color: white; border: none; padding: 11px 24px; border-radius: 4px; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: background 0.2s; }
         .btn-eliminar:hover { background: #c53030; }
+
+        body.dark { background: #121212; color: #e0e0e0; }
+        body.dark .navbar { background: #111; border-bottom-color: #333; }
+        body.dark .navbar-brand { color: #fff !important; }
+        body.dark .navbar-brand span { color: #aaa !important; }
+        body.dark .nav-username { color: #ddd; }
+        body.dark .btn-logout { background: #222; color: #f5f5f5 !important; }
+        body.dark .btn-logout:hover { background: #333; }
+        body.dark .confirm-card { background: #171717; border: 1px solid #333; }
+        body.dark .confirm-icon { background: #3d1616; color: #fcc; }
+        body.dark .confirm-title { color: #f8f8f2; }
+        body.dark .confirm-sub { color: #bfbfbf; }
+        body.dark .confirm-actividad { background: #1d1d1d; border-color: #444; }
+        body.dark .confirm-actividad-titulo { color: #f8f8f2; }
+        body.dark .confirm-actividad-desc { color: #b8b8b8; }
+        body.dark .confirm-warning { color: #f3a3a3; }
+        body.dark .btn-cancelar { background: #222; color: #e5e5e5; }
+        body.dark .btn-cancelar:hover { background: #2f2f2f; color: #fff; }
+        body.dark .btn-eliminar { background: #c53030; }
+        body.dark .btn-eliminar:hover { background: #a0262a; }
     </style>
 </head>
 <body>
+    <script>if(localStorage.getItem('darkMode')==='1')document.body.classList.add('dark');</script>
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">Gestión de Tareas <span>Colaborativas</span></a>
